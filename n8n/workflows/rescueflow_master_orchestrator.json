@@ -3,9 +3,9 @@
   "nodes": [
     {
       "parameters": {
-        "content": "## 🚨 EMERGENCY INTAKE SOURCES\nCaptures reports from Telegram, Gmail, Web Form, or CSV batch.",
-        "height": 380,
-        "width": 320
+        "content": "## 🚨 EMERGENCY INTAKE SOURCES\nCaptures incoming disaster reports from Telegram, Gmail, Web Form, or CSV batch.",
+        "height": 420,
+        "width": 340
       },
       "id": "sticky-intake",
       "name": "Sticky Note - Intake",
@@ -47,7 +47,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Normalizes all channels into the canonical RescueFlow Schema\nconst item = $input.item.json;\nlet source = 'web';\nlet sender = 'Anonymous Citizen';\nlet messageText = '';\nlet locationHint = '';\nlet metadata = {};\n\nif (item.message && item.message.text) {\n  source = 'telegram';\n  sender = item.message.from ? ('@' + (item.message.from.username || item.message.from.first_name)) : 'Telegram User';\n  messageText = item.message.text.replace(/^\\/report\\s*/i, '');\n  metadata = { chat_id: item.message.chat ? item.message.chat.id : null };\n} else if (item.from && item.subject) {\n  source = 'email';\n  sender = item.from.value ? item.from.value[0].address : (item.from.text || 'Email User');\n  messageText = item.text || item.html || item.subject;\n  metadata = { subject: item.subject };\n} else {\n  source = item.source || 'web';\n  sender = item.sender || item.name || 'Web Citizen';\n  messageText = item.message || '';\n  locationHint = item.location || item.location_hint || '';\n  metadata = item.metadata || {};\n}\n\nconst messageId = item.message_id || 'MSG-' + Math.random().toString(36).substring(2, 10).toUpperCase();\n\nreturn {\n  message_id: messageId,\n  source: source,\n  sender: sender,\n  message: messageText.trim(),\n  location_hint: locationHint,\n  timestamp: item.timestamp || new Date().toISOString(),\n  metadata: metadata\n};"
+        "jsCode": "// Normalizes all incoming channels into the canonical RescueFlow Schema\nconst item = $input.item.json;\nlet source = 'web';\nlet sender = 'Anonymous Citizen';\nlet messageText = '';\nlet locationHint = '';\nlet metadata = {};\n\nif (item.message && item.message.text) {\n  source = 'telegram';\n  sender = item.message.from ? ('@' + (item.message.from.username || item.message.from.first_name)) : 'Telegram User';\n  messageText = item.message.text.replace(/^\\/report\\s*/i, '');\n  metadata = { chat_id: item.message.chat ? item.message.chat.id : null };\n} else if (item.from && item.subject) {\n  source = 'email';\n  sender = item.from.value ? item.from.value[0].address : (item.from.text || 'Email User');\n  messageText = item.text || item.html || item.subject;\n  metadata = { subject: item.subject };\n} else {\n  source = item.source || 'web';\n  sender = item.sender || item.name || 'Web Citizen';\n  messageText = item.message || '';\n  locationHint = item.location || item.location_hint || '';\n  metadata = item.metadata || {};\n}\n\nconst messageId = item.message_id || 'MSG-' + Math.random().toString(36).substring(2, 10).toUpperCase();\n\nreturn {\n  message_id: messageId,\n  source: source,\n  sender: sender,\n  message: messageText.trim(),\n  location_hint: locationHint,\n  timestamp: item.timestamp || new Date().toISOString(),\n  metadata: metadata\n};"
       },
       "id": "node-normalize",
       "name": "Message Normalization",
@@ -57,8 +57,8 @@
     },
     {
       "parameters": {
-        "content": "## 🧠 GROQ AI CLASSIFICATION\nEvaluates whether message is a real/simulated disaster vs casual chat.",
-        "height": 380,
+        "content": "## 🧠 GROQ AI CLASSIFICATION\nEvaluates whether message describes a real/simulated disaster vs casual chat.",
+        "height": 420,
         "width": 360
       },
       "id": "sticky-classification",
@@ -117,20 +117,20 @@
         "url": "http://localhost:8000/api/n8n/events",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"event_type\": \"MESSAGE_ARCHIVED_NON_EMERGENCY\",\n  \"message_id\": \"{{$json.message_id}}\",\n  \"payload\": { \"reason\": \"{{$json.classification.reason}}\", \"status\": \"archived\" }\n}",
+        "jsonBody": "={\n  \"event_type\": \"MESSAGE_ARCHIVED_NON_EMERGENCY\",\n  \"message_id\": \"{{$json.message_id}}\",\n  \"payload\": { \"reason\": \"{{$json.classification.reason || 'Not classified as emergency'}}\", \"status\": \"archived\" }\n}",
         "options": {}
       },
       "id": "node-archive-casual",
       "name": "Archive Casual Message",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [1460, 420]
+      "position": [1460, 440]
     },
     {
       "parameters": {
-        "content": "## 🔍 GROQ AI EXTRACTION\nExtracts disaster type, location, casualties, and needed resources.",
-        "height": 380,
-        "width": 340
+        "content": "## 🔍 GROQ AI EXTRACTION\nExtracts disaster type, precise location, affected count, and resource requirements.",
+        "height": 420,
+        "width": 360
       },
       "id": "sticky-extraction",
       "name": "Sticky Note - Extraction",
@@ -162,7 +162,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const resp = $input.item.json;\nlet raw = resp.choices ? resp.choices[0].message.content : JSON.stringify(resp);\nlet extraction = {};\ntry {\n  extraction = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch(e) {\n  extraction = {\n    disaster_type: 'flood',\n    location: $node['Message Normalization'].json.location_hint || 'PSG College',\n    people_affected: 3,\n    resources_required: ['rescue_team'],\n    severity: 'critical',\n    summary: $node['Message Normalization'].json.message\n  };\n}\nreturn { ...$node['Message Normalization'].json, extraction: extraction };"
+        "jsCode": "const resp = $input.item.json;\nlet raw = resp.choices ? resp.choices[0].message.content : JSON.stringify(resp);\nlet extraction = {};\ntry {\n  extraction = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch(e) {\n  extraction = {\n    disaster_type: 'flood',\n    location: $node['Message Normalization'].json.location_hint || 'City Center',\n    people_affected: 3,\n    resources_required: ['rescue_team'],\n    severity: 'critical',\n    summary: $node['Message Normalization'].json.message\n  };\n}\nreturn { ...$node['Message Normalization'].json, extraction: extraction };"
       },
       "id": "node-json-validation",
       "name": "JSON Validation",
@@ -172,8 +172,8 @@
     },
     {
       "parameters": {
-        "content": "## 🔄 DEDUPLICATION & INCIDENT MERGING\nGroups multi-channel reports into a consolidated operational incident.",
-        "height": 380,
+        "content": "## 🔄 DEDUPLICATION & INCIDENT MERGING\nChecks active database incidents and merges matching duplicate reports.",
+        "height": 420,
         "width": 380
       },
       "id": "sticky-dedup",
@@ -233,8 +233,8 @@
     },
     {
       "parameters": {
-        "content": "## ⚖️ PRIORITY ENGINE & MONGODB\nCalculates deterministic score and creates incident in database.",
-        "height": 380,
+        "content": "## ⚖️ PRIORITY ENGINE & MONGODB\nCalculates deterministic priority score (0-100) and persists incident to database.",
+        "height": 420,
         "width": 380
       },
       "id": "sticky-priority",
@@ -270,7 +270,7 @@
     },
     {
       "parameters": {
-        "content": "## 👮 HUMAN-IN-THE-LOOP APPROVAL\nCritical and High priority incidents require operator authorization.",
+        "content": "## 👮 HUMAN-IN-THE-LOOP APPROVAL\nCritical and High priority incidents require operator review before dispatch.",
         "height": 420,
         "width": 380
       },
@@ -387,6 +387,72 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [3980, 520]
+    },
+    {
+      "parameters": {
+        "content": "## ⏱️ RESPONSE LIVELINESS & INCIDENT MONITORING\nScheduled cron runs every 5 minutes, checks response staleness, and escalates delayed incidents.",
+        "height": 260,
+        "width": 960
+      },
+      "id": "sticky-monitoring",
+      "name": "Sticky Note - Monitoring",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [160, 680]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "node-schedule-cron",
+      "name": "Schedule Trigger - Every 5 Min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 760]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8000/api/incidents?status=responding&limit=50",
+        "options": {}
+      },
+      "id": "node-get-responding-incidents",
+      "name": "Poll Responding Incidents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 760]
+    },
+    {
+      "parameters": {
+        "jsCode": "const active = $input.item.json.incidents || [];\nconst now = new Date();\nconst monitored = [];\n\nfor (const inc of active) {\n  const created = new Date(inc.created_at);\n  const minutesElapsed = Math.round((now - created) / 60000);\n  \n  monitored.push({\n    incident_id: inc.incident_id,\n    type: inc.type,\n    location: inc.location,\n    status: inc.status,\n    minutes_elapsed: minutesElapsed,\n    requires_escalation: (minutesElapsed > 30 && inc.status === 'responding')\n  });\n}\n\nreturn {\n  timestamp: now.toISOString(),\n  total_monitored: monitored.length,\n  monitored_incidents: monitored\n};"
+      },
+      "id": "node-analyze-monitoring",
+      "name": "Analyze Response Liveliness & Staleness",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 760]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"INCIDENT_MONITORING_CYCLE\",\n  \"payload\": {\n    \"total_active\": {{$json.total_monitored}},\n    \"monitoring_data\": {{$json.monitored_incidents}}\n  }\n}",
+        "options": {}
+      },
+      "id": "node-report-monitoring-cycle",
+      "name": "Report Monitoring Cycle to Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [920, 760]
     }
   ],
   "connections": {
@@ -441,7 +507,10 @@
     "Critical or High?": {
       "main": [
         [{ "node": "Human Approval Decision Webhook", "type": "main", "index": 0 }],
-        []
+        [
+          { "node": "Telegram Alert Notification", "type": "main", "index": 0 },
+          { "node": "Email Alert Notification", "type": "main", "index": 0 }
+        ]
       ]
     },
     "Human Approval Decision Webhook": {
@@ -458,6 +527,15 @@
     },
     "Telegram Alert Notification": {
       "main": [[{ "node": "Update Status Responding", "type": "main", "index": 0 }]]
+    },
+    "Schedule Trigger - Every 5 Min": {
+      "main": [[{ "node": "Poll Responding Incidents", "type": "main", "index": 0 }]]
+    },
+    "Poll Responding Incidents": {
+      "main": [[{ "node": "Analyze Response Liveliness & Staleness", "type": "main", "index": 0 }]]
+    },
+    "Analyze Response Liveliness & Staleness": {
+      "main": [[{ "node": "Report Monitoring Cycle to Backend", "type": "main", "index": 0 }]]
     }
   }
 }
