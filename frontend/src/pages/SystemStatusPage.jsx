@@ -176,10 +176,10 @@ export function SystemStatusPage() {
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', background: 'rgba(249, 115, 22, 0.15)', color: '#f97316', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', background: '#fff7ed', color: '#ea580c', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #fed7aa' }}>
                     WF-{wf.id}
                   </span>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--peacock-deep)', fontFamily: 'var(--font-mono)' }}>
                     {wf.name}
                   </span>
                 </div>
