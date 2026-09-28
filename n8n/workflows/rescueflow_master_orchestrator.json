@@ -43,7 +43,8 @@
       "name": "Gmail Inbox Trigger",
       "type": "n8n-nodes-base.emailReadImap",
       "typeVersion": 2,
-      "position": [200, 380]
+      "position": [200, 380],
+      "disabled": true
     },
     {
       "parameters": {
