@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ModeledSelect } from '../components/ModeledSelect';
 import { Shield, Sparkles } from 'lucide-react';
 
 export function LoginPage() {
@@ -117,15 +118,16 @@ export function LoginPage() {
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px', color: 'var(--peacock-deep)' }}>
               Command Role
             </label>
-            <select
+            <ModeledSelect
               value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={{ width: '100%' }}
-            >
-              <option value="commander">Operations Commander (Authorizes Dispatches)</option>
-              <option value="supervisor">Tactical Supervisor (Evaluates Reports)</option>
-              <option value="dispatcher">Field Dispatch Officer (Observer)</option>
-            </select>
+              onChange={setRole}
+              options={[
+                { value: 'commander', label: 'Operations Commander (Authorizes Dispatches)', dotColor: '#0f766e' },
+                { value: 'supervisor', label: 'Tactical Supervisor (Evaluates Reports)', dotColor: '#0284c7' },
+                { value: 'dispatcher', label: 'Field Dispatch Officer (Observer)', dotColor: '#8b5cf6' },
+              ]}
+              minWidth="100%"
+            />
           </div>
 
           <button
