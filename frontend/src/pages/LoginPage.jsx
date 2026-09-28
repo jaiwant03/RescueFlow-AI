@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
+import { Shield, Sparkles } from 'lucide-react';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -37,7 +37,7 @@ export function LoginPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'radial-gradient(circle at center, #0f172a 0%, #060a12 100%)',
+        background: 'radial-gradient(circle at center, #ffffff 0%, #f0fdfa 50%, #e0f2fe 100%)',
         padding: '20px',
       }}
     >
@@ -46,31 +46,33 @@ export function LoginPage() {
         style={{
           width: '100%',
           maxWidth: '440px',
-          padding: '32px',
+          padding: '36px',
           border: '1px solid var(--border-medium)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
+          boxShadow: 'var(--shadow-lg)',
+          background: '#ffffff',
+          borderRadius: '16px',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div
             style={{
-              width: '54px',
-              height: '54px',
+              width: '56px',
+              height: '56px',
               borderRadius: '14px',
-              background: 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)',
-              margin: '0 auto 14px',
+              background: 'var(--gradient-peacock-rama)',
+              margin: '0 auto 16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 25px rgba(6, 182, 212, 0.4)',
+              boxShadow: '0 6px 20px rgba(0, 91, 130, 0.25)',
             }}
           >
             <Shield size={28} color="#ffffff" />
           </div>
-          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}>
-            RESCUEFLOW <span style={{ color: 'var(--accent-cyan)' }}>AI</span>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--peacock-deep)', letterSpacing: '0.04em' }}>
+            RESCUEFLOW <span style={{ color: 'var(--rama-green)' }}>AI</span>
           </h1>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             Disaster Message Prioritization & Response Automation
           </p>
         </div>
@@ -85,8 +87,8 @@ export function LoginPage() {
             fontSize: '0.92rem',
             fontWeight: 700,
             marginBottom: '20px',
-            background: 'linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%)',
-            boxShadow: '0 0 15px rgba(2, 132, 199, 0.4)',
+            background: 'var(--gradient-peacock-rama)',
+            boxShadow: '0 4px 14px rgba(13, 148, 136, 0.35)',
           }}
         >
           <Sparkles size={16} /> Enter as Operations Commander (Demo Access)
@@ -98,35 +100,47 @@ export function LoginPage() {
 
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-              Operator Name:
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px', color: 'var(--peacock-deep)' }}>
+              Operator Name
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your Name"
+              placeholder="Enter your name..."
               style={{ width: '100%' }}
+              required
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-              Command Role:
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px', color: 'var(--peacock-deep)' }}>
+              Command Role
             </label>
-            <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%' }}>
-              <option value="commander">Operations Commander (Full Authorization)</option>
-              <option value="supervisor">Tactical Supervisor</option>
-              <option value="operator">Emergency Dispatch Operator</option>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              style={{ width: '100%' }}
+            >
+              <option value="commander">Operations Commander (Authorizes Dispatches)</option>
+              <option value="supervisor">Tactical Supervisor (Evaluates Reports)</option>
+              <option value="dispatcher">Field Dispatch Officer (Observer)</option>
             </select>
           </div>
 
           <button
             type="submit"
-            className="btn btn-secondary"
-            style={{ width: '100%', marginTop: '6px', padding: '10px' }}
+            className="btn"
+            style={{
+              marginTop: '10px',
+              padding: '11px',
+              background: 'var(--rama-bg)',
+              color: 'var(--rama-deep)',
+              border: '1px solid #99f6e4',
+              fontWeight: 700,
+            }}
           >
-            Launch Session <ArrowRight size={14} />
+            Launch Tactical Console &rarr;
           </button>
         </form>
       </div>
