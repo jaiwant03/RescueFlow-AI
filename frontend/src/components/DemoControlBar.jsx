@@ -185,7 +185,7 @@ export function DemoControlBar({ onScenarioComplete }) {
                 letterSpacing: '0.01em',
               }}
             >
-              Hackathon Demo Simulation Controller
+              Real-Time Incident Ingestion & Telemetry Controller
             </h2>
 
             <p
@@ -196,17 +196,17 @@ export function DemoControlBar({ onScenarioComplete }) {
                 marginTop: '2px',
               }}
             >
-              Simulate disaster scenarios for evaluation (1-click trigger for official scenario flow)
+              Simulate disaster telemetry for field evaluation (1-click trigger for official operational flow)
             </p>
           </div>
         </div>
 
-        {/* Green "Run Demo Data" Pill Button */}
+        {/* Green "Inject All Scenarios" Pill Button */}
         <button
           onClick={handleRunAllScenarios}
           disabled={runningAll || Boolean(runningKey)}
           style={{
-            background: '#0d9488',
+            background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
             color: '#ffffff',
             borderRadius: '9999px',
             padding: '7px 18px',
@@ -222,13 +222,13 @@ export function DemoControlBar({ onScenarioComplete }) {
           }}
           onMouseEnter={(e) => {
             if (!runningAll && !runningKey) {
-              e.currentTarget.style.background = '#0f766e';
+              e.currentTarget.style.opacity = '0.92';
               e.currentTarget.style.transform = 'translateY(-1px)';
             }
           }}
           onMouseLeave={(e) => {
             if (!runningAll && !runningKey) {
-              e.currentTarget.style.background = '#0d9488';
+              e.currentTarget.style.opacity = '1';
               e.currentTarget.style.transform = 'translateY(0)';
             }
           }}
@@ -236,12 +236,12 @@ export function DemoControlBar({ onScenarioComplete }) {
           {runningAll ? (
             <>
               <Loader2 size={14} className="animate-spin" />
-              Running Scenarios...
+              Injecting Scenarios...
             </>
           ) : (
             <>
               <Play size={12} fill="#ffffff" />
-              Run Demo Data
+              Inject All Scenarios
             </>
           )}
         </button>
