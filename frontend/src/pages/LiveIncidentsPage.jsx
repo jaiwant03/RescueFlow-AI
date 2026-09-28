@@ -169,9 +169,9 @@ export function LiveIncidentsPage() {
                     <td style={{ textTransform: 'capitalize', fontWeight: 600 }}>
                       {inc.type}
                     </td>
-                    <td style={{ color: '#ffffff' }}>
+                    <td style={{ color: 'var(--peacock-deep)', fontWeight: 600 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <MapPin size={12} color="var(--accent-cyan)" />
+                        <MapPin size={12} color="var(--rama-green)" />
                         <span>{inc.location}</span>
                       </div>
                     </td>
