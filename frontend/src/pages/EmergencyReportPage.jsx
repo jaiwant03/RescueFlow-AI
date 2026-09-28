@@ -726,21 +726,52 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
       {/* TAB 2: CSV BATCH IMPORT */}
       {tab === 'csv' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="eoc-card">
-            <div className="eoc-card-header">
-              <div className="eoc-card-title">
-                <FileText size={18} color="var(--accent-cyan)" />
-                <span>Bulk Emergency CSV Ingestion</span>
+          <div
+            className="eoc-card"
+            style={{
+              padding: '24px',
+              borderRadius: '16px',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 20px rgba(0, 50, 70, 0.05)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <FileText size={20} color="var(--rama-green)" />
+                <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+                  Bulk Emergency CSV Ingestion
+                </h3>
               </div>
-              <button onClick={handleLoadDemoCSV} className="btn btn-secondary" style={{ fontSize: '0.75rem' }}>
-                Load Canonical Demo Dataset
+              <button
+                type="button"
+                onClick={handleLoadDemoCSV}
+                style={{
+                  fontSize: '0.78rem',
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  background: '#e6f9f5',
+                  border: '1px solid #99f6e4',
+                  color: '#0f766e',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#ccfbf1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#e6f9f5';
+                }}
+              >
+                Load Canonical Dataset
               </button>
             </div>
 
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '16px', lineHeight: 1.5 }}>
-              Import historical or batch simulated emergency reports. Required CSV header columns:
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '18px', lineHeight: 1.5 }}>
+              Import historical or batch simulated emergency reports directly into the AI classification engine. Required CSV header columns:
               <br />
-              <code style={{ color: 'var(--accent-cyan)', background: 'var(--bg-surface)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>
+              <code style={{ color: '#0f766e', background: '#e6f9f5', padding: '3px 8px', borderRadius: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', display: 'inline-block', marginTop: '6px', fontWeight: 600 }}>
                 source, message, timestamp, location
               </code>
             </p>
@@ -748,20 +779,23 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
             <form onSubmit={handleUploadCSV}>
               <div
                 style={{
-                  border: '2px dashed var(--border-medium)',
-                  borderRadius: '10px',
-                  padding: '30px',
+                  border: '2px dashed #99f6e4',
+                  borderRadius: '14px',
+                  padding: '36px 20px',
                   textAlign: 'center',
-                  background: 'var(--bg-surface)',
-                  marginBottom: '16px',
+                  background: 'linear-gradient(180deg, #fcfefe 0%, #f0fdfa 100%)',
+                  marginBottom: '20px',
+                  transition: 'all 0.2s ease',
                 }}
               >
-                <Upload size={32} color="var(--rama-green)" style={{ margin: '0 auto 10px' }} />
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
-                  {csvFile ? csvFile.name : 'Select or drop emergency reports CSV'}
+                <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: '#e6f9f5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <Upload size={26} color="var(--rama-green)" />
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                  {csvFile ? `${(csvFile.size / 1024).toFixed(1)} KB` : 'Supports standard UTF-8 encoded CSV files'}
+                <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
+                  {csvFile ? csvFile.name : 'Select or drag & drop emergency reports CSV'}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                  {csvFile ? `${(csvFile.size / 1024).toFixed(1)} KB` : 'Supports standard UTF-8 encoded comma-separated values'}
                 </div>
                 <input
                   type="file"
@@ -770,8 +804,34 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                   style={{ display: 'none' }}
                   id="csv-input-file"
                 />
-                <label htmlFor="csv-input-file" className="btn btn-secondary" style={{ cursor: 'pointer' }}>
-                  Browse Files
+                <label
+                  htmlFor="csv-input-file"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 20px',
+                    borderRadius: '10px',
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    color: 'var(--peacock-deep)',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--rama-green)';
+                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(13, 148, 136, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+                  }}
+                >
+                  <FileText size={14} color="var(--rama-green)" />
+                  <span>{csvFile ? 'Change Selected File' : 'Browse Files'}</span>
                 </label>
               </div>
 
@@ -779,10 +839,38 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                 <button
                   type="submit"
                   disabled={!csvFile || csvUploading}
-                  className="btn btn-primary"
-                  style={{ padding: '10px 24px' }}
+                  style={{
+                    padding: '12px 32px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontSize: '0.92rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.02em',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: (!csvFile || csvUploading) ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 14px rgba(13, 148, 136, 0.35)',
+                    transition: 'all 0.2s ease',
+                    opacity: (!csvFile || csvUploading) ? 0.7 : 1,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (csvFile && !csvUploading) {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 6px 18px rgba(13, 148, 136, 0.45)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (csvFile && !csvUploading) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 14px rgba(13, 148, 136, 0.35)';
+                    }
+                  }}
                 >
-                  {csvUploading ? 'Processing Batch...' : 'Process CSV Batch'}
+                  <Upload size={16} />
+                  <span>{csvUploading ? 'Processing Batch...' : 'Process CSV Batch'}</span>
                 </button>
               </div>
             </form>
@@ -790,17 +878,26 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
 
           {/* CSV Result */}
           {csvResult && (
-            <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--peacock-deep)', marginBottom: '8px' }}>
+            <div
+              className="eoc-card"
+              style={{
+                borderLeft: '4px solid var(--rama-green)',
+                background: '#ffffff',
+                borderRadius: '14px',
+                padding: '20px',
+                boxShadow: '0 2px 10px rgba(0, 50, 70, 0.05)',
+              }}
+            >
+              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--peacock-deep)', marginBottom: '10px' }}>
                 Batch Ingestion Complete: {csvResult.total_imported} Records Processed
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 {csvResult.results?.map((r, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ color: r.status === 'merged' ? 'var(--accent-cyan)' : r.status === 'created' ? '#ef4444' : '#64748b', fontWeight: 700 }}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px', background: '#f8fafc', borderRadius: '8px' }}>
+                    <span style={{ color: r.status === 'merged' ? 'var(--accent-cyan)' : r.status === 'created' ? '#ef4444' : '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>
                       [{r.status?.toUpperCase()}]
                     </span>
-                    <span>
+                    <span style={{ fontWeight: 600 }}>
                       {r.incident_id ? `#${r.incident_id}` : ''} {r.reason ? `(${r.reason})` : ''}
                     </span>
                   </div>
