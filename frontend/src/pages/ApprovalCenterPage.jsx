@@ -76,8 +76,8 @@ export function ApprovalCenterPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <CheckSquare size={22} color="#f59e0b" /> Human-in-the-Loop Approval Center
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <CheckSquare size={22} color="#ea580c" /> Human-in-the-Loop Approval Center
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             AI Recommends &bull; Human Decides &bull; n8n Executes Approved Operations
