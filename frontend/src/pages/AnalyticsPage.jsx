@@ -124,15 +124,15 @@ export function AnalyticsPage() {
                 return (
                   <div key={type}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
-                      <span style={{ textTransform: 'capitalize', fontWeight: 600, color: '#ffffff' }}>
+                      <span style={{ textTransform: 'capitalize', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                         {type.replace('_', ' ')}
                       </span>
                       <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
                         {count} ({pct}%)
                       </span>
                     </div>
-                    <div style={{ height: '8px', background: 'var(--bg-surface)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #0284c7, #06b6d4)', borderRadius: '4px' }} />
+                    <div style={{ height: '8px', background: 'var(--bg-main)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--peacock-primary), var(--rama-green))', borderRadius: '4px' }} />
                     </div>
                   </div>
                 );
