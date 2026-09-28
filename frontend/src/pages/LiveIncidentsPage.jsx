@@ -51,8 +51,8 @@ export function LiveIncidentsPage() {
       {/* Page Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Radio size={22} color="var(--accent-cyan)" /> Live Emergency Incidents
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Radio size={22} color="var(--rama-green)" /> Live Emergency Incidents
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Real-time multi-channel incident feed with deduplication & explainable priority scoring
