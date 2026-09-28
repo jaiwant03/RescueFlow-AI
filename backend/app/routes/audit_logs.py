@@ -28,3 +28,13 @@ async def get_audit_logs(
         "audit_logs": clean_mongo_doc(items)
     }
 
+@router.delete("")
+async def clear_audit_logs():
+    db = get_database()
+    result = await db["audit_logs"].delete_many({})
+    deleted = getattr(result, "deleted_count", 0)
+    return {
+        "status": "success",
+        "message": "All audit logs cleared successfully",
+        "deleted_count": deleted
+    }
