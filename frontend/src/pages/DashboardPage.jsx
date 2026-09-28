@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
 import { useSystem } from '../context/SystemContext';
-import { DemoControlBar } from '../components/DemoControlBar';
+import { LiveOperationsBar } from '../components/LiveOperationsBar';
 import { IncidentMap } from '../components/IncidentMap';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { StatusBadge } from '../components/StatusBadge';
@@ -17,7 +17,7 @@ import {
   Clock, 
   ArrowRight, 
   ShieldCheck,
-  MapPin,
+  MapPin, 
   Users
 } from 'lucide-react';
 
@@ -49,11 +49,6 @@ export function DashboardPage() {
     loadData();
   }, [loadData]);
 
-  const handleScenarioFinished = () => {
-    loadData();
-    refreshStats();
-  };
-
   const handleOpenApproval = (incident, action) => {
     setSelectedIncidentForApproval(incident);
     setApprovalAction(action);
@@ -73,8 +68,9 @@ export function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* 1-Click Hackathon Demo Simulator Controller */}
-      <DemoControlBar onScenarioComplete={handleScenarioFinished} />
+      {/* Real-time Emergency Operations Command Bar */}
+      <LiveOperationsBar onRefresh={loadData} />
+
 
       {/* Top Operations Statistics Cards */}
       <div
@@ -85,89 +81,90 @@ export function DashboardPage() {
         }}
       >
         {/* Total Incidents */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--rama-green)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
             <span>TOTAL INCIDENTS</span>
-            <Activity size={16} color="var(--rama-green)" />
+            <Activity size={17} color="var(--rama-green)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
             {stats.total_incidents || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
             Active & triage tracking
           </div>
         </div>
 
         {/* Critical */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-critical)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-            <span>CRITICAL</span>
-            <Flame size={16} color="var(--priority-critical)" />
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-critical)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
+            <span style={{ color: 'var(--priority-critical)' }}>CRITICAL</span>
+            <Flame size={17} color="var(--priority-critical)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-critical)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--priority-critical)', margin: '6px 0 2px' }}>
             {stats.critical || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--priority-critical)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--priority-critical)', fontWeight: 700 }}>
             Immediate life danger
           </div>
         </div>
 
         {/* High */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-high)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-            <span>HIGH</span>
-            <AlertTriangle size={16} color="var(--priority-high)" />
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-high)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
+            <span style={{ color: 'var(--priority-high)' }}>HIGH</span>
+            <AlertTriangle size={17} color="var(--priority-high)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-high)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--priority-high)', margin: '6px 0 2px' }}>
             {stats.high || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--priority-high)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--priority-high)', fontWeight: 700 }}>
             High-consequence response
           </div>
         </div>
 
         {/* Medium */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-medium)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-            <span>MEDIUM</span>
-            <Clock size={16} color="var(--priority-medium)" />
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-medium)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
+            <span style={{ color: '#b45309' }}>MEDIUM</span>
+            <Clock size={17} color="var(--priority-medium)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-medium)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#b45309', margin: '6px 0 2px' }}>
             {stats.medium || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
             Controlled triage
           </div>
         </div>
 
         {/* Deduplication Efficiency */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-            <span>DEDUP SAVINGS</span>
-            <Layers size={16} color="var(--rama-green)" />
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--rama-green)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
+            <span style={{ color: 'var(--rama-deep)' }}>DEDUP SAVINGS</span>
+            <Layers size={17} color="var(--rama-green)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--rama-deep)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--rama-deep)', margin: '6px 0 2px' }}>
             {stats.deduplication_saved || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--rama-deep)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--rama-deep)', fontWeight: 700 }}>
             Fragmented reports merged
           </div>
         </div>
 
         {/* Resolved */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--peacock-light)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
-            <span>RESOLVED</span>
-            <CheckCircle size={16} color="var(--peacock-light)" />
+        <div className="eoc-card" style={{ borderLeft: '5px solid var(--peacock-light)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
+            <span style={{ color: 'var(--peacock-primary)' }}>RESOLVED</span>
+            <CheckCircle size={17} color="var(--peacock-light)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
             {stats.resolved || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
             Completed operations
           </div>
         </div>
       </div>
+
 
       {/* Main Command Center Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px' }}>
@@ -337,40 +334,56 @@ export function DashboardPage() {
             )}
           </div>
 
-          {/* Core Concept Architecture Summary */}
+          {/* Real-Time Response Telemetry & Dispatch Channels */}
           <div
             className="eoc-card"
             style={{
-              background: 'linear-gradient(180deg, #10192e 0%, #0d1526 100%)',
+              background: '#ffffff',
               border: '1px solid var(--border-medium)',
             }}
           >
             <div className="eoc-card-header">
-              <div className="eoc-card-title" style={{ fontSize: '0.9rem' }}>
-                <TrendingUp size={16} color="var(--accent-cyan)" />
-                <span>Orchestration Pipeline Principles</span>
+              <div className="eoc-card-title" style={{ fontSize: '0.94rem', fontWeight: 800 }}>
+                <TrendingUp size={16} color="var(--rama-green)" />
+                <span>Real-Time Response Telemetry</span>
               </div>
+              <Link to="/activity" style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--peacock-primary)' }}>
+                View Dispatches &rarr;
+              </Link>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.78rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', background: 'var(--bg-surface)', borderRadius: '6px' }}>
-                <span style={{ color: 'var(--accent-cyan)', fontWeight: 700 }}>AI UNDERSTANDS:</span>
-                <span style={{ color: 'var(--text-secondary)' }}>Groq LLM extracts needs, disaster type & location</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: 'var(--peacock-primary)', fontWeight: 800, fontSize: '0.8rem' }}>AI UNDERSTANDS:</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Groq extracts triage, impact & location</span>
+                </div>
+                <span className="badge badge-rama">ACTIVE</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', background: 'var(--bg-surface)', borderRadius: '6px' }}>
-                <span style={{ color: '#f97316', fontWeight: 700 }}>n8n AUTOMATES:</span>
-                <span style={{ color: 'var(--text-secondary)' }}>Central workflows coordinate intake & notifications</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: 'var(--peacock-deep)', fontWeight: 800, fontSize: '0.8rem' }}>n8n AUTOMATES:</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Orchestrator routes alerts to units</span>
+                </div>
+                <span className="badge badge-peacock">READY</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', background: 'var(--bg-surface)', borderRadius: '6px' }}>
-                <span style={{ color: '#10b981', fontWeight: 700 }}>MONGODB REMEMBERS:</span>
-                <span style={{ color: 'var(--text-secondary)' }}>Corroborating reports merge without data loss</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: 'var(--rama-deep)', fontWeight: 800, fontSize: '0.8rem' }}>MONGODB STORES:</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Deduplication merges reports</span>
+                </div>
+                <span className="badge badge-rama">SYNCED</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px', background: 'var(--bg-surface)', borderRadius: '6px' }}>
-                <span style={{ color: '#3b82f6', fontWeight: 700 }}>HUMAN APPROVES:</span>
-                <span style={{ color: 'var(--text-secondary)' }}>Critical dispatches require operator decision</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ color: '#ea580c', fontWeight: 800, fontSize: '0.8rem' }}>HUMAN APPROVES:</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Critical dispatches require operator decision</span>
+                </div>
+                <span className="badge badge-high" style={{ padding: '2px 6px', fontSize: '0.68rem' }}>REQUIRED</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
