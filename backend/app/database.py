@@ -1,7 +1,11 @@
 import logging
 import asyncio
 from typing import Optional, Dict, Any, List
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+except ImportError:
+    AsyncIOMotorClient = Any
+    AsyncIOMotorDatabase = Any
 from app.config import settings
 
 logger = logging.getLogger("rescueflow.database")
