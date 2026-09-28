@@ -63,8 +63,8 @@ export function AuditLogsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <ScrollText size={22} color="var(--accent-cyan)" /> System Audit & Compliance Trail
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <ScrollText size={22} color="var(--rama-green)" /> System Audit & Compliance Trail
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Complete audit logging of all AI classification, extraction, merging, and response actions
@@ -158,7 +158,7 @@ export function AuditLogsPage() {
                     </td>
                     <td>
                       {log.incident_id ? (
-                        <Link to={`/incidents/${log.incident_id}`} style={{ color: '#ffffff', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                        <Link to={`/incidents/${log.incident_id}`} style={{ color: 'var(--peacock-primary)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                           {log.incident_id}
                         </Link>
                       ) : (
@@ -168,7 +168,7 @@ export function AuditLogsPage() {
                     <td style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                       {log.source || 'SYSTEM'}
                     </td>
-                    <td style={{ fontWeight: 600, fontSize: '0.8rem', color: '#ffffff' }}>
+                    <td style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--peacock-deep)' }}>
                       {log.actor || 'System'}
                     </td>
                     <td style={{ fontSize: '0.78rem', color: '#94a3b8', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
