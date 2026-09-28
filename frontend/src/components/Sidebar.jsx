@@ -9,9 +9,7 @@ import {
   Activity, 
   BarChart3, 
   ScrollText, 
-  Server, 
-  SlidersHorizontal,
-  Flame
+  Server
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -24,14 +22,14 @@ export function Sidebar() {
       label: 'Live Incidents', 
       icon: <Radio size={18} />, 
       badge: stats.critical > 0 ? `${stats.critical} CRIT` : null, 
-      badgeColor: '#ef4444' 
+      badgeColor: 'var(--priority-critical)' 
     },
     { 
       to: '/approvals', 
       label: 'Approval Center', 
       icon: <CheckSquare size={18} />, 
       badge: stats.pending_approvals > 0 ? stats.pending_approvals : null,
-      badgeColor: '#f59e0b'
+      badgeColor: '#ea580c'
     },
     { to: '/report', label: 'Emergency Report', icon: <Send size={18} /> },
     { to: '/activity', label: 'Response Activity', icon: <Activity size={18} /> },
@@ -52,6 +50,7 @@ export function Sidebar() {
         justifyContent: 'space-between',
         padding: '16px 12px',
         minHeight: 'calc(100vh - 61px)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -60,7 +59,7 @@ export function Sidebar() {
             fontSize: '0.68rem',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
-            color: 'var(--text-muted)',
+            color: 'var(--peacock-primary)',
             padding: '8px 12px 4px',
             fontWeight: 700,
           }}
@@ -81,15 +80,15 @@ export function Sidebar() {
               padding: '10px 12px',
               borderRadius: '8px',
               fontSize: '0.88rem',
-              fontWeight: 500,
-              color: isActive ? '#ffffff' : 'var(--text-secondary)',
-              background: isActive ? 'rgba(6, 182, 212, 0.12)' : 'transparent',
-              borderLeft: isActive ? '3px solid var(--accent-cyan)' : '3px solid transparent',
-              transition: 'all 0.15s ease',
+              fontWeight: isActive ? 700 : 500,
+              color: isActive ? 'var(--rama-deep)' : 'var(--text-secondary)',
+              background: isActive ? 'var(--rama-bg)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--rama-green)' : '4px solid transparent',
+              transition: 'all var(--transition-fast)',
             })}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {item.icon}
+              <span style={{ color: 'inherit' }}>{item.icon}</span>
               <span>{item.label}</span>
             </div>
             {item.badge && (
@@ -97,11 +96,11 @@ export function Sidebar() {
                 style={{
                   fontSize: '0.7rem',
                   fontWeight: 700,
-                  padding: '2px 7px',
+                  padding: '2px 8px',
                   borderRadius: '12px',
-                  background: item.badgeColor ? `${item.badgeColor}22` : 'rgba(255,255,255,0.1)',
-                  color: item.badgeColor || '#ffffff',
-                  border: `1px solid ${item.badgeColor || '#ffffff'}44`,
+                  background: 'var(--priority-critical-bg)',
+                  color: item.badgeColor || 'var(--priority-critical)',
+                  border: '1px solid var(--priority-critical-border)',
                 }}
               >
                 {item.badge}
@@ -114,34 +113,35 @@ export function Sidebar() {
       {/* Triage Quick Stats Footer */}
       <div
         style={{
-          background: 'var(--bg-card)',
+          background: 'var(--bg-main)',
           border: '1px solid var(--border-subtle)',
           borderRadius: '10px',
           padding: '12px',
           marginTop: '20px',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--peacock-deep)', textTransform: 'uppercase', fontWeight: 700 }}>
             Incident Triage
           </span>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>
+          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--rama-green)' }}>
             {stats.total_incidents} Active
           </span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.75rem' }}>
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#ef4444' }}>
-            <span style={{ fontWeight: 700 }}>{stats.critical}</span> Critical
+          <div style={{ background: 'var(--priority-critical-bg)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--priority-critical-border)', color: 'var(--priority-critical)' }}>
+            <span style={{ fontWeight: 800 }}>{stats.critical}</span> Critical
           </div>
-          <div style={{ background: 'rgba(249, 115, 22, 0.1)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(249, 115, 22, 0.3)', color: '#f97316' }}>
-            <span style={{ fontWeight: 700 }}>{stats.high}</span> High
+          <div style={{ background: 'var(--priority-high-bg)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--priority-high-border)', color: 'var(--priority-high)' }}>
+            <span style={{ fontWeight: 800 }}>{stats.high}</span> High
           </div>
-          <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(234, 179, 8, 0.3)', color: '#eab308' }}>
-            <span style={{ fontWeight: 700 }}>{stats.medium}</span> Med
+          <div style={{ background: 'var(--priority-medium-bg)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--priority-medium-border)', color: 'var(--priority-medium)' }}>
+            <span style={{ fontWeight: 800 }}>{stats.medium}</span> Med
           </div>
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
-            <span style={{ fontWeight: 700 }}>{stats.resolved}</span> Resolved
+          <div style={{ background: 'var(--priority-low-bg)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--priority-low-border)', color: 'var(--priority-low)' }}>
+            <span style={{ fontWeight: 800 }}>{stats.resolved}</span> Done
           </div>
         </div>
       </div>
