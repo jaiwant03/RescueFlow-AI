@@ -1,0 +1,70 @@
+{
+  "name": "05_Incident_Monitoring",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "node-schedule-cron",
+      "name": "Schedule Trigger - Every 5 Min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8000/api/incidents?status=responding&limit=50",
+        "options": {}
+      },
+      "id": "node-get-active-incidents",
+      "name": "Poll Responding Incidents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const active = $input.item.json.incidents || [];\nconst now = new Date();\nconst monitored = [];\n\nfor (const inc of active) {\n  const created = new Date(inc.created_at);\n  const minutesElapsed = Math.round((now - created) / 60000);\n  \n  monitored.push({\n    incident_id: inc.incident_id,\n    type: inc.type,\n    location: inc.location,\n    status: inc.status,\n    minutes_elapsed: minutesElapsed,\n    requires_escalation: (minutesElapsed > 30 && inc.status === 'responding')\n  });\n}\n\nreturn {\n  timestamp: now.toISOString(),\n  total_monitored: monitored.length,\n  monitored_incidents: monitored\n};"
+      },
+      "id": "node-analyze-monitoring",
+      "name": "Analyze Response Liveliness & Staleness",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"INCIDENT_MONITORING_CYCLE\",\n  \"payload\": {\n    \"total_active\": {{$json.total_monitored}},\n    \"monitoring_data\": {{$json.monitored_incidents}}\n  }\n}",
+        "options": {}
+      },
+      "id": "node-report-monitoring-cycle",
+      "name": "Report Monitoring Cycle to Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger - Every 5 Min": {
+      "main": [[{ "node": "Poll Responding Incidents", "type": "main", "index": 0 }]]
+    },
+    "Poll Responding Incidents": {
+      "main": [[{ "node": "Analyze Response Liveliness & Staleness", "type": "main", "index": 0 }]]
+    },
+    "Analyze Response Liveliness & Staleness": {
+      "main": [[{ "node": "Report Monitoring Cycle to Backend", "type": "main", "index": 0 }]]
+    }
+  }
+}

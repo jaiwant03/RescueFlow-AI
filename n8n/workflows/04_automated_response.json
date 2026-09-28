@@ -1,0 +1,101 @@
+{
+  "name": "04_Automated_Response",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "automated-response",
+        "options": {}
+      },
+      "id": "node-auto-response-trigger",
+      "name": "Webhook - Response Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=http://localhost:8000/api/incidents/{{$json.incident_id}}",
+        "options": {}
+      },
+      "id": "node-get-incident-details",
+      "name": "Get Incident Details from Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const inc = $input.item.json;\nconst resources = (inc.resources_required && inc.resources_required.length > 0)\n  ? inc.resources_required.join(', ')\n  : 'Rescue Team, Medical First Responder';\n\nconst tgMessage = `🚨 [SIMULATED EMERGENCY DISPATCH]\\n\\nIncident: ${inc.incident_id}\\nType: ${inc.type ? inc.type.toUpperCase() : 'EMERGENCY'}\\nLocation: ${inc.location}\\nPeople Affected: ${inc.people_affected || 'Unspecified'}\\nRequired: ${resources}\\n\\nStatus: AUTHORIZED & DISPATCHING FIELD UNITS`;\n\nconst emailSubject = `[SIMULATED DISPATCH] Authorized Response: ${inc.incident_id} - ${inc.location}`;\n\nreturn {\n  ...inc,\n  telegram_message: tgMessage,\n  email_subject: emailSubject,\n  email_body: tgMessage + '\\n\\nAuthorization Record verified in RescueFlow Command Center.',\n  dispatched_at: new Date().toISOString()\n};"
+      },
+      "id": "node-format-notifications",
+      "name": "Format Dispatch Payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"NOTIFICATION_DISPATCHED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"task_id\": \"TSK-TG-{{Math.random().toString(36).substring(2, 8).toUpperCase()}}\",\n    \"channel\": \"telegram\",\n    \"target\": \"RescueFlow Telegram Emergency Channel\",\n    \"content\": \"{{$json.telegram_message}}\",\n    \"assigned_team\": \"Rapid Response Alpha\",\n    \"resources\": {{$json.resources_required ? JSON.stringify($json.resources_required) : '[]'}}\n  }\n}",
+        "options": {}
+      },
+      "id": "node-dispatch-telegram-alert",
+      "name": "Simulated Telegram Alert Dispatch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [980, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"NOTIFICATION_DISPATCHED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"task_id\": \"TSK-EM-{{Math.random().toString(36).substring(2, 8).toUpperCase()}}\",\n    \"channel\": \"email\",\n    \"target\": \"rescueflow.demo@gmail.com\",\n    \"content\": \"{{$json.email_body}}\",\n    \"assigned_team\": \"Rapid Response Alpha\",\n    \"resources\": {{$json.resources_required ? JSON.stringify($json.resources_required) : '[]'}}\n  }\n}",
+        "options": {}
+      },
+      "id": "node-dispatch-email-alert",
+      "name": "Simulated Email Alert Dispatch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [980, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:8000/api/incidents/{{$json.incident_id}}/status",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"responding\",\n  \"reason\": \"Automated dispatch completed by n8n\",\n  \"actor\": \"n8n Automated Response Workflow\"\n}",
+        "options": {}
+      },
+      "id": "node-update-status-responding",
+      "name": "Update Status to Responding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1260, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Response Trigger": {
+      "main": [[{ "node": "Get Incident Details from Backend", "type": "main", "index": 0 }]]
+    },
+    "Get Incident Details from Backend": {
+      "main": [[{ "node": "Format Dispatch Payloads", "type": "main", "index": 0 }]]
+    },
+    "Format Dispatch Payloads": {
+      "main": [
+        [{ "node": "Simulated Telegram Alert Dispatch", "type": "main", "index": 0 }],
+        [{ "node": "Simulated Email Alert Dispatch", "type": "main", "index": 0 }]
+      ]
+    },
+    "Simulated Telegram Alert Dispatch": {
+      "main": [[{ "node": "Update Status to Responding", "type": "main", "index": 0 }]]
+    }
+  }
+}
