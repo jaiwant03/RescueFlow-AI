@@ -49,8 +49,8 @@ export function ResponseActivityPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Activity size={22} color="var(--accent-cyan)" /> Automated Response & Dispatch Activity
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Activity size={22} color="var(--rama-green)" /> Automated Response & Dispatch Activity
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Live dispatch tasks executed by n8n after operator authorization
@@ -93,7 +93,7 @@ export function ResponseActivityPage() {
                       {task.task_id}
                     </td>
                     <td>
-                      <Link to={`/incidents/${task.incident_id}`} style={{ color: 'var(--accent-cyan)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                      <Link to={`/incidents/${task.incident_id}`} style={{ color: 'var(--peacock-primary)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                         {task.incident_id}
                       </Link>
                     </td>
