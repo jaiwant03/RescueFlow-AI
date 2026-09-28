@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from fastapi import APIRouter
 from app.schemas.action import N8nEventPayload
+from app.config import settings
 from app.database import get_database
 from app.services.realtime import broadcaster
 from app.services.audit import log_audit_event
@@ -23,7 +24,7 @@ async def handle_n8n_event(event: N8nEventPayload):
 
     logger.info(f"Received n8n event '{event.event_type}' for incident '{event.incident_id}'")
 
-    # If this is a notification dispatched event from n8n workflow 04
+    # If this is a notification dispatched event from n8n workflow
     if event.event_type == "NOTIFICATION_DISPATCHED":
         payload = event.payload
         task_doc = {
@@ -33,12 +34,21 @@ async def handle_n8n_event(event: N8nEventPayload):
             "target": payload.get("target", "Emergency Channel"),
             "content": payload.get("content", ""),
             "status": "delivered",
-            "is_simulation": True,
+            "is_simulation": settings.DEMO_MODE,
             "assigned_team": payload.get("assigned_team"),
             "resources": payload.get("resources", []),
             "timestamp": timestamp
         }
         await db["response_tasks"].insert_one(task_doc)
+
+        # Broadcast to Telegram if configured
+        if payload.get("channel") == "telegram":
+            from app.services.telegram_service import telegram_service
+            if telegram_service.is_configured and settings.TELEGRAM_ALERT_CHAT_ID:
+                await telegram_service.send_message(
+                    chat_id=settings.TELEGRAM_ALERT_CHAT_ID,
+                    text=f"🚨 *RESCUEFLOW DISPATCH ALERT*\n*Incident:* `{event.incident_id}`\n\n{payload.get('content', '')}"
+                )
 
     # Log to audit trail
     await log_audit_event(
