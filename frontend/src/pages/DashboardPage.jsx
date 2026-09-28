@@ -85,12 +85,12 @@ export function DashboardPage() {
         }}
       >
         {/* Total Incidents */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>TOTAL INCIDENTS</span>
-            <Activity size={16} color="var(--accent-cyan)" />
+            <Activity size={16} color="var(--rama-green)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
             {stats.total_incidents || 0}
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -99,40 +99,40 @@ export function DashboardPage() {
         </div>
 
         {/* Critical */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #ef4444' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-critical)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>CRITICAL</span>
-            <Flame size={16} color="#ef4444" />
+            <Flame size={16} color="var(--priority-critical)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ef4444', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-critical)', margin: '6px 0 2px' }}>
             {stats.critical || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: '#ef4444' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--priority-critical)' }}>
             Immediate life danger
           </div>
         </div>
 
         {/* High */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #f97316' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-high)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>HIGH</span>
-            <AlertTriangle size={16} color="#f97316" />
+            <AlertTriangle size={16} color="var(--priority-high)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f97316', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-high)', margin: '6px 0 2px' }}>
             {stats.high || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: '#f97316' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--priority-high)' }}>
             High-consequence response
           </div>
         </div>
 
         {/* Medium */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #eab308' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--priority-medium)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>MEDIUM</span>
-            <Clock size={16} color="#eab308" />
+            <Clock size={16} color="var(--priority-medium)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#eab308', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--priority-medium)', margin: '6px 0 2px' }}>
             {stats.medium || 0}
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -141,26 +141,26 @@ export function DashboardPage() {
         </div>
 
         {/* Deduplication Efficiency */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #10b981' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>DEDUP SAVINGS</span>
-            <Layers size={16} color="#10b981" />
+            <Layers size={16} color="var(--rama-green)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--rama-deep)', margin: '6px 0 2px' }}>
             {stats.deduplication_saved || 0}
           </div>
-          <div style={{ fontSize: '0.72rem', color: '#10b981' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--rama-deep)' }}>
             Fragmented reports merged
           </div>
         </div>
 
         {/* Resolved */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #6366f1' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--peacock-light)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600 }}>
             <span>RESOLVED</span>
-            <CheckCircle size={16} color="#6366f1" />
+            <CheckCircle size={16} color="var(--peacock-light)" />
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: '6px 0 2px' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
             {stats.resolved || 0}
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -301,13 +301,13 @@ export function DashboardPage() {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#ffffff' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                         {app.incident_id}
                       </span>
                       <PriorityBadge level={app.priority_level} score={app.priority_score} />
                     </div>
 
-                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
                       {app.disaster_type?.toUpperCase()} — {app.location}
                     </div>
 
