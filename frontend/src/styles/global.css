@@ -19,6 +19,10 @@ body {
 }
 
 /* Cursive Multicolor Headings (Rama Green + Rama Blue + Purple) */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+}
+
 .font-cursive {
   font-family: var(--font-heading) !important;
 }
@@ -34,7 +38,7 @@ body {
 }
 
 .heading-cursive-vibrant {
-  font-family: var(--font-cursive) !important;
+  font-family: var(--font-heading) !important;
   background: var(--gradient-multicolor-vibrant) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
