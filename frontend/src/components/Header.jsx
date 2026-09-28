@@ -7,8 +7,6 @@ export function Header() {
   const { systemStatus, currentTime } = useSystem();
   const { user } = useAuth();
 
-  const getStatusColor = (healthy) => (healthy ? '#10b981' : '#f59e0b');
-
   return (
     <header
       style={{
@@ -21,36 +19,37 @@ export function Header() {
         zIndex: 50,
         position: 'sticky',
         top: 0,
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       {/* Brand Identity */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <div
           style={{
-            background: 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)',
-            width: '40px',
-            height: '40px',
+            background: 'var(--gradient-peacock-rama)',
+            width: '42px',
+            height: '42px',
             borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(6, 182, 212, 0.4)',
+            boxShadow: '0 4px 14px rgba(0, 91, 130, 0.25)',
           }}
         >
           <Shield size={22} color="#ffffff" />
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.05em', color: '#ffffff' }}>
-              RESCUEFLOW <span style={{ color: 'var(--accent-cyan)' }}>AI</span>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.04em', color: 'var(--peacock-deep)' }}>
+              RESCUEFLOW <span style={{ color: 'var(--rama-green)' }}>AI</span>
             </h1>
             <span
               style={{
                 fontSize: '0.68rem',
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                color: '#ef4444',
-                padding: '2px 6px',
+                background: 'var(--priority-critical-bg)',
+                border: '1px solid var(--priority-critical-border)',
+                color: 'var(--priority-critical)',
+                padding: '2px 8px',
                 borderRadius: '4px',
                 fontWeight: 700,
                 display: 'inline-flex',
@@ -68,7 +67,7 @@ export function Header() {
       </div>
 
       {/* System Telemetry & Live Indicators */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         {/* n8n Status */}
         <div
           title={`n8n Orchestrator: ${systemStatus.n8n?.status}`}
@@ -77,15 +76,15 @@ export function Header() {
             alignItems: 'center',
             gap: '6px',
             fontSize: '0.76rem',
-            background: 'var(--bg-card)',
-            padding: '5px 10px',
+            background: 'var(--bg-main)',
+            padding: '6px 12px',
             borderRadius: '6px',
             border: '1px solid var(--border-subtle)',
           }}
         >
-          <Workflow size={14} color="#f97316" />
+          <Workflow size={14} color="var(--peacock-light)" />
           <span style={{ color: 'var(--text-secondary)' }}>n8n:</span>
-          <span style={{ fontWeight: 600, color: systemStatus.n8n?.status === 'connected' ? '#10b981' : '#f59e0b' }}>
+          <span style={{ fontWeight: 700, color: systemStatus.n8n?.status === 'connected' ? 'var(--rama-green)' : '#ea580c' }}>
             {systemStatus.n8n?.status === 'connected' ? 'ACTIVE' : 'READY'}
           </span>
           <span
@@ -93,7 +92,7 @@ export function Header() {
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: systemStatus.n8n?.status === 'connected' ? '#10b981' : '#f59e0b',
+              backgroundColor: systemStatus.n8n?.status === 'connected' ? 'var(--rama-green)' : '#ea580c',
             }}
           />
         </div>
@@ -106,23 +105,23 @@ export function Header() {
             alignItems: 'center',
             gap: '6px',
             fontSize: '0.76rem',
-            background: 'var(--bg-card)',
-            padding: '5px 10px',
+            background: 'var(--bg-main)',
+            padding: '6px 12px',
             borderRadius: '6px',
             border: '1px solid var(--border-subtle)',
           }}
         >
-          <Cpu size={14} color="#06b6d4" />
+          <Cpu size={14} color="var(--rama-green)" />
           <span style={{ color: 'var(--text-secondary)' }}>Groq AI:</span>
-          <span style={{ fontWeight: 600, color: systemStatus.groq_ai?.healthy ? '#10b981' : '#ef4444' }}>
-            {systemStatus.groq_ai?.has_api_key ? 'LLAMA-3.3' : 'ONLINE (HEURISTIC)'}
+          <span style={{ fontWeight: 700, color: systemStatus.groq_ai?.healthy ? 'var(--rama-green)' : '#dc2626' }}>
+            {systemStatus.groq_ai?.has_api_key ? 'LLAMA-3.3' : 'ONLINE'}
           </span>
           <span
             className="status-dot"
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: '#10b981',
+              backgroundColor: 'var(--rama-green)',
             }}
           />
         </div>
@@ -135,15 +134,15 @@ export function Header() {
             alignItems: 'center',
             gap: '6px',
             fontSize: '0.76rem',
-            background: 'var(--bg-card)',
-            padding: '5px 10px',
+            background: 'var(--bg-main)',
+            padding: '6px 12px',
             borderRadius: '6px',
             border: '1px solid var(--border-subtle)',
           }}
         >
-          <Database size={14} color="#10b981" />
+          <Database size={14} color="var(--peacock-primary)" />
           <span style={{ color: 'var(--text-secondary)' }}>MongoDB:</span>
-          <span style={{ fontWeight: 600, color: '#10b981' }}>
+          <span style={{ fontWeight: 700, color: 'var(--rama-green)' }}>
             {systemStatus.mongodb?.status === 'connected' ? 'CONNECTED' : 'LOCAL'}
           </span>
           <span
@@ -151,7 +150,7 @@ export function Header() {
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: '#10b981',
+              backgroundColor: 'var(--rama-green)',
             }}
           />
         </div>
@@ -164,14 +163,15 @@ export function Header() {
             gap: '6px',
             fontSize: '0.8rem',
             fontFamily: 'var(--font-mono)',
-            color: 'var(--text-primary)',
-            background: 'var(--bg-main)',
-            padding: '5px 10px',
+            color: 'var(--peacock-deep)',
+            background: 'var(--peacock-bg)',
+            padding: '6px 12px',
             borderRadius: '6px',
-            border: '1px solid var(--border-subtle)',
+            border: '1px solid #bae6fd',
+            fontWeight: 600,
           }}
         >
-          <Clock size={13} color="var(--accent-cyan)" />
+          <Clock size={13} color="var(--peacock-primary)" />
           <span>{currentTime}</span>
         </div>
 
@@ -181,27 +181,27 @@ export function Header() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            paddingLeft: '10px',
+            paddingLeft: '12px',
             borderLeft: '1px solid var(--border-subtle)',
           }}
         >
           <div
             style={{
-              width: '32px',
-              height: '32px',
+              width: '34px',
+              height: '34px',
               borderRadius: '50%',
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-medium)',
+              background: 'var(--rama-bg)',
+              border: '1px solid #99f6e4',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--accent-cyan)',
+              color: 'var(--rama-deep)',
             }}
           >
             <User size={16} />
           </div>
           <div style={{ lineHeight: 1.2 }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#ffffff' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
               {user ? user.name : 'Duty Officer'}
             </div>
             <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
