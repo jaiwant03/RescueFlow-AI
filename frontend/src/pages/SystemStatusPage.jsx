@@ -56,8 +56,8 @@ export function SystemStatusPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Server size={22} color="var(--accent-cyan)" /> System Health & n8n Architecture
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Server size={22} color="var(--rama-green)" /> System Health & n8n Architecture
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Live status of backend services, MongoDB database, Groq AI inference, and n8n workflows
@@ -72,12 +72,12 @@ export function SystemStatusPage() {
       {/* Primary Subsystem Health Cards Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
         {/* Backend API */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #10b981' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Server size={18} color="#10b981" /> FastAPI Backend
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Server size={18} color="var(--rama-green)" /> FastAPI Backend
             </span>
-            <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.72rem', background: 'var(--rama-bg)', color: 'var(--rama-deep)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #99f6e4' }}>
               ONLINE
             </span>
           </div>
@@ -90,17 +90,17 @@ export function SystemStatusPage() {
         </div>
 
         {/* n8n Orchestrator */}
-        <div className="eoc-card" style={{ borderLeft: `4px solid ${components.n8n?.healthy ? '#10b981' : '#f59e0b'}` }}>
+        <div className="eoc-card" style={{ borderLeft: `4px solid ${components.n8n?.healthy ? 'var(--rama-green)' : '#ea580c'}` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Workflow size={18} color="#f97316" /> n8n Orchestration Core
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Workflow size={18} color="#ea580c" /> n8n Orchestration Core
             </span>
-            <span style={{ fontSize: '0.72rem', background: components.n8n?.healthy ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)', color: components.n8n?.healthy ? '#10b981' : '#f59e0b', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.72rem', background: components.n8n?.healthy ? 'var(--rama-bg)' : '#fff7ed', color: components.n8n?.healthy ? 'var(--rama-deep)' : '#ea580c', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #fed7aa' }}>
               {components.n8n?.status?.toUpperCase() || 'READY'}
             </span>
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-            Base URL: <code style={{ color: 'var(--accent-cyan)' }}>{components.n8n?.base_url}</code>
+            Base URL: <code style={{ color: 'var(--peacock-primary)', fontWeight: 600 }}>{components.n8n?.base_url}</code>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
             Webhook: <code style={{ color: 'var(--text-secondary)' }}>{components.n8n?.webhook_url}</code>
@@ -108,17 +108,17 @@ export function SystemStatusPage() {
         </div>
 
         {/* Groq AI */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--peacock-light)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Cpu size={18} color="var(--accent-cyan)" /> Groq AI Engine
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Cpu size={18} color="var(--peacock-light)" /> Groq AI Engine
             </span>
-            <span style={{ fontSize: '0.72rem', background: 'rgba(6, 182, 212, 0.15)', color: 'var(--accent-cyan)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.72rem', background: 'var(--peacock-bg)', color: 'var(--peacock-primary)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #bae6fd' }}>
               {components.groq_ai?.has_api_key ? 'GROQ CLOUD' : 'HEURISTIC ACTIVE'}
             </span>
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-            Configured Model: <code style={{ color: '#ffffff' }}>{components.groq_ai?.model}</code>
+            Configured Model: <code style={{ color: 'var(--peacock-deep)', fontWeight: 600 }}>{components.groq_ai?.model}</code>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
             OpenAI-compatible /chat/completions with strict JSON parsing
@@ -126,17 +126,17 @@ export function SystemStatusPage() {
         </div>
 
         {/* MongoDB */}
-        <div className="eoc-card" style={{ borderLeft: '4px solid #10b981' }}>
+        <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Database size={18} color="#10b981" /> MongoDB
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Database size={18} color="var(--rama-green)" /> MongoDB
             </span>
-            <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.72rem', background: 'var(--rama-bg)', color: 'var(--rama-deep)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #99f6e4' }}>
               {components.mongodb?.status?.toUpperCase()}
             </span>
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-            Database: <code style={{ color: '#ffffff' }}>{components.mongodb?.db_name}</code>
+            Database: <code style={{ color: 'var(--peacock-deep)', fontWeight: 600 }}>{components.mongodb?.db_name}</code>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
             URI: <code style={{ color: 'var(--text-secondary)' }}>{components.mongodb?.uri}</code>
