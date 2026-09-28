@@ -1,0 +1,296 @@
+@import './theme.css';
+
+/* Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  transition: all var(--transition-fast);
+}
+
+input, select, textarea {
+  font-family: inherit;
+  outline: none;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+/* Common Card Containers */
+.eoc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.eoc-card:hover {
+  border-color: var(--border-medium);
+}
+
+.eoc-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+}
+
+.eoc-card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+/* Standard Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background: #0284c7;
+  color: white;
+}
+.btn-primary:hover {
+  background: #0369a1;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+}
+
+.btn-success {
+  background: #059669;
+  color: white;
+}
+.btn-success:hover {
+  background: #047857;
+  box-shadow: 0 0 12px rgba(5, 150, 105, 0.4);
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: white;
+}
+.btn-danger:hover {
+  background: #b91c1c;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.btn-accent {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+.btn-accent:hover {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: var(--accent-cyan);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-critical {
+  background: var(--priority-critical-bg);
+  color: var(--priority-critical);
+  border: 1px solid var(--priority-critical-border);
+}
+
+.badge-high {
+  background: var(--priority-high-bg);
+  color: var(--priority-high);
+  border: 1px solid var(--priority-high-border);
+}
+
+.badge-medium {
+  background: var(--priority-medium-bg);
+  color: var(--priority-medium);
+  border: 1px solid var(--priority-medium-border);
+}
+
+.badge-low {
+  background: var(--priority-low-bg);
+  color: var(--priority-low);
+  border: 1px solid var(--priority-low-border);
+}
+
+/* Pulsing Status Dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.status-dot.critical {
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+  animation: pulse-crit 1.5s infinite;
+}
+
+.status-dot.warning {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+@keyframes pulse-crit {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Data Tables */
+.eoc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.eoc-table th {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.eoc-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.eoc-table tr:hover td {
+  background: var(--bg-card-hover);
+}
+
+/* Simulation Notice Ribbon */
+.simulation-banner {
+  background: linear-gradient(90deg, #1e1b4b 0%, #311042 50%, #1e1b4b 100%);
+  border-bottom: 1px solid #6366f1;
+  color: #e0e7ff;
+  font-size: 0.8rem;
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+/* Map Dark Mode Styling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  background: #0f172a !important;
+}
+
+.leaflet-tile {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-card) !important;
+}
