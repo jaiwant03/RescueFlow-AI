@@ -1,216 +1,266 @@
 import React from 'react';
 import { useSystem } from '../context/SystemContext';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Cpu, Database, Workflow, Clock, User, AlertOctagon } from 'lucide-react';
+import { CubeLogo } from './CubeLogo';
+import { 
+  Workflow, 
+  Cpu, 
+  Database, 
+  Bell, 
+  ChevronDown, 
+  AlertTriangle 
+} from 'lucide-react';
 
 export function Header() {
-  const { systemStatus, currentTime } = useSystem();
+  const { systemStatus } = useSystem();
   const { user } = useAuth();
 
   return (
     <header
       style={{
-        background: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border-subtle)',
-        padding: '10px 24px',
+        background: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '8px 24px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 50,
         position: 'sticky',
         top: 0,
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
       }}
     >
-      {/* Brand Identity */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div
-          style={{
-            background: 'var(--gradient-peacock-rama)',
-            width: '42px',
-            height: '42px',
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 14px rgba(0, 91, 130, 0.25)',
-          }}
-        >
-          <Shield size={22} color="#ffffff" />
-        </div>
+      {/* 1. Left Brand Identity */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <CubeLogo size={36} />
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.04em', color: 'var(--peacock-deep)' }}>
-              RESCUEFLOW <span style={{ color: 'var(--rama-green)' }}>AI</span>
-            </h1>
-            <span
-              style={{
-                fontSize: '0.72rem',
-                background: 'var(--rama-bg)',
-                border: '1px solid var(--rama-green)',
-                color: 'var(--rama-deep)',
-                padding: '2px 9px',
-                borderRadius: '12px',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                letterSpacing: '0.03em',
-              }}
-            >
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--rama-green)', display: 'inline-block' }} />
-              LIVE EOC ACTIVE
-            </span>
-          </div>
-          <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            AI-Powered Disaster Message Prioritization & Response Automation
+          <h1
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 800,
+              letterSpacing: '-0.01em',
+              color: '#0f2738',
+              lineHeight: 1.15,
+            }}
+          >
+            RescueFlow <span style={{ color: '#10b981' }}>AI</span>
+          </h1>
+          <p
+            style={{
+              fontSize: '0.70rem',
+              color: '#64748b',
+              fontWeight: 500,
+              marginTop: '1px',
+            }}
+          >
+            Disaster Message Prioritization & Response Automation
           </p>
-
         </div>
       </div>
 
-      {/* System Telemetry & Live Indicators */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        {/* n8n Status */}
+      {/* 2. Center Simulation Mode Active Badge */}
+      <div
+        style={{
+          background: '#ecfdf5',
+          border: '1px solid #a7f3d0',
+          borderRadius: '9999px',
+          padding: '4px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          boxShadow: '0 1px 2px rgba(16, 185, 129, 0.05)',
+        }}
+      >
         <div
-          title={`n8n Orchestrator: ${systemStatus.n8n?.status}`}
+          style={{
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            background: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ffffff',
+            flexShrink: 0,
+          }}
+        >
+          <Bell size={11} fill="#ffffff" />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+          <span
+            style={{
+              fontSize: '0.68rem',
+              fontWeight: 800,
+              color: '#065f46',
+              letterSpacing: '0.04em',
+            }}
+          >
+            SIMULATION MODE ACTIVE
+          </span>
+          <span
+            style={{
+              fontSize: '0.64rem',
+              color: '#047857',
+              fontWeight: 500,
+            }}
+          >
+            Automated responses and dispatches are simulated for Hackathon Evaluation
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Right Status Badges & User Profile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* n8n Status Pill */}
+        <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '0.76rem',
-            background: 'var(--bg-main)',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid var(--border-subtle)',
+            fontSize: '0.74rem',
+            background: '#f8fafc',
+            padding: '5px 12px',
+            borderRadius: '9999px',
+            border: '1px solid #e2e8f0',
+            color: '#1e293b',
+            fontWeight: 700,
           }}
         >
-          <Workflow size={14} color="var(--peacock-light)" />
-          <span style={{ color: 'var(--text-secondary)' }}>n8n:</span>
-          <span style={{ fontWeight: 700, color: systemStatus.n8n?.status === 'connected' ? 'var(--rama-green)' : '#ea580c' }}>
-            {systemStatus.n8n?.status === 'connected' ? 'ACTIVE' : 'READY'}
-          </span>
+          <Workflow size={13} color="#0d9488" />
+          <span style={{ color: '#475569', fontWeight: 600 }}>n8n</span>
+          <span style={{ color: '#0d9488' }}>READY</span>
           <span
-            className="status-dot"
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: systemStatus.n8n?.status === 'connected' ? 'var(--rama-green)' : '#ea580c',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
+              display: 'inline-block',
             }}
           />
         </div>
 
-        {/* Groq AI Status */}
+        {/* Groq AI Status Pill */}
         <div
-          title={`Groq Model: ${systemStatus.groq_ai?.model}`}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '0.76rem',
-            background: 'var(--bg-main)',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid var(--border-subtle)',
+            fontSize: '0.74rem',
+            background: '#f8fafc',
+            padding: '5px 12px',
+            borderRadius: '9999px',
+            border: '1px solid #e2e8f0',
+            color: '#1e293b',
+            fontWeight: 700,
           }}
         >
-          <Cpu size={14} color="var(--rama-green)" />
-          <span style={{ color: 'var(--text-secondary)' }}>Groq AI:</span>
-          <span style={{ fontWeight: 700, color: systemStatus.groq_ai?.healthy ? 'var(--rama-green)' : '#dc2626' }}>
-            {systemStatus.groq_ai?.has_api_key ? 'LLAMA-3.3' : 'ONLINE'}
-          </span>
+          <Cpu size={13} color="#0d9488" />
+          <span style={{ color: '#475569', fontWeight: 600 }}>Groq AI</span>
+          <span style={{ color: '#0d9488' }}>ONLINE</span>
           <span
-            className="status-dot"
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: 'var(--rama-green)',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
+              display: 'inline-block',
             }}
           />
         </div>
 
-        {/* MongoDB Status */}
+        {/* MongoDB Status Pill */}
         <div
-          title={`MongoDB: ${systemStatus.mongodb?.status}`}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '0.76rem',
-            background: 'var(--bg-main)',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid var(--border-subtle)',
+            fontSize: '0.74rem',
+            background: '#f8fafc',
+            padding: '5px 12px',
+            borderRadius: '9999px',
+            border: '1px solid #e2e8f0',
+            color: '#1e293b',
+            fontWeight: 700,
           }}
         >
-          <Database size={14} color="var(--peacock-primary)" />
-          <span style={{ color: 'var(--text-secondary)' }}>MongoDB:</span>
-          <span style={{ fontWeight: 700, color: 'var(--rama-green)' }}>
-            {systemStatus.mongodb?.status === 'connected' ? 'CONNECTED' : 'LOCAL'}
-          </span>
+          <Database size={13} color="#0d9488" />
+          <span style={{ color: '#475569', fontWeight: 600 }}>MongoDB</span>
+          <span style={{ color: '#0d9488' }}>LOCAL</span>
           <span
-            className="status-dot"
             style={{
               width: '6px',
               height: '6px',
-              backgroundColor: 'var(--rama-green)',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
+              display: 'inline-block',
             }}
           />
         </div>
 
-        {/* Live Clock */}
+        {/* Notification Bell with red dot */}
         <div
           style={{
+            position: 'relative',
+            width: '32px',
+            height: '32px',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.8rem',
-            fontFamily: 'var(--font-mono)',
-            color: 'var(--peacock-deep)',
-            background: 'var(--peacock-bg)',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            border: '1px solid #bae6fd',
-            fontWeight: 600,
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#64748b',
           }}
         >
-          <Clock size={13} color="var(--peacock-primary)" />
-          <span>{currentTime}</span>
+          <Bell size={18} />
+          <span
+            style={{
+              position: 'absolute',
+              top: '6px',
+              right: '6px',
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              backgroundColor: '#ef4444',
+              border: '1px solid #ffffff',
+            }}
+          />
         </div>
 
-        {/* User Identity */}
+        {/* User Profile Avatar */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            paddingLeft: '12px',
-            borderLeft: '1px solid var(--border-subtle)',
+            paddingLeft: '6px',
+            cursor: 'pointer',
           }}
         >
           <div
             style={{
-              width: '34px',
-              height: '34px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
-              background: 'var(--rama-bg)',
-              border: '1px solid #99f6e4',
+              background: '#0284c7',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--rama-deep)',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '0.78rem',
             }}
           >
-            <User size={16} />
+            SC
           </div>
-          <div style={{ lineHeight: 1.2 }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
-              {user ? user.name : 'Duty Officer'}
+          <div style={{ lineHeight: 1.15 }}>
+            <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
+              Sarah Connor
             </div>
-            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-              {user ? user.role : 'Command Lead'}
+            <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 500 }}>
+              Operations Commander
             </div>
           </div>
+          <ChevronDown size={14} color="#94a3b8" />
         </div>
       </div>
     </header>
