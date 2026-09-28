@@ -4,7 +4,7 @@ import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { LiveTicker } from '../components/LiveTicker';
 import { useSystem } from '../context/SystemContext';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export function MainLayout() {
   const { toasts } = useSystem();
@@ -14,12 +14,12 @@ export function MainLayout() {
       {/* Simulation Notice Top Ribbon */}
       <div className="simulation-banner">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <AlertTriangle size={14} color="#f59e0b" />
+          <AlertTriangle size={14} color="#fef08a" />
           <span>
-            <strong>SIMULATION MODE ACTIVE:</strong> RescueFlow AI is running in Hackathon Evaluation Mode. Automated responses and dispatches are fully simulated. No live emergency responders are dispatched.
+            <strong>SIMULATION MODE ACTIVE:</strong> RescueFlow AI is running in Hackathon Evaluation Mode. Automated responses and dispatches are simulated.
           </span>
         </div>
-        <div style={{ fontSize: '0.72rem', opacity: 0.8 }}>
+        <div style={{ fontSize: '0.72rem', opacity: 0.9, fontWeight: 600 }}>
           Coimbatore District EOC Simulation Node
         </div>
       </div>
@@ -60,25 +60,25 @@ export function MainLayout() {
       >
         {toasts.map((toast) => {
           const borderColors = {
-            critical: '#ef4444',
-            warning: '#f59e0b',
-            info: '#06b6d4',
+            critical: '#dc2626',
+            warning: '#ea580c',
+            info: 'var(--rama-green)',
           };
-          const bColor = borderColors[toast.type] || '#3b82f6';
+          const bColor = borderColors[toast.type] || 'var(--peacock-primary)';
 
           return (
             <div
               key={toast.id}
               style={{
-                background: 'var(--bg-card)',
+                background: '#ffffff',
                 borderLeft: `4px solid ${bColor}`,
                 borderTop: '1px solid var(--border-subtle)',
                 borderRight: '1px solid var(--border-subtle)',
                 borderBottom: '1px solid var(--border-subtle)',
                 borderRadius: '8px',
                 padding: '12px 16px',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
-                color: '#ffffff',
+                boxShadow: 'var(--shadow-lg)',
+                color: 'var(--text-primary)',
                 animation: 'slideIn 0.2s ease',
               }}
             >
