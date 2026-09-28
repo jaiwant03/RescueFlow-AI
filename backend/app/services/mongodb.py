@@ -36,6 +36,14 @@ def resolve_coords(location_str: str, lat: Optional[float], lng: Optional[float]
             return coords["lat"], coords["lng"]
     return None, None
 
+def sanitize_doc(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not doc:
+        return doc
+    clean = dict(doc)
+    if "_id" in clean:
+        clean["_id"] = str(clean["_id"])
+    return clean
+
 async def get_next_incident_id(db) -> str:
     count = await db["incidents"].count_documents({})
     return f"INC-{str(count + 1024).zfill(6)}"
