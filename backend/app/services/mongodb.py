@@ -25,6 +25,8 @@ COIMBATORE_LOCATIONS = {
     "railway station": {"lat": 10.9983, "lng": 76.9678},
 }
 
+Tuple_coords = tuple[Optional[float], Optional[float]]
+
 def resolve_coords(location_str: str, lat: Optional[float], lng: Optional[float]) -> Tuple_coords:
     if lat and lng:
         return lat, lng
@@ -33,8 +35,6 @@ def resolve_coords(location_str: str, lat: Optional[float], lng: Optional[float]
         if key in loc_lower:
             return coords["lat"], coords["lng"]
     return None, None
-
-Tuple_coords = tuple[Optional[float], Optional[float]]
 
 async def get_next_incident_id(db) -> str:
     count = await db["incidents"].count_documents({})
