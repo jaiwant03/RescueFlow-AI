@@ -35,16 +35,17 @@ export function Header() {
         <CubeLogo size={36} />
         <div>
           <h1
+            className="heading-cursive-multicolor"
             style={{
-              fontSize: '1.25rem',
+              fontSize: '1.45rem',
               fontWeight: 800,
-              letterSpacing: '-0.01em',
-              color: '#0f2738',
+              letterSpacing: '0.02em',
               lineHeight: 1.15,
             }}
           >
-            RescueFlow <span style={{ color: '#10b981' }}>AI</span>
+            RescueFlow AI
           </h1>
+
           <p
             style={{
               fontSize: '0.70rem',
