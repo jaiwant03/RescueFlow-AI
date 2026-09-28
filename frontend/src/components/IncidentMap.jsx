@@ -128,23 +128,23 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
         )}
       </MapContainer>
 
-      {/* Map Legend Overlay */}
+      {/* Map Legend Overlay on Bottom-Left */}
       <div
         style={{
           position: 'absolute',
           bottom: '12px',
-          right: '12px',
+          left: '12px',
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(6px)',
-          border: '1px solid var(--border-medium)',
+          border: '1px solid #cbd5e1',
           borderRadius: '8px',
           padding: '6px 14px',
-          fontSize: '0.76rem',
+          fontSize: '0.74rem',
           fontWeight: 700,
-          color: 'var(--text-primary)',
-          boxShadow: 'var(--shadow-md)',
+          color: '#0f2738',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
           display: 'flex',
-          gap: '14px',
+          gap: '12px',
           zIndex: 1000,
         }}
       >
@@ -155,13 +155,17 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ea580c' }} /> High
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#d97706' }} /> Medium
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }} /> Medium
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0d9488' }} /> Low
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> Low
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0284c7' }} /> Resolved
         </span>
       </div>
     </div>
+
 
   );
 }
