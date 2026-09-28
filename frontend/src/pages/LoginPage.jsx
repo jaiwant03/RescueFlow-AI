@@ -69,8 +69,8 @@ export function LoginPage() {
           >
             <Shield size={28} color="#ffffff" />
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--peacock-deep)', letterSpacing: '0.04em' }}>
-            RESCUEFLOW <span style={{ color: 'var(--rama-green)' }}>AI</span>
+          <h1 className="heading-cursive-multicolor" style={{ fontSize: '1.9rem', fontWeight: 800 }}>
+            RescueFlow AI
           </h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
             Disaster Message Prioritization & Response Automation

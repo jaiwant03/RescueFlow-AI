@@ -116,8 +116,8 @@ export function LiveOperationsBar({ onRefresh }) {
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.02rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>
-              LIVE EMERGENCY OPERATIONS COMMAND
+            <h2 className="heading-cursive-multicolor" style={{ fontSize: '1.2rem', fontWeight: 800 }}>
+              Live Emergency Operations Command
             </h2>
             <span
               style={{

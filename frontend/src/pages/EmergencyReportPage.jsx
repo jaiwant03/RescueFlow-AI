@@ -137,8 +137,9 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
     <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header */}
       <div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Send size={22} color="var(--rama-green)" /> Emergency Ingestion Gateway
+        <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Send size={22} color="var(--rama-green)" />
+          <span className="heading-cursive-multicolor">Emergency Ingestion Gateway</span>
         </h2>
         <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
           Submit single simulated citizen reports or import multi-channel CSV batches

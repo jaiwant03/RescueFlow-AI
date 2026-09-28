@@ -49,8 +49,9 @@ export function ResponseActivityPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Activity size={22} color="var(--rama-green)" /> Automated Response & Dispatch Activity
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Activity size={22} color="var(--rama-green)" />
+            <span className="heading-cursive-multicolor">Automated Response & Dispatch Activity</span>
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Live dispatch tasks executed by n8n after operator authorization

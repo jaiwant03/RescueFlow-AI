@@ -56,8 +56,9 @@ export function SystemStatusPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Server size={22} color="var(--rama-green)" /> System Health & n8n Architecture
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Server size={22} color="var(--rama-green)" />
+            <span className="heading-cursive-multicolor">System Health & n8n Architecture</span>
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Live status of backend services, MongoDB database, Groq AI inference, and n8n workflows

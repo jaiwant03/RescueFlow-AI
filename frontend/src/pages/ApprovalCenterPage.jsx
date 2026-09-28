@@ -76,8 +76,9 @@ export function ApprovalCenterPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <CheckSquare size={22} color="#ea580c" /> Human-in-the-Loop Approval Center
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <CheckSquare size={22} color="#ea580c" />
+            <span className="heading-cursive-multicolor">Human-in-the-Loop Approval Center</span>
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             AI Recommends &bull; Human Decides &bull; n8n Executes Approved Operations
@@ -129,7 +130,7 @@ export function ApprovalCenterPage() {
       ) : approvals.length === 0 ? (
         <div className="eoc-card" style={{ padding: '40px', textAlign: 'center' }}>
           <ShieldCheck size={36} color="var(--rama-green)" style={{ margin: '0 auto 12px' }} />
-          <h3 style={{ fontSize: '1.1rem', color: 'var(--peacock-deep)', marginBottom: '6px' }}>
+          <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.25rem', marginBottom: '6px' }}>
             No Pending Emergency Authorizations
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', maxWidth: '420px', margin: '0 auto' }}>

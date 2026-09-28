@@ -62,7 +62,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {isApprove ? <ShieldCheck size={20} color="var(--rama-green)" /> : <XCircle size={20} color="var(--priority-critical)" />}
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>
+            <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.2rem', fontWeight: 800 }}>
               {isApprove ? 'Authorize Emergency Deployment' : 'Reject Response Request'}
             </h3>
           </div>

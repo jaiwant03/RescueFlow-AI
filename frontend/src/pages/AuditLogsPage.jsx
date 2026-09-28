@@ -63,8 +63,9 @@ export function AuditLogsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <ScrollText size={22} color="var(--rama-green)" /> System Audit & Compliance Trail
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <ScrollText size={22} color="var(--rama-green)" />
+            <span className="heading-cursive-multicolor">System Audit & Compliance Trail</span>
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Complete audit logging of all AI classification, extraction, merging, and response actions
@@ -222,7 +223,7 @@ export function AuditLogsPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
+                <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
                   Audit Event: {selectedEvent.event_type}
                 </h3>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
