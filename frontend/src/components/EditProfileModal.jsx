@@ -300,8 +300,10 @@ export function EditProfileModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} style={{ overflowY: 'auto', padding: '24px', flex: 1 }}>
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          {/* Scrollable Fields */}
+          <div style={{ overflowY: 'auto', padding: '22px 24px', flex: 1 }}>
           {errorMessage && (
             <div
               style={{
@@ -748,17 +750,19 @@ export function EditProfileModal({ isOpen, onClose }) {
               </div>
             </div>
           </div>
+          </div>
 
-          {/* Modal Footer Buttons */}
+          {/* Pinned Modal Footer Buttons */}
           <div
             style={{
-              marginTop: '24px',
-              paddingTop: '16px',
-              borderTop: '1px solid #f1f5f9',
+              padding: '14px 24px',
+              borderTop: '1px solid #e2e8f0',
+              background: '#f8fafc',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-end',
               gap: '12px',
+              flexShrink: 0,
             }}
           >
             <button
