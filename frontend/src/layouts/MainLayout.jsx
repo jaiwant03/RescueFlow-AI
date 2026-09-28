@@ -11,19 +11,6 @@ export function MainLayout() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      {/* Simulation Notice Top Ribbon */}
-      <div className="simulation-banner">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <AlertTriangle size={14} color="#fef08a" />
-          <span>
-            <strong>SIMULATION MODE ACTIVE:</strong> RescueFlow AI is running in Hackathon Evaluation Mode. Automated responses and dispatches are simulated.
-          </span>
-        </div>
-        <div style={{ fontSize: '0.72rem', opacity: 0.9, fontWeight: 600 }}>
-          Coimbatore District EOC Simulation Node
-        </div>
-      </div>
-
       {/* Main Header */}
       <Header />
 
@@ -38,12 +25,13 @@ export function MainLayout() {
             flex: 1,
             padding: '24px',
             overflowY: 'auto',
-            maxHeight: 'calc(100vh - 105px)',
+            maxHeight: 'calc(100vh - 75px)',
           }}
         >
           <Outlet />
         </main>
       </div>
+
 
       {/* Floating Notification Toasts */}
       <div

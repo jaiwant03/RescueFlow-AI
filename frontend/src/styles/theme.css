@@ -15,11 +15,12 @@
   --border-medium: #cbd5e1;
   --border-active: #0d9488; /* Rama Green */
 
-  /* Text Colors (High Contrast on White) */
-  --text-primary: #0f2738;    /* Deep oceanic slate for razor-sharp readability */
-  --text-secondary: #335368;  /* Balanced peacock slate */
-  --text-muted: #64748b;      /* Neutral slate */
-  --text-light: #ffffff;      /* For colored badges & buttons */
+  /* Text Colors (High Contrast on White Canvas - Razor-Sharp Visibility) */
+  --text-primary: #0a1f2e;    /* Deep Jet Navy - maximum readability */
+  --text-secondary: #1a364a;  /* High-contrast slate peacock - clear labels & subtext */
+  --text-muted: #334e68;      /* Visible secondary text - no washed-out grays */
+  --text-light: #ffffff;      /* Pure white for badges, buttons, active highlights */
+
 
   /* Peacock Blue Tiers */
   --peacock-primary: #005b82;   /* Signature Royal Peacock Blue */
