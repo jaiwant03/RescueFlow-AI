@@ -18,12 +18,39 @@ body {
   overflow-x: hidden;
 }
 
-/* Headings inherit deep peacock tone */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--peacock-deep);
-  font-weight: 700;
-  line-height: 1.25;
+/* Cursive Multicolor Headings (Rama Green + Rama Blue + Purple) */
+.font-cursive {
+  font-family: var(--font-heading) !important;
 }
+
+.heading-cursive-multicolor {
+  font-family: var(--font-heading) !important;
+  background: var(--gradient-multicolor) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.heading-cursive-vibrant {
+  font-family: var(--font-cursive) !important;
+  background: var(--gradient-multicolor-vibrant) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.text-multicolor {
+  background: var(--gradient-multicolor) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
+}
+
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
