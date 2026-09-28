@@ -28,6 +28,10 @@ class Settings:
     # Deduplication & Similarity Threshold
     SIMILARITY_THRESHOLD: float = float(os.getenv("SIMILARITY_THRESHOLD", "0.75"))
     
+    # Channels (Telegram Bot & Alerts)
+    TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TELEGRAM_ALERT_CHAT_ID: str = os.getenv("TELEGRAM_ALERT_CHAT_ID", "")
+
     # Demo & Simulation Mode
     DEMO_MODE: bool = os.getenv("DEMO_MODE", "true").lower() in ("true", "1", "yes")
     
