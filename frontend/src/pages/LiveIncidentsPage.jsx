@@ -2,18 +2,22 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { StatusBadge } from '../components/StatusBadge';
+import { ModeledSelect } from '../components/ModeledSelect';
 import { Link } from 'react-router-dom';
 import { 
   Radio, 
   Search, 
   Filter, 
   RotateCw, 
+  RotateCcw,
   ExternalLink, 
   MapPin, 
   Users, 
   Calendar,
   Layers,
-  ChevronRight
+  ChevronRight,
+  SlidersHorizontal,
+  X
 } from 'lucide-react';
 
 export function LiveIncidentsPage() {
@@ -46,6 +50,43 @@ export function LiveIncidentsPage() {
     loadIncidents();
   }, [loadIncidents]);
 
+  const priorityOptions = [
+    { value: 'all', label: 'All Priorities' },
+    { value: 'critical', label: 'Critical (80+)', dotColor: '#ef4444' },
+    { value: 'high', label: 'High (60-79)', dotColor: '#f97316' },
+    { value: 'medium', label: 'Medium (30-59)', dotColor: '#eab308' },
+    { value: 'low', label: 'Low (0-29)', dotColor: '#10b981' },
+  ];
+
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending', dotColor: '#f59e0b' },
+    { value: 'approved', label: 'Approved', dotColor: '#0284c7' },
+    { value: 'responding', label: 'Responding', dotColor: '#3b82f6' },
+    { value: 'monitoring', label: 'Monitoring', dotColor: '#8b5cf6' },
+    { value: 'resolved', label: 'Resolved', dotColor: '#10b981' },
+    { value: 'rejected', label: 'Rejected', dotColor: '#64748b' },
+  ];
+
+  const typeOptions = [
+    { value: 'all', label: 'All Disaster Types' },
+    { value: 'flood', label: 'Flood', dotColor: '#0284c7' },
+    { value: 'fire', label: 'Fire', dotColor: '#ef4444' },
+    { value: 'medical', label: 'Medical', dotColor: '#10b981' },
+    { value: 'building_collapse', label: 'Building Collapse', dotColor: '#d97706' },
+    { value: 'accident', label: 'Accident', dotColor: '#f59e0b' },
+    { value: 'other', label: 'Other', dotColor: '#64748b' },
+  ];
+
+  const hasActiveFilters = search.trim() !== '' || priorityFilter !== 'all' || statusFilter !== 'all' || typeFilter !== 'all';
+
+  const resetFilters = () => {
+    setSearch('');
+    setPriorityFilter('all');
+    setStatusFilter('all');
+    setTypeFilter('all');
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Page Header */}
@@ -65,68 +106,124 @@ export function LiveIncidentsPage() {
         </button>
       </div>
 
-      {/* Filter and Search Bar */}
+      {/* Modeled Filter and Search Bar */}
       <div
         className="eoc-card"
         style={{
           padding: '14px 18px',
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: '14px',
           alignItems: 'center',
           justifyContent: 'space-between',
+          background: '#ffffff',
+          borderRadius: '14px',
+          boxShadow: '0 2px 10px rgba(0, 50, 70, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
         }}
       >
-        {/* Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 240px' }}>
-          <Search size={16} color="var(--text-muted)" />
+        {/* Search Modeled Input */}
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            flex: '1 1 260px',
+            maxWidth: '380px',
+          }}
+        >
+          <Search
+            size={16}
+            color="var(--rama-green)"
+            style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }}
+          />
           <input
             type="text"
             placeholder="Search by ID, location, or summary..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              paddingLeft: '36px',
+              paddingRight: search ? '32px' : '14px',
+              paddingTop: '8px',
+              paddingBottom: '8px',
+              borderRadius: '10px',
+              border: '1px solid #cbd5e1',
+              fontSize: '0.84rem',
+              outline: 'none',
+              background: '#ffffff',
+              transition: 'all 0.15s ease',
+            }}
           />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '2px',
+              }}
+              title="Clear search"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
 
-        {/* Priority Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Priority:</span>
-          <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
-            <option value="all">All Priorities</option>
-            <option value="critical">Critical (80+)</option>
-            <option value="high">High (60-79)</option>
-            <option value="medium">Medium (30-59)</option>
-            <option value="low">Low (0-29)</option>
-          </select>
-        </div>
+        {/* Modeled Filter Options Group */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <ModeledSelect
+            label="Priority:"
+            value={priorityFilter}
+            onChange={setPriorityFilter}
+            options={priorityOptions}
+            minWidth="145px"
+          />
 
-        {/* Status Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Status:</span>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="responding">Responding</option>
-            <option value="monitoring">Monitoring</option>
-            <option value="resolved">Resolved</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </div>
+          <ModeledSelect
+            label="Status:"
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={statusOptions}
+            minWidth="140px"
+          />
 
-        {/* Disaster Type Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Type:</span>
-          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-            <option value="all">All Disaster Types</option>
-            <option value="flood">Flood</option>
-            <option value="fire">Fire</option>
-            <option value="medical">Medical</option>
-            <option value="building_collapse">Building Collapse</option>
-            <option value="accident">Accident</option>
-            <option value="other">Other</option>
-          </select>
+          <ModeledSelect
+            label="Type:"
+            value={typeFilter}
+            onChange={setTypeFilter}
+            options={typeOptions}
+            minWidth="155px"
+          />
+
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '7px 12px',
+                borderRadius: '10px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#dc2626',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Reset all filters"
+            >
+              <RotateCcw size={12} /> Reset
+            </button>
+          )}
         </div>
       </div>
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
+import { ModeledSelect } from '../components/ModeledSelect';
 import { 
   ScrollText, 
   RotateCw, 
+  RotateCcw,
   Search, 
   Filter, 
   Code, 
@@ -39,24 +41,31 @@ export function AuditLogsPage() {
     loadAuditLogs();
   }, [loadAuditLogs]);
 
-  const eventTypes = [
-    'all',
-    'MESSAGE_RECEIVED',
-    'AI_CLASSIFIED',
-    'AI_EXTRACTED',
-    'INCIDENT_CREATED',
-    'INCIDENT_UPDATED',
-    'DUPLICATE_DETECTED',
-    'PRIORITY_CALCULATED',
-    'APPROVAL_REQUESTED',
-    'APPROVED',
-    'REJECTED',
-    'NOTIFICATION_SENT',
-    'STATUS_CHANGED',
-    'TEAM_ASSIGNED',
-    'RESOLVED',
-    'SYSTEM_RESET',
+  const eventTypeOptions = [
+    { value: 'all', label: 'All Event Types' },
+    { value: 'MESSAGE_RECEIVED', label: 'Message Received', dotColor: '#3b82f6' },
+    { value: 'AI_CLASSIFIED', label: 'AI Classified', dotColor: '#8b5cf6' },
+    { value: 'AI_EXTRACTED', label: 'AI Extracted', dotColor: '#a855f7' },
+    { value: 'INCIDENT_CREATED', label: 'Incident Created', dotColor: '#ef4444' },
+    { value: 'INCIDENT_UPDATED', label: 'Incident Updated', dotColor: '#f97316' },
+    { value: 'DUPLICATE_DETECTED', label: 'Duplicate Detected', dotColor: '#06b6d4' },
+    { value: 'PRIORITY_CALCULATED', label: 'Priority Calculated', dotColor: '#eab308' },
+    { value: 'APPROVAL_REQUESTED', label: 'Approval Requested', dotColor: '#f59e0b' },
+    { value: 'APPROVED', label: 'Approved', dotColor: '#0284c7' },
+    { value: 'REJECTED', label: 'Rejected', dotColor: '#64748b' },
+    { value: 'NOTIFICATION_SENT', label: 'Notification Sent', dotColor: '#10b981' },
+    { value: 'STATUS_CHANGED', label: 'Status Changed', dotColor: '#3b82f6' },
+    { value: 'TEAM_ASSIGNED', label: 'Team Assigned', dotColor: '#14b8a6' },
+    { value: 'RESOLVED', label: 'Resolved', dotColor: '#10b981' },
+    { value: 'SYSTEM_RESET', label: 'System Reset', dotColor: '#dc2626' },
   ];
+
+  const hasActiveFilters = incidentIdFilter.trim() !== '' || eventTypeFilter !== 'all';
+
+  const resetFilters = () => {
+    setIncidentIdFilter('');
+    setEventTypeFilter('all');
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -77,38 +86,106 @@ export function AuditLogsPage() {
         </button>
       </div>
 
-      {/* Filter Bar */}
+      {/* Modeled Filter Bar */}
       <div
         className="eoc-card"
         style={{
-          padding: '12px 18px',
+          padding: '14px 18px',
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '12px',
+          gap: '14px',
           alignItems: 'center',
           justifyContent: 'space-between',
+          background: '#ffffff',
+          borderRadius: '14px',
+          boxShadow: '0 2px 10px rgba(0, 50, 70, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 240px' }}>
-          <Search size={16} color="var(--text-muted)" />
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            flex: '1 1 240px',
+            maxWidth: '380px',
+          }}
+        >
+          <Search
+            size={16}
+            color="var(--rama-green)"
+            style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }}
+          />
           <input
             type="text"
             placeholder="Filter by Incident ID (e.g., INC-001024)..."
             value={incidentIdFilter}
             onChange={(e) => setIncidentIdFilter(e.target.value)}
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              paddingLeft: '36px',
+              paddingRight: incidentIdFilter ? '32px' : '14px',
+              paddingTop: '8px',
+              paddingBottom: '8px',
+              borderRadius: '10px',
+              border: '1px solid #cbd5e1',
+              fontSize: '0.84rem',
+              outline: 'none',
+              background: '#ffffff',
+              transition: 'all 0.15s ease',
+            }}
           />
+          {incidentIdFilter && (
+            <button
+              onClick={() => setIncidentIdFilter('')}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '2px',
+              }}
+              title="Clear search"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Event Type:</span>
-          <select value={eventTypeFilter} onChange={(e) => setEventTypeFilter(e.target.value)}>
-            {eventTypes.map((et) => (
-              <option key={et} value={et}>
-                {et === 'all' ? 'All Event Types' : et}
-              </option>
-            ))}
-          </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <ModeledSelect
+            label="Event Type:"
+            value={eventTypeFilter}
+            onChange={setEventTypeFilter}
+            options={eventTypeOptions}
+            minWidth="190px"
+          />
+
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '7px 12px',
+                borderRadius: '10px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#dc2626',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Reset filters"
+            >
+              <RotateCcw size={12} /> Reset
+            </button>
+          )}
         </div>
       </div>
 
