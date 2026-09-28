@@ -128,8 +128,8 @@ export function ApprovalCenterPage() {
         </div>
       ) : approvals.length === 0 ? (
         <div className="eoc-card" style={{ padding: '40px', textAlign: 'center' }}>
-          <ShieldCheck size={36} color="#10b981" style={{ margin: '0 auto 12px' }} />
-          <h3 style={{ fontSize: '1.1rem', color: '#ffffff', marginBottom: '6px' }}>
+          <ShieldCheck size={36} color="var(--rama-green)" style={{ margin: '0 auto 12px' }} />
+          <h3 style={{ fontSize: '1.1rem', color: 'var(--peacock-deep)', marginBottom: '6px' }}>
             No Pending Emergency Authorizations
           </h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', maxWidth: '420px', margin: '0 auto' }}>
@@ -161,7 +161,7 @@ export function ApprovalCenterPage() {
                 </div>
 
                 {/* Disaster details */}
-                <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', marginBottom: '6px' }}>
+                <div style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--peacock-deep)', marginBottom: '6px' }}>
                   {app.disaster_type?.toUpperCase()} EMERGENCY
                 </div>
 
