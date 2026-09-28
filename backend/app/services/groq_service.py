@@ -248,7 +248,7 @@ class GroqService:
         
         # Disaster type
         disaster_type = "other"
-        if "flood" in lower:
+        if "flood" in lower or "water" in lower or "inundat" in lower:
             disaster_type = "flood"
         elif "fire" in lower:
             disaster_type = "fire"
