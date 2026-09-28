@@ -466,8 +466,10 @@ async def execute_approval_decision(
         await n8n_service.notify_approval_decision(incident_id, "approve", None, decided_by)
 
         updated_inc = await db["incidents"].find_one({"incident_id": incident_id})
+        updated_inc = sanitize_doc(updated_inc)
         await broadcaster.broadcast("INCIDENT_UPDATED", updated_inc)
-        return {"success": True, "incident": updated_inc, "tasks": [telegram_task, email_task]}
+        return {"success": True, "incident": updated_inc, "tasks": sanitize_doc([telegram_task, email_task])}
+
 
     else:
         # REJECT
@@ -515,5 +517,7 @@ async def execute_approval_decision(
         await n8n_service.notify_approval_decision(incident_id, "reject", reason, decided_by)
 
         updated_inc = await db["incidents"].find_one({"incident_id": incident_id})
+        updated_inc = sanitize_doc(updated_inc)
         await broadcaster.broadcast("INCIDENT_UPDATED", updated_inc)
         return {"success": True, "incident": updated_inc}
+
