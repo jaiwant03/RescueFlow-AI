@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { api } from '../services/api';
 import { ModeledSelect } from '../components/ModeledSelect';
 import { 
@@ -10,7 +10,13 @@ import {
   Code, 
   Clock, 
   X,
-  ExternalLink 
+  ExternalLink,
+  Copy,
+  Check,
+  ShieldCheck,
+  Cpu,
+  Layers,
+  Send
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +26,7 @@ export function AuditLogsPage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTypeFilter, setEventTypeFilter] = useState('all');
   const [incidentIdFilter, setIncidentIdFilter] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const loadAuditLogs = useCallback(async () => {
     try {
@@ -40,6 +47,15 @@ export function AuditLogsPage() {
   useEffect(() => {
     loadAuditLogs();
   }, [loadAuditLogs]);
+
+  // Derived audit stats
+  const stats = useMemo(() => {
+    const total = logs.length;
+    const aiActions = logs.filter(l => l.event_type?.includes('AI_')).length;
+    const dispatches = logs.filter(l => l.event_type === 'NOTIFICATION_SENT' || l.event_type === 'APPROVED').length;
+    const dedups = logs.filter(l => l.event_type === 'DUPLICATE_DETECTED').length;
+    return { total, aiActions, dispatches, dedups };
+  }, [logs]);
 
   const eventTypeOptions = [
     { value: 'all', label: 'All Event Types' },
@@ -67,28 +83,112 @@ export function AuditLogsPage() {
     setEventTypeFilter('all');
   };
 
+  const handleCopyJson = () => {
+    if (!selectedEvent) return;
+    navigator.clipboard.writeText(JSON.stringify(selectedEvent, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px' }}>
         <div>
-          <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <ScrollText size={22} color="var(--rama-green)" />
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+            <span style={{ 
+              width: '38px', 
+              height: '38px', 
+              borderRadius: '10px', 
+              background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.15) 0%, rgba(2, 132, 199, 0.1) 100%)',
+              border: '1px solid rgba(13, 148, 136, 0.25)',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <ScrollText size={20} color="var(--rama-green)" />
+            </span>
             <span className="heading-cursive-multicolor">System Audit & Compliance Trail</span>
           </h2>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-            Complete audit logging of all AI classification, extraction, merging, and response actions
+          <p style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '4px', marginBottom: 0, fontWeight: 500 }}>
+            Deterministic log of all intake normalization, AI triage classifications, human sign-offs, and automated dispatches
           </p>
         </div>
 
-        <button onClick={loadAuditLogs} className="btn btn-secondary">
-          <RotateCw size={14} /> Refresh Logs
+        <button 
+          onClick={loadAuditLogs} 
+          className="btn btn-secondary"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: '#ffffff',
+            border: '1.5px solid #e2e8f0',
+            boxShadow: '0 2px 5px rgba(0,0,0,0.04)',
+            padding: '8px 16px',
+            borderRadius: '10px',
+            color: '#0f766e',
+            fontWeight: 600,
+            fontSize: '0.84rem',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <RotateCw size={14} className={loading ? 'spin' : ''} /> 
+          <span>Refresh Logs</span>
         </button>
+      </div>
+
+      {/* 4 Summary Stat Metric Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+        <div style={{ background: '#ffffff', borderRadius: '14px', padding: '16px 18px', border: '1.5px solid #ccfbf1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div>
+            <div style={{ fontSize: '0.74rem', color: '#0f766e', fontWeight: 700, textTransform: 'uppercase' }}>Total Audit Records</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#042f2e', marginTop: '4px', lineHeight: 1 }}>{stats.total}</div>
+            <div style={{ fontSize: '0.73rem', color: '#64748b', marginTop: '4px' }}>Immutable ledger events</div>
+          </div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#ccfbf1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d9488' }}>
+            <ScrollText size={20} />
+          </div>
+        </div>
+
+        <div style={{ background: '#ffffff', borderRadius: '14px', padding: '16px 18px', border: '1.5px solid #bae6fd', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div>
+            <div style={{ fontSize: '0.74rem', color: '#0369a1', fontWeight: 700, textTransform: 'uppercase' }}>AI Inference Events</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#082f49', marginTop: '4px', lineHeight: 1 }}>{stats.aiActions}</div>
+            <div style={{ fontSize: '0.73rem', color: '#64748b', marginTop: '4px' }}>Groq entity extractions</div>
+          </div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0284c7' }}>
+            <Cpu size={20} />
+          </div>
+        </div>
+
+        <div style={{ background: '#ffffff', borderRadius: '14px', padding: '16px 18px', border: '1.5px solid #d1fae5', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div>
+            <div style={{ fontSize: '0.74rem', color: '#047857', fontWeight: 700, textTransform: 'uppercase' }}>Dispatches & Approvals</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#065f46', marginTop: '4px', lineHeight: 1 }}>{stats.dispatches}</div>
+            <div style={{ fontSize: '0.73rem', color: '#64748b', marginTop: '4px' }}>Authorizations recorded</div>
+          </div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981' }}>
+            <Send size={20} />
+          </div>
+        </div>
+
+        <div style={{ background: '#ffffff', borderRadius: '14px', padding: '16px 18px', border: '1.5px solid #ddd6fe', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+          <div>
+            <div style={{ fontSize: '0.74rem', color: '#6d28d9', fontWeight: 700, textTransform: 'uppercase' }}>Deduplication Matches</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2e1065', marginTop: '4px', lineHeight: 1 }}>{stats.dedups}</div>
+            <div style={{ fontSize: '0.73rem', color: '#64748b', marginTop: '4px' }}>Corroborated reports</div>
+          </div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b5cf6' }}>
+            <Layers size={20} />
+          </div>
+        </div>
       </div>
 
       {/* Modeled Filter Bar */}
       <div
-        className="eoc-card"
         style={{
           padding: '14px 18px',
           display: 'flex',
@@ -98,7 +198,8 @@ export function AuditLogsPage() {
           justifyContent: 'space-between',
           background: '#ffffff',
           borderRadius: '14px',
-          boxShadow: '0 2px 10px rgba(0, 50, 70, 0.04), 0 1px 3px rgba(0,0,0,0.02)',
+          border: '1.5px solid #e2e8f0',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
         }}
       >
         <div
@@ -112,7 +213,7 @@ export function AuditLogsPage() {
         >
           <Search
             size={16}
-            color="var(--rama-green)"
+            color="#94a3b8"
             style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }}
           />
           <input
@@ -127,11 +228,20 @@ export function AuditLogsPage() {
               paddingTop: '8px',
               paddingBottom: '8px',
               borderRadius: '10px',
-              border: '1px solid #cbd5e1',
+              border: '1.5px solid #cbd5e1',
               fontSize: '0.84rem',
               outline: 'none',
-              background: '#ffffff',
+              background: '#f8fafc',
+              color: '#0f172a',
               transition: 'all 0.15s ease',
+            }}
+            onFocus={(e) => {
+              e.target.style.background = '#ffffff';
+              e.target.style.borderColor = 'var(--rama-green)';
+            }}
+            onBlur={(e) => {
+              e.target.style.background = '#f8fafc';
+              e.target.style.borderColor = '#cbd5e1';
             }}
           />
           {incidentIdFilter && (
@@ -142,7 +252,7 @@ export function AuditLogsPage() {
                 right: '10px',
                 background: 'transparent',
                 border: 'none',
-                color: 'var(--text-muted)',
+                color: '#94a3b8',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -161,7 +271,7 @@ export function AuditLogsPage() {
             value={eventTypeFilter}
             onChange={setEventTypeFilter}
             options={eventTypeOptions}
-            minWidth="190px"
+            minWidth="200px"
           />
 
           {hasActiveFilters && (
@@ -171,94 +281,138 @@ export function AuditLogsPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '5px',
-                padding: '7px 12px',
+                padding: '8px 14px',
                 borderRadius: '10px',
                 background: '#fef2f2',
-                border: '1px solid #fecaca',
+                border: '1.5px solid #fecaca',
                 color: '#dc2626',
-                fontSize: '0.78rem',
+                fontSize: '0.80rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
               title="Reset filters"
             >
-              <RotateCcw size={12} /> Reset
+              <RotateCcw size={13} /> Reset
             </button>
           )}
         </div>
       </div>
 
       {/* Audit Log Table */}
-      <div className="eoc-card" style={{ padding: '0', overflow: 'hidden' }}>
+      <div 
+        style={{ 
+          background: '#ffffff',
+          borderRadius: '16px',
+          border: '1.5px solid #e2e8f0',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+          overflow: 'hidden' 
+        }}
+      >
         {loading ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            Loading audit records...
+          <div style={{ padding: '50px 20px', textAlign: 'center', color: '#64748b' }}>
+            <RotateCw size={24} className="spin" style={{ margin: '0 auto 12px', color: 'var(--rama-green)' }} />
+            <div>Loading verified audit trail...</div>
           </div>
         ) : logs.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            No audit records match the filter criteria.
+          <div style={{ padding: '48px 20px', textAlign: 'center', color: '#64748b' }}>
+            No audit records match the selected filter criteria.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table className="eoc-table">
+            <table className="eoc-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Event Type</th>
-                  <th>Incident ID</th>
-                  <th>Source Channel</th>
-                  <th>Actor Designation</th>
-                  <th>Details Preview</th>
-                  <th>Payload</th>
+                <tr style={{ background: '#f8fafc', borderBottom: '1.5px solid #e2e8f0' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>TIMESTAMP</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>EVENT TYPE</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>INCIDENT ID</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>SOURCE CHANNEL</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>ACTOR</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'left', letterSpacing: '0.04em' }}>DETAILS PREVIEW</th>
+                  <th style={{ padding: '12px 16px', fontSize: '0.74rem', color: '#475569', fontWeight: 800, textAlign: 'center', letterSpacing: '0.04em' }}>PAYLOAD</th>
                 </tr>
               </thead>
               <tbody>
                 {logs.map((log, idx) => (
-                  <tr key={idx}>
-                    <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                      {new Date(log.timestamp).toLocaleTimeString()}
+                  <tr 
+                    key={idx}
+                    style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s ease' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#ffffff'}
+                  >
+                    <td style={{ padding: '12px 16px', fontSize: '0.80rem', color: '#64748b', fontFamily: 'var(--font-mono)' }}>
+                      {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </td>
-                    <td>
+                    <td style={{ padding: '12px 16px' }}>
                       <span
                         style={{
-                          fontSize: '0.72rem',
+                          fontSize: '0.73rem',
                           fontWeight: 700,
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          background: 'rgba(6, 182, 212, 0.12)',
-                          color: 'var(--accent-cyan)',
-                          border: '1px solid rgba(6, 182, 212, 0.3)',
+                          padding: '3px 9px',
+                          borderRadius: '6px',
+                          background: '#f0fdfa',
+                          color: '#0f766e',
+                          border: '1px solid #ccfbf1',
+                          display: 'inline-block'
                         }}
                       >
                         {log.event_type}
                       </span>
                     </td>
-                    <td>
+                    <td style={{ padding: '12px 16px' }}>
                       {log.incident_id ? (
-                        <Link to={`/incidents/${log.incident_id}`} style={{ color: 'var(--peacock-primary)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                        <Link 
+                          to={`/incidents/${log.incident_id}`} 
+                          style={{ 
+                            color: '#0284c7', 
+                            fontWeight: 700, 
+                            fontFamily: 'var(--font-mono)', 
+                            textDecoration: 'none',
+                            fontSize: '0.82rem'
+                          }}
+                        >
                           {log.incident_id}
                         </Link>
                       ) : (
-                        <span style={{ color: 'var(--text-muted)' }}>-</span>
+                        <span style={{ color: '#cbd5e1' }}>-</span>
                       )}
                     </td>
-                    <td style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <td style={{ padding: '12px 16px', textTransform: 'uppercase', fontSize: '0.78rem', color: '#475569', fontWeight: 600 }}>
                       {log.source || 'SYSTEM'}
                     </td>
-                    <td style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--peacock-deep)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: 700, fontSize: '0.82rem', color: '#0f172a' }}>
                       {log.actor || 'System'}
                     </td>
-                    <td style={{ fontSize: '0.78rem', color: '#94a3b8', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <td style={{ padding: '12px 16px', fontSize: '0.82rem', color: '#334155', maxWidth: '340px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
                       {JSON.stringify(log.details || {})}
                     </td>
-                    <td>
+                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       <button
                         onClick={() => setSelectedEvent(log)}
-                        className="btn btn-secondary"
-                        style={{ padding: '3px 8px', fontSize: '0.72rem', gap: '4px' }}
+                        style={{
+                          padding: '4px 10px',
+                          fontSize: '0.74rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          background: '#ffffff',
+                          border: '1.5px solid #cbd5e1',
+                          borderRadius: '8px',
+                          color: '#0f766e',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--rama-green)';
+                          e.currentTarget.style.color = '#042f2e';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#cbd5e1';
+                          e.currentTarget.style.color = '#0f766e';
+                        }}
                       >
-                        <Code size={11} /> JSON
+                        <Code size={13} /> JSON
                       </button>
                     </td>
                   </tr>
@@ -278,7 +432,7 @@ export function AuditLogsPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(15, 39, 56, 0.65)',
+            backgroundColor: 'rgba(15, 23, 42, 0.65)',
             backdropFilter: 'blur(5px)',
             display: 'flex',
             alignItems: 'center',
@@ -290,47 +444,89 @@ export function AuditLogsPage() {
           <div
             style={{
               background: '#ffffff',
-              border: '1px solid var(--border-medium)',
-              borderRadius: '12px',
-              padding: '20px',
+              border: '1.5px solid #e2e8f0',
+              borderRadius: '16px',
+              padding: '22px',
               width: '90%',
-              maxWidth: '560px',
-              boxShadow: 'var(--shadow-lg)',
+              maxWidth: '600px',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
                   Audit Event: {selectedEvent.event_type}
                 </h3>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
                   Recorded at {new Date(selectedEvent.timestamp).toLocaleString()}
                 </span>
               </div>
-              <button onClick={() => setSelectedEvent(null)} style={{ color: 'var(--text-muted)' }}>
-                <X size={18} />
+              <button 
+                onClick={() => setSelectedEvent(null)} 
+                style={{ 
+                  background: 'transparent', 
+                  border: 'none', 
+                  color: '#64748b', 
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex'
+                }}
+              >
+                <X size={20} />
               </button>
             </div>
 
             <pre
               style={{
-                background: 'var(--bg-main)',
-                padding: '14px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.78rem',
-                color: 'var(--accent-cyan)',
+                background: '#0f172a',
+                padding: '16px',
+                borderRadius: '12px',
+                fontSize: '0.80rem',
+                color: '#38bdf8',
                 fontFamily: 'var(--font-mono)',
                 overflowX: 'auto',
-                maxHeight: '340px',
+                maxHeight: '360px',
+                border: '1px solid #334155'
               }}
             >
               {JSON.stringify(selectedEvent, null, 2)}
             </pre>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '14px' }}>
-              <button onClick={() => setSelectedEvent(null)} className="btn btn-secondary">
-                Close
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+              <button
+                onClick={handleCopyJson}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '9px',
+                  border: '1.5px solid #cbd5e1',
+                  background: '#f8fafc',
+                  color: '#0f172a',
+                  fontWeight: 600,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                <span>{copied ? 'Copied to Clipboard!' : 'Copy Payload'}</span>
+              </button>
+
+              <button 
+                onClick={() => setSelectedEvent(null)} 
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: '9px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Done
               </button>
             </div>
           </div>
