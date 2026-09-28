@@ -1,68 +1,91 @@
 :root {
-  /* Color Palette - Emergency Operations Center (Dark Base) */
-  --bg-main: #070c16;
-  --bg-surface: #0c1424;
-  --bg-card: #121c32;
-  --bg-card-hover: #182542;
-  --bg-glass: rgba(18, 28, 50, 0.85);
+  /* -----------------------------------------------------------
+     RESCUEFLOW AI DESIGN SYSTEM: WHITE + PEACOCK BLUE + RAMA GREEN
+     ----------------------------------------------------------- */
+
+  /* White & Light Canvas Backgrounds */
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0fdfa;
+  --bg-glass: rgba(255, 255, 255, 0.94);
   
   /* Borders */
-  --border-subtle: #1e293b;
-  --border-medium: #2a3b55;
-  --border-active: #3b82f6;
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-active: #0d9488; /* Rama Green */
 
-  /* Text Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-light: #ffffff;
+  /* Text Colors (High Contrast on White) */
+  --text-primary: #0f2738;    /* Deep oceanic slate for razor-sharp readability */
+  --text-secondary: #335368;  /* Balanced peacock slate */
+  --text-muted: #64748b;      /* Neutral slate */
+  --text-light: #ffffff;      /* For colored badges & buttons */
 
-  /* Priority Accent Tiers */
-  --priority-critical: #ef4444;
-  --priority-critical-bg: rgba(239, 68, 68, 0.15);
-  --priority-critical-border: rgba(239, 68, 68, 0.4);
+  /* Peacock Blue Tiers */
+  --peacock-primary: #005b82;   /* Signature Royal Peacock Blue */
+  --peacock-deep: #003e5c;      /* Deep Midnight Peacock */
+  --peacock-light: #0284c7;     /* Luminous Sky Peacock */
+  --peacock-bg: #e0f2fe;        /* Soft Peacock tint */
 
-  --priority-high: #f97316;
-  --priority-high-bg: rgba(249, 115, 22, 0.15);
-  --priority-high-border: rgba(249, 115, 22, 0.4);
+  /* Rama Green Tiers */
+  --rama-green: #0d9488;        /* Signature Radiant Rama Green / Teal */
+  --rama-vibrant: #14b8a6;      /* Luminous Rama Green */
+  --rama-deep: #0f766e;         /* Deep Rich Emerald-Teal */
+  --rama-bg: #ccfbf1;           /* Soft Rama Green tint */
+  --rama-glow: rgba(13, 148, 136, 0.25);
 
-  --priority-medium: #eab308;
-  --priority-medium-bg: rgba(234, 179, 8, 0.15);
-  --priority-medium-border: rgba(234, 179, 8, 0.4);
+  /* Operations Accents (Mapped to Peacock & Rama) */
+  --accent-cyan: #0d9488;       /* Primary Rama Green accent */
+  --accent-blue: #005b82;       /* Primary Peacock Blue accent */
+  --accent-indigo: #0284c7;
+  --accent-cyan-bg: rgba(13, 148, 136, 0.12);
 
-  --priority-low: #10b981;
-  --priority-low-bg: rgba(16, 185, 129, 0.15);
-  --priority-low-border: rgba(16, 185, 129, 0.4);
+  /* Signature Gradients */
+  --gradient-peacock-rama: linear-gradient(135deg, #005b82 0%, #0d9488 100%);
+  --gradient-rama-peacock: linear-gradient(135deg, #0d9488 0%, #005b82 100%);
+  --gradient-banner: linear-gradient(90deg, #00425f 0%, #005b82 30%, #0d9488 70%, #00425f 100%);
+  --gradient-card-hero: linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%);
 
-  /* Operations Accents */
-  --accent-cyan: #06b6d4;
-  --accent-cyan-bg: rgba(6, 182, 212, 0.12);
-  --accent-blue: #3b82f6;
-  --accent-indigo: #6366f1;
+  /* Priority Accent Tiers (Optimized for White Canvas) */
+  --priority-critical: #dc2626;
+  --priority-critical-bg: #fef2f2;
+  --priority-critical-border: #fca5a5;
+
+  --priority-high: #ea580c;
+  --priority-high-bg: #fff7ed;
+  --priority-high-border: #fdba74;
+
+  --priority-medium: #d97706;
+  --priority-medium-bg: #fffbeb;
+  --priority-medium-border: #fde68a;
+
+  --priority-low: #0d9488; /* Rama Green */
+  --priority-low-bg: #f0fdfa;
+  --priority-low-border: #99f6e4;
 
   /* Status Colors */
-  --status-pending: #f59e0b;
-  --status-approved: #3b82f6;
-  --status-responding: #8b5cf6;
-  --status-monitoring: #06b6d4;
-  --status-resolved: #10b981;
+  --status-pending: #d97706;
+  --status-approved: #005b82;
+  --status-responding: #0d9488;
+  --status-monitoring: #0284c7;
+  --status-resolved: #16a34a;
   --status-rejected: #64748b;
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 
-  /* Radii & Shadows */
+  /* Radii & Elevation Shadows */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 15px rgba(6, 182, 212, 0.25);
-  --shadow-critical: 0 0 20px rgba(239, 68, 68, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 91, 130, 0.07), 0 1px 2px rgba(13, 148, 136, 0.04);
+  --shadow-md: 0 4px 14px rgba(0, 91, 130, 0.09), 0 2px 6px rgba(13, 148, 136, 0.05);
+  --shadow-lg: 0 10px 28px rgba(0, 91, 130, 0.12), 0 4px 10px rgba(13, 148, 136, 0.08);
+  --shadow-glow: 0 0 18px rgba(13, 148, 136, 0.35);
+  --shadow-critical: 0 0 20px rgba(220, 38, 38, 0.25);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
