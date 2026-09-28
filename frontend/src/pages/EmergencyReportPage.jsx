@@ -137,8 +137,8 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
     <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header */}
       <div>
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Send size={22} color="var(--accent-cyan)" /> Emergency Ingestion Gateway
+        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Send size={22} color="var(--rama-green)" /> Emergency Ingestion Gateway
         </h2>
         <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
           Submit single simulated citizen reports or import multi-channel CSV batches
@@ -245,7 +245,7 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
             <form onSubmit={handleSubmitReport} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Message Input */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '6px', color: '#ffffff' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '6px', color: 'var(--peacock-deep)' }}>
                   Emergency Situation Description *
                 </label>
                 <textarea
@@ -374,9 +374,9 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle2 size={24} color="#10b981" />
+                <CheckCircle2 size={24} color="var(--rama-green)" />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                     Emergency report submitted and processed successfully!
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
