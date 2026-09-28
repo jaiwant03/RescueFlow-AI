@@ -45,24 +45,27 @@ export function Header() {
             </h1>
             <span
               style={{
-                fontSize: '0.68rem',
-                background: 'var(--priority-critical-bg)',
-                border: '1px solid var(--priority-critical-border)',
-                color: 'var(--priority-critical)',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                fontWeight: 700,
+                fontSize: '0.72rem',
+                background: 'var(--rama-bg)',
+                border: '1px solid var(--rama-green)',
+                color: 'var(--rama-deep)',
+                padding: '2px 9px',
+                borderRadius: '12px',
+                fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
+                gap: '5px',
+                letterSpacing: '0.03em',
               }}
             >
-              <AlertOctagon size={11} /> SIMULATION MODE
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--rama-green)', display: 'inline-block' }} />
+              LIVE EOC ACTIVE
             </span>
           </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
             AI-Powered Disaster Message Prioritization & Response Automation
           </p>
+
         </div>
       </div>
 

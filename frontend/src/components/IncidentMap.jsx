@@ -84,38 +84,38 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
             <Popup>
               <div style={{ padding: '6px', minWidth: '190px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontWeight: 700, fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
+                  <span style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', fontSize: '0.88rem', color: 'var(--peacock-deep)' }}>
                     {inc.incident_id}
                   </span>
                   <PriorityBadge level={inc.priority_level} score={inc.priority_score} />
                 </div>
 
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px', textTransform: 'capitalize' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '6px', textTransform: 'capitalize', color: 'var(--peacock-deep)' }}>
                   {inc.type} Incident
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem', color: '#94a3b8', marginBottom: '4px' }}>
-                  <MapPin size={12} /> {inc.location}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
+                  <MapPin size={13} color="var(--peacock-primary)" /> {inc.location}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem', color: '#94a3b8', marginBottom: '8px' }}>
-                  <Users size={12} /> {inc.people_affected || 0} People Affected ({inc.report_count} reports)
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>
+                  <Users size={13} color="var(--rama-green)" /> {inc.people_affected || 0} Affected ({inc.report_count} reports)
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', borderTop: '1px solid #334155', paddingTop: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', borderTop: '1px solid var(--border-subtle)', paddingTop: '8px' }}>
                   <StatusBadge status={inc.status} />
                   <Link
                     to={`/incidents/${inc.incident_id}`}
                     style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: '#06b6d4',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      color: 'var(--peacock-primary)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px',
                     }}
                   >
-                    Details <ExternalLink size={11} />
+                    Details <ExternalLink size={12} />
                   </Link>
                 </div>
               </div>
@@ -134,31 +134,35 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
           position: 'absolute',
           bottom: '12px',
           right: '12px',
-          background: 'rgba(15, 23, 42, 0.85)',
-          backdropFilter: 'blur(4px)',
-          border: '1px solid var(--border-subtle)',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(6px)',
+          border: '1px solid var(--border-medium)',
           borderRadius: '8px',
-          padding: '6px 12px',
-          fontSize: '0.72rem',
+          padding: '6px 14px',
+          fontSize: '0.76rem',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          boxShadow: 'var(--shadow-md)',
           display: 'flex',
-          gap: '12px',
+          gap: '14px',
           zIndex: 1000,
         }}
       >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} /> Critical
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#dc2626' }} /> Critical
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f97316' }} /> High
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ea580c' }} /> High
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#eab308' }} /> Medium
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#d97706' }} /> Medium
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} /> Low
+        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0d9488' }} /> Low
         </span>
       </div>
     </div>
+
   );
 }
 
