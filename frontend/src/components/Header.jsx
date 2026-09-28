@@ -294,8 +294,8 @@ export function Header() {
           >
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #0077b6 0%, #0d9488 100%)',
                 display: 'flex',
@@ -303,11 +303,22 @@ export function Header() {
                 justifyContent: 'center',
                 color: '#ffffff',
                 fontWeight: 700,
-                fontSize: '0.78rem',
+                fontSize: '0.80rem',
                 boxShadow: '0 2px 6px rgba(0, 119, 182, 0.25)',
+                overflow: 'hidden',
+                border: '1.5px solid #ffffff',
+                flexShrink: 0,
               }}
             >
-              {getInitials(user?.name)}
+              {user?.photo ? (
+                <img
+                  src={user.photo}
+                  alt={user.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                getInitials(user?.name)
+              )}
             </div>
             <div style={{ lineHeight: 1.15, textAlign: 'left' }}>
               <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
@@ -320,10 +331,20 @@ export function Header() {
             <ChevronDown size={14} color="#94a3b8" />
           </button>
 
-          {/* Modeled User Profile Menu */}
+          {/* User Profile Menu */}
           <UserProfileMenu
             isOpen={isProfileOpen}
             onClose={() => setIsProfileOpen(false)}
+            onOpenEditProfile={() => {
+              setIsProfileOpen(false);
+              setIsEditProfileOpen(true);
+            }}
+          />
+
+          {/* Edit Profile Modal */}
+          <EditProfileModal
+            isOpen={isEditProfileOpen}
+            onClose={() => setIsEditProfileOpen(false)}
           />
         </div>
       </div>
