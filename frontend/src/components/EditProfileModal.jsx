@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSystem } from '../context/SystemContext';
 import { 
@@ -191,7 +192,7 @@ export function EditProfileModal({ isOpen, onClose }) {
     }, 200);
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -825,7 +826,8 @@ export function EditProfileModal({ isOpen, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
