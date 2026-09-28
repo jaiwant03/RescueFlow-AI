@@ -115,6 +115,7 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
             "incident_id": None
         }
         await db["messages"].insert_one(msg_record)
+        msg_record = sanitize_doc(msg_record)
         await broadcaster.broadcast("MESSAGE_NON_EMERGENCY", msg_record)
         return {
             "status": "non_emergency",
@@ -234,6 +235,7 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
             details={"priority_score": new_score, "report_count": merged_data["report_count"]}
         )
 
+        merged_data = sanitize_doc(merged_data)
         await broadcaster.broadcast("INCIDENT_UPDATED", merged_data)
         return {"status": "merged", "incident_id": inc_id, "report_count": merged_data["report_count"], "incident": merged_data}
 
