@@ -29,7 +29,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(5, 10, 20, 0.85)',
+        backgroundColor: 'rgba(15, 39, 56, 0.65)',
         backdropFilter: 'blur(5px)',
         display: 'flex',
         alignItems: 'center',
@@ -40,12 +40,12 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
     >
       <div
         style={{
-          background: 'var(--bg-card)',
-          border: `1px solid ${isApprove ? '#3b82f6' : '#ef4444'}`,
+          background: '#ffffff',
+          border: `2px solid ${isApprove ? 'var(--rama-green)' : 'var(--priority-critical)'}`,
           borderRadius: '14px',
           width: '100%',
           maxWidth: '520px',
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6)',
+          boxShadow: 'var(--shadow-lg)',
           overflow: 'hidden',
         }}
       >
@@ -57,12 +57,12 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'var(--bg-surface)',
+            background: 'var(--bg-main)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {isApprove ? <ShieldCheck size={20} color="#3b82f6" /> : <XCircle size={20} color="#ef4444" />}
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff' }}>
+            {isApprove ? <ShieldCheck size={20} color="var(--rama-green)" /> : <XCircle size={20} color="var(--priority-critical)" />}
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>
               {isApprove ? 'Authorize Emergency Deployment' : 'Reject Response Request'}
             </h3>
           </div>
@@ -76,7 +76,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
           {/* Incident Summary Card */}
           <div
             style={{
-              background: 'var(--bg-surface)',
+              background: 'var(--bg-main)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '14px',
@@ -84,13 +84,13 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.88rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.88rem', color: 'var(--peacock-deep)' }}>
                 {incident.incident_id}
               </span>
               <PriorityBadge level={incident.priority_level} score={incident.priority_score} />
             </div>
 
-            <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#ffffff', marginBottom: '4px' }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
               {incident.type?.toUpperCase()} — {incident.location}
             </div>
 
@@ -101,7 +101,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
             {incident.resources_required && incident.resources_required.length > 0 && (
               <div style={{ marginTop: '10px', fontSize: '0.78rem' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Recommended Units: </span>
-                <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>
+                <span style={{ color: 'var(--rama-deep)', fontWeight: 700 }}>
                   {incident.resources_required.join(', ')}
                 </span>
               </div>
@@ -110,7 +110,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
 
           {/* Reason Input */}
           <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px', color: 'var(--peacock-deep)' }}>
               {isApprove ? 'Deployment Authorization Note (Optional):' : 'Rejection Justification (Required):'}
             </label>
             <textarea
@@ -133,7 +133,7 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
               gap: '6px',
             }}
           >
-            <AlertTriangle size={14} color="#f59e0b" style={{ flexShrink: 0 }} />
+            <AlertTriangle size={14} color="#ea580c" style={{ flexShrink: 0 }} />
             <span>
               All notifications and dispatches triggered by this action will execute in simulated hackathon mode.
             </span>

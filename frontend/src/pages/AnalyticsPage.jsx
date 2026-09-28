@@ -45,8 +45,8 @@ export function AnalyticsPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BarChart3 size={22} color="var(--accent-cyan)" /> Disaster Intelligence Analytics
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <BarChart3 size={22} color="var(--rama-green)" /> Disaster Intelligence Analytics
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
             Deduplication efficiency, channel distribution, and response performance metrics
@@ -62,7 +62,7 @@ export function AnalyticsPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
         <div className="eoc-card">
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>DEDUP REDUCTION EFFICIENCY</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', margin: '4px 0' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--rama-deep)', margin: '4px 0' }}>
             {metrics.deduplication_reduction_percent}%
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -72,7 +72,7 @@ export function AnalyticsPage() {
 
         <div className="eoc-card">
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>AVG INTAKE PROCESSING TIME</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-cyan)', margin: '4px 0' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-primary)', margin: '4px 0' }}>
             {metrics.avg_processing_time_sec}s
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -82,7 +82,7 @@ export function AnalyticsPage() {
 
         <div className="eoc-card">
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>TOTAL INGESTED REPORTS</div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: '4px 0' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--peacock-deep)', margin: '4px 0' }}>
             {metrics.total_reports_ingested}
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
@@ -208,35 +208,35 @@ export function AnalyticsPage() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
-          <div style={{ background: 'var(--bg-surface)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Send size={24} color="#06b6d4" />
+          <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Send size={24} color="var(--peacock-light)" />
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>TELEGRAM BOT</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>{messages_by_channel.telegram || 0}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>{messages_by_channel.telegram || 0}</div>
             </div>
           </div>
 
-          <div style={{ background: 'var(--bg-surface)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Mail size={24} color="#f97316" />
+          <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Mail size={24} color="#ea580c" />
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>GMAIL / EMAIL</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>{messages_by_channel.email || 0}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>{messages_by_channel.email || 0}</div>
             </div>
           </div>
 
-          <div style={{ background: 'var(--bg-surface)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Radio size={24} color="#3b82f6" />
+          <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Radio size={24} color="var(--peacock-primary)" />
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>WEB FORM</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>{messages_by_channel.web || 0}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>{messages_by_channel.web || 0}</div>
             </div>
           </div>
 
-          <div style={{ background: 'var(--bg-surface)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <FileSpreadsheet size={24} color="#10b981" />
+          <div style={{ background: 'var(--bg-main)', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <FileSpreadsheet size={24} color="var(--rama-green)" />
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>CSV BULK UPLOAD</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff' }}>{messages_by_channel.csv || 0}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--peacock-deep)' }}>{messages_by_channel.csv || 0}</div>
             </div>
           </div>
         </div>
