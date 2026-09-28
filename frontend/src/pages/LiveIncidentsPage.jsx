@@ -136,9 +136,10 @@ export function LiveIncidentsPage() {
             Loading live emergency incidents...
           </div>
         ) : incidents.length === 0 ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            No incidents matched your query. Use the Simulation Controller on Dashboard to generate reports.
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)', fontWeight: 600 }}>
+            No incidents matched your query. Ingest new reports via Emergency Report or the Live Operations Bar.
           </div>
+
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table className="eoc-table">

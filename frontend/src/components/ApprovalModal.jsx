@@ -123,21 +123,28 @@ export function ApprovalModal({ isOpen, onClose, onConfirm, incident, actionType
             />
           </div>
 
-          {/* Simulation disclaimer */}
+          {/* Operational notification notice */}
           <div
             style={{
-              fontSize: '0.72rem',
-              color: 'var(--text-muted)',
+              fontSize: '0.78rem',
+              color: 'var(--text-secondary)',
+              fontWeight: 600,
               marginBottom: '18px',
               display: 'flex',
-              gap: '6px',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--bg-main)',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              border: '1px solid var(--border-subtle)',
             }}
           >
-            <AlertTriangle size={14} color="#ea580c" style={{ flexShrink: 0 }} />
+            <ShieldCheck size={16} color="var(--rama-green)" style={{ flexShrink: 0 }} />
             <span>
-              All notifications and dispatches triggered by this action will execute in simulated hackathon mode.
+              Authorizing this response will automatically dispatch task orders to emergency response units via Telegram and Email channels.
             </span>
           </div>
+
 
           {/* Action buttons */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
