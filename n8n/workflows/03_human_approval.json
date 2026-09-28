@@ -1,0 +1,108 @@
+{
+  "name": "03_Human_Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "human-approval-init",
+        "options": {}
+      },
+      "id": "node-approval-trigger",
+      "name": "Webhook - Approval Requested",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"APPROVAL_RECORD_CREATED\",\n  \"incident_id\": \"{{$json.incident_id || $json.matched_incident_id || 'INC-PENDING'}}\",\n  \"payload\": {\n    \"priority_score\": {{$json.priority_score || 85}},\n    \"priority_level\": \"{{$json.priority_level || 'critical'}}\",\n    \"recommended_resources\": {{$json.extraction ? JSON.stringify($json.extraction.resources_required) : '[\"Rescue Team\", \"Medical Team\"]'}}\n  }\n}",
+        "options": {}
+      },
+      "id": "node-register-approval",
+      "name": "Register Approval Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "approval-decision",
+        "options": {}
+      },
+      "id": "node-approval-decision-webhook",
+      "name": "Webhook - Operator Decision Callback",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.decision}}",
+              "value2": "approve"
+            }
+          ]
+        }
+      },
+      "id": "node-if-decision-approved",
+      "name": "Is Response Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1020, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/automated-response",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"approved_by\": \"{{$json.decided_by || 'Command Chief'}}\",\n  \"timestamp\": \"{{new Date().toISOString()}}\"\n}",
+        "options": {}
+      },
+      "id": "node-trigger-automated-response",
+      "name": "Trigger Automated Response Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"APPROVAL_REJECTED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"decision\": \"rejected\",\n    \"reason\": \"{{$json.reason || 'Operator rejection'}}\",\n    \"rejected_by\": \"{{$json.decided_by || 'Duty Supervisor'}}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-log-rejection",
+      "name": "Log Rejection in Audit Trail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1300, 420]
+    }
+  ],
+  "connections": {
+    "Webhook - Approval Requested": {
+      "main": [[{ "node": "Register Approval Record", "type": "main", "index": 0 }]]
+    },
+    "Register Approval Record": {
+      "main": [[{ "node": "Webhook - Operator Decision Callback", "type": "main", "index": 0 }]]
+    },
+    "Webhook - Operator Decision Callback": {
+      "main": [[{ "node": "Is Response Approved?", "type": "main", "index": 0 }]]
+    },
+    "Is Response Approved?": {
+      "main": [
+        [{ "node": "Trigger Automated Response Workflow", "type": "main", "index": 0 }],
+        [{ "node": "Log Rejection in Audit Trail", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

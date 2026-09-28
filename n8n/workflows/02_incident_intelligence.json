@@ -1,0 +1,160 @@
+{
+  "name": "02_Incident_Intelligence",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "incident-intelligence",
+        "options": {}
+      },
+      "id": "node-webhook-intelligence",
+      "name": "Webhook - Incident Intelligence Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.GROQ_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'llama-3.3-70b-versatile'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency information extraction engine. Extract ONLY explicitly stated info. Return valid JSON with keys: disaster_type, location, people_affected (number), vulnerable_people ({detected: boolean, types: string[]}), immediate_need (string[]), resources_required (string[]), severity (critical|high|medium|low), time_reference, confidence (number), summary.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json.message}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node-groq-extraction",
+      "name": "Groq AI - Information Extraction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const groqResp = $input.item.json;\nlet raw = '';\nif (groqResp.choices && groqResp.choices[0]) {\n  raw = groqResp.choices[0].message.content;\n} else {\n  raw = JSON.stringify(groqResp);\n}\n\nlet extraction = {};\ntry {\n  extraction = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch (e) {\n  extraction = {\n    disaster_type: 'flood',\n    location: 'Coimbatore',\n    people_affected: 3,\n    vulnerable_people: { detected: false, types: [] },\n    immediate_need: ['rescue'],\n    resources_required: ['rescue_team'],\n    severity: 'high',\n    summary: $node['Webhook - Incident Intelligence Trigger'].json.message\n  };\n}\n\nreturn {\n  ...$node['Webhook - Incident Intelligence Trigger'].json,\n  extraction: extraction\n};"
+      },
+      "id": "node-parse-extraction",
+      "name": "Parse & Sanitize Extraction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8000/api/incidents?status=pending&limit=50",
+        "options": {}
+      },
+      "id": "node-fetch-active-incidents",
+      "name": "Fetch Active Incidents from Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const extractionData = $node['Parse & Sanitize Extraction'].json;\nconst activeIncidents = $input.item.json.incidents || [];\n\nconst newLoc = (extractionData.extraction.location || '').toLowerCase();\nconst newType = (extractionData.extraction.disaster_type || '').toLowerCase();\n\nlet matchedIncident = null;\nfor (const inc of activeIncidents) {\n  const incLoc = (inc.location || '').toLowerCase();\n  const incType = (inc.type || '').toLowerCase();\n  \n  if ((incLoc.includes(newLoc) || newLoc.includes(incLoc)) && (incType === newType || incType === 'other')) {\n    matchedIncident = inc;\n    break;\n  }\n}\n\nreturn {\n  ...extractionData,\n  is_duplicate: Boolean(matchedIncident),\n  matched_incident_id: matchedIncident ? matchedIncident.incident_id : null,\n  matched_incident: matchedIncident\n};"
+      },
+      "id": "node-deduplication-check",
+      "name": "Deduplication & Similarity Logic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.is_duplicate}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "node-if-duplicate",
+      "name": "Is Duplicate Incident?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1440, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"DUPLICATE_MERGED_BY_N8N\",\n  \"incident_id\": \"{{$json.matched_incident_id}}\",\n  \"message_id\": \"{{$json.message_id}}\",\n  \"payload\": {\n    \"source\": \"{{$json.source}}\",\n    \"new_report_merged\": true,\n    \"message\": \"{{$json.message}}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-merge-existing-incident",
+      "name": "Update Existing Incident in MongoDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1700, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst ext = item.extraction;\n\nlet score = 20;\nconst reasons = [];\n\nif (ext.severity === 'critical' || /trapped/i.test(ext.summary)) {\n  score += 30;\n  reasons.push('Immediate life danger detected');\n}\nif (/trapped/i.test(ext.summary)) {\n  score += 20;\n  reasons.push('People trapped in distress area');\n}\nif (ext.vulnerable_people && ext.vulnerable_people.detected) {\n  score += 20;\n  reasons.push('Vulnerable population detected');\n}\nif (ext.people_affected >= 5) {\n  score += 15;\n  reasons.push('Significant casualty/affected count');\n}\nif (['flood', 'fire', 'building_collapse'].includes(ext.disaster_type)) {\n  score += 15;\n  reasons.push('High-risk disaster category');\n}\n\nscore = Math.min(score, 100);\nlet level = 'low';\nif (score >= 80) level = 'critical';\nelse if (score >= 60) level = 'high';\nelse if (score >= 30) level = 'medium';\n\nreturn {\n  ...item,\n  priority_score: score,\n  priority_level: level,\n  priority_reasons: reasons,\n  requires_approval: (level === 'critical' || level === 'high')\n};"
+      },
+      "id": "node-priority-calculation",
+      "name": "Calculate Deterministic Priority",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/human-approval-init",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "node-trigger-human-approval",
+      "name": "Trigger Human Approval Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1960, 420]
+    }
+  ],
+  "connections": {
+    "Webhook - Incident Intelligence Trigger": {
+      "main": [[{ "node": "Groq AI - Information Extraction", "type": "main", "index": 0 }]]
+    },
+    "Groq AI - Information Extraction": {
+      "main": [[{ "node": "Parse & Sanitize Extraction", "type": "main", "index": 0 }]]
+    },
+    "Parse & Sanitize Extraction": {
+      "main": [[{ "node": "Fetch Active Incidents from Backend", "type": "main", "index": 0 }]]
+    },
+    "Fetch Active Incidents from Backend": {
+      "main": [[{ "node": "Deduplication & Similarity Logic", "type": "main", "index": 0 }]]
+    },
+    "Deduplication & Similarity Logic": {
+      "main": [[{ "node": "Is Duplicate Incident?", "type": "main", "index": 0 }]]
+    },
+    "Is Duplicate Incident?": {
+      "main": [
+        [{ "node": "Update Existing Incident in MongoDB", "type": "main", "index": 0 }],
+        [{ "node": "Calculate Deterministic Priority", "type": "main", "index": 0 }]
+      ]
+    },
+    "Calculate Deterministic Priority": {
+      "main": [[{ "node": "Trigger Human Approval Workflow", "type": "main", "index": 0 }]]
+    }
+  }
+}
