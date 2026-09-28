@@ -97,9 +97,10 @@ export function SystemProvider({ children }) {
       );
       refreshStats();
     } else if (type === 'SYSTEM_RESET') {
-      addToast('🧹 System Reset', 'Demo data cleared successfully.', 'info');
+      addToast('🧹 System Reset', 'Operational records synchronized and reset.', 'info');
       refreshStats();
     }
+
   }, [addToast, refreshStats]);
 
   useRealtime(handleRealtimeEvent);
