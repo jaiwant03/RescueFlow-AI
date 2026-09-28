@@ -436,8 +436,8 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                   marginBottom: '16px',
                 }}
               >
-                <Upload size={32} color="var(--accent-cyan)" style={{ margin: '0 auto 10px' }} />
-                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff', marginBottom: '4px' }}>
+                <Upload size={32} color="var(--rama-green)" style={{ margin: '0 auto 10px' }} />
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
                   {csvFile ? csvFile.name : 'Select or drop emergency reports CSV'}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
@@ -470,8 +470,8 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
 
           {/* CSV Result */}
           {csvResult && (
-            <div className="eoc-card" style={{ borderLeft: '4px solid #10b981' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+            <div className="eoc-card" style={{ borderLeft: '4px solid var(--rama-green)' }}>
+              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--peacock-deep)', marginBottom: '8px' }}>
                 Batch Ingestion Complete: {csvResult.total_imported} Records Processed
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
