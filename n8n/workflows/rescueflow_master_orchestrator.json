@@ -1,0 +1,463 @@
+{
+  "name": "RescueFlow AI - Master Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🚨 EMERGENCY INTAKE SOURCES\nCaptures reports from Telegram, Gmail, Web Form, or CSV batch.",
+        "height": 380,
+        "width": 320
+      },
+      "id": "sticky-intake",
+      "name": "Sticky Note - Intake",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [160, 80]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "emergency-intake",
+        "options": {}
+      },
+      "id": "node-webhook-intake",
+      "name": "React Web / CSV Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 260]
+    },
+    {
+      "parameters": {
+        "updates": ["message"]
+      },
+      "id": "node-telegram-trigger",
+      "name": "Telegram Bot Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [200, 140]
+    },
+    {
+      "parameters": {
+        "filters": { "readStatus": "unread" }
+      },
+      "id": "node-email-trigger",
+      "name": "Gmail Inbox Trigger",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [200, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes all channels into the canonical RescueFlow Schema\nconst item = $input.item.json;\nlet source = 'web';\nlet sender = 'Anonymous Citizen';\nlet messageText = '';\nlet locationHint = '';\nlet metadata = {};\n\nif (item.message && item.message.text) {\n  source = 'telegram';\n  sender = item.message.from ? ('@' + (item.message.from.username || item.message.from.first_name)) : 'Telegram User';\n  messageText = item.message.text.replace(/^\\/report\\s*/i, '');\n  metadata = { chat_id: item.message.chat ? item.message.chat.id : null };\n} else if (item.from && item.subject) {\n  source = 'email';\n  sender = item.from.value ? item.from.value[0].address : (item.from.text || 'Email User');\n  messageText = item.text || item.html || item.subject;\n  metadata = { subject: item.subject };\n} else {\n  source = item.source || 'web';\n  sender = item.sender || item.name || 'Web Citizen';\n  messageText = item.message || '';\n  locationHint = item.location || item.location_hint || '';\n  metadata = item.metadata || {};\n}\n\nconst messageId = item.message_id || 'MSG-' + Math.random().toString(36).substring(2, 10).toUpperCase();\n\nreturn {\n  message_id: messageId,\n  source: source,\n  sender: sender,\n  message: messageText.trim(),\n  location_hint: locationHint,\n  timestamp: item.timestamp || new Date().toISOString(),\n  metadata: metadata\n};"
+      },
+      "id": "node-normalize",
+      "name": "Message Normalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 260]
+    },
+    {
+      "parameters": {
+        "content": "## 🧠 GROQ AI CLASSIFICATION\nEvaluates whether message is a real/simulated disaster vs casual chat.",
+        "height": 380,
+        "width": 360
+      },
+      "id": "sticky-classification",
+      "name": "Sticky Note - Classification",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [780, 80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$env.GROQ_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'llama-3.3-70b-versatile'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency message classification engine. Determine whether an incoming message describes a disaster situation. Output ONLY valid JSON: {\\\"is_emergency\\\": boolean, \\\"emergency_type\\\": string, \\\"confidence\\\": number, \\\"reason\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node-groq-classify",
+      "name": "Groq AI Classification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [820, 260]
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.item.json;\nlet raw = resp.choices ? resp.choices[0].message.content : JSON.stringify(resp);\nlet parsed = { is_emergency: true, emergency_type: 'other', confidence: 0.9 };\ntry {\n  parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch (e) {\n  const isEm = /flood|fire|urgent|trapped|medical|injury/i.test($node['Message Normalization'].json.message);\n  parsed = { is_emergency: isEm, emergency_type: 'flood', confidence: 0.85 };\n}\nreturn { ...$node['Message Normalization'].json, is_emergency: Boolean(parsed.is_emergency), classification: parsed };"
+      },
+      "id": "node-parse-classification",
+      "name": "Parse Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 260]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{ "value1": "={{$json.is_emergency}}", "value2": true }]
+        }
+      },
+      "id": "node-if-emergency",
+      "name": "Is Emergency?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1220, 260]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"MESSAGE_ARCHIVED_NON_EMERGENCY\",\n  \"message_id\": \"{{$json.message_id}}\",\n  \"payload\": { \"reason\": \"{{$json.classification.reason}}\", \"status\": \"archived\" }\n}",
+        "options": {}
+      },
+      "id": "node-archive-casual",
+      "name": "Archive Casual Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1460, 420]
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 GROQ AI EXTRACTION\nExtracts disaster type, location, casualties, and needed resources.",
+        "height": 380,
+        "width": 340
+      },
+      "id": "sticky-extraction",
+      "name": "Sticky Note - Extraction",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1460, 80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$env.GROQ_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'llama-3.3-70b-versatile'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency information extraction engine. Extract explicitly stated facts. Output valid JSON: {\\\"disaster_type\\\": string, \\\"location\\\": string, \\\"people_affected\\\": number, \\\"vulnerable_people\\\": {\\\"detected\\\": boolean, \\\"types\\\": string[]}, \\\"immediate_need\\\": string[], \\\"resources_required\\\": string[], \\\"severity\\\": string, \\\"summary\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node-groq-extract",
+      "name": "Groq AI Extraction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1500, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.item.json;\nlet raw = resp.choices ? resp.choices[0].message.content : JSON.stringify(resp);\nlet extraction = {};\ntry {\n  extraction = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch(e) {\n  extraction = {\n    disaster_type: 'flood',\n    location: $node['Message Normalization'].json.location_hint || 'PSG College',\n    people_affected: 3,\n    resources_required: ['rescue_team'],\n    severity: 'critical',\n    summary: $node['Message Normalization'].json.message\n  };\n}\nreturn { ...$node['Message Normalization'].json, extraction: extraction };"
+      },
+      "id": "node-json-validation",
+      "name": "JSON Validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1720, 240]
+    },
+    {
+      "parameters": {
+        "content": "## 🔄 DEDUPLICATION & INCIDENT MERGING\nGroups multi-channel reports into a consolidated operational incident.",
+        "height": 380,
+        "width": 380
+      },
+      "id": "sticky-dedup",
+      "name": "Sticky Note - Deduplication",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1940, 80]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8000/api/incidents?status=pending&limit=50",
+        "options": {}
+      },
+      "id": "node-get-active-incidents",
+      "name": "Get Active Incidents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1980, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const extData = $node['JSON Validation'].json;\nconst active = $input.item.json.incidents || [];\n\nconst newLoc = (extData.extraction.location || '').toLowerCase();\nconst newType = (extData.extraction.disaster_type || '').toLowerCase();\n\nlet match = null;\nfor (const inc of active) {\n  const incLoc = (inc.location || '').toLowerCase();\n  const incType = (inc.type || '').toLowerCase();\n  if ((incLoc.includes(newLoc) || newLoc.includes(incLoc)) && (incType === newType || incType === 'other')) {\n    match = inc;\n    break;\n  }\n}\n\nreturn {\n  ...extData,\n  is_duplicate: Boolean(match),\n  matched_incident_id: match ? match.incident_id : null,\n  matched_incident: match\n};"
+      },
+      "id": "node-dedup-logic",
+      "name": "Duplicate Detection",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2180, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{ "value1": "={{$json.is_duplicate}}", "value2": true }]
+        }
+      },
+      "id": "node-if-duplicate",
+      "name": "Existing Incident?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2380, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"DUPLICATE_MERGED_BY_N8N\",\n  \"incident_id\": \"{{$json.matched_incident_id}}\",\n  \"message_id\": \"{{$json.message_id}}\",\n  \"payload\": {\n    \"merged_into\": \"{{$json.matched_incident_id}}\",\n    \"report_source\": \"{{$json.source}}\",\n    \"message\": \"{{$json.message}}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-merge-incident",
+      "name": "Merge with Existing Incident",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2640, 140]
+    },
+    {
+      "parameters": {
+        "content": "## ⚖️ PRIORITY ENGINE & MONGODB\nCalculates deterministic score and creates incident in database.",
+        "height": 380,
+        "width": 380
+      },
+      "id": "sticky-priority",
+      "name": "Sticky Note - Priority",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2620, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\nconst ext = item.extraction;\nlet score = 20;\nconst reasons = [];\n\nif (ext.severity === 'critical' || /trapped/i.test(ext.summary)) {\n  score += 30;\n  reasons.push('Immediate life danger detected');\n}\nif (/trapped/i.test(ext.summary)) {\n  score += 20;\n  reasons.push('People reported trapped in distress zone');\n}\nif (ext.vulnerable_people && ext.vulnerable_people.detected) {\n  score += 20;\n  reasons.push('Vulnerable population detected');\n}\nif (ext.people_affected >= 5) {\n  score += 15;\n  reasons.push('Significant impact scale (5+ people)');\n}\nif (['flood', 'fire', 'building_collapse'].includes(ext.disaster_type)) {\n  score += 15;\n  reasons.push('High-risk disaster category: ' + ext.disaster_type);\n}\n\nscore = Math.min(score, 100);\nlet level = 'low';\nif (score >= 80) level = 'critical';\nelse if (score >= 60) level = 'high';\nelse if (score >= 30) level = 'medium';\n\nreturn {\n  ...item,\n  priority_score: score,\n  priority_level: level,\n  priority_reasons: reasons,\n  requires_approval: (level === 'critical' || level === 'high')\n};"
+      },
+      "id": "node-priority-calculation",
+      "name": "Priority Calculation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2660, 360]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/emergency/report",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message_id\": \"{{$json.message_id}}\",\n  \"source\": \"{{$json.source}}\",\n  \"name\": \"{{$json.sender}}\",\n  \"message\": \"{{$json.message}}\",\n  \"location\": \"{{$json.extraction.location}}\"\n}",
+        "options": {}
+      },
+      "id": "node-persist-mongodb",
+      "name": "Persist to MongoDB & Dashboard Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2880, 360]
+    },
+    {
+      "parameters": {
+        "content": "## 👮 HUMAN-IN-THE-LOOP APPROVAL\nCritical and High priority incidents require operator authorization.",
+        "height": 420,
+        "width": 380
+      },
+      "id": "sticky-approval",
+      "name": "Sticky Note - Approval",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [3140, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{ "value1": "={{$node['Priority Calculation'].json.requires_approval}}", "value2": true }]
+        }
+      },
+      "id": "node-if-approval-required",
+      "name": "Critical or High?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [3180, 360]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "approval-decision",
+        "options": {}
+      },
+      "id": "node-human-decision-webhook",
+      "name": "Human Approval Decision Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [3420, 360]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [{ "value1": "={{$json.decision}}", "value2": "approve" }]
+        }
+      },
+      "id": "node-if-approved",
+      "name": "Is Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [3660, 360]
+    },
+    {
+      "parameters": {
+        "content": "## 📢 AUTOMATED MULTI-CHANNEL RESPONSE\nDispatches Telegram alert, Email notice, Response Task, and Audit Logs.",
+        "height": 460,
+        "width": 460
+      },
+      "id": "sticky-response",
+      "name": "Sticky Note - Response",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [3920, 160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"NOTIFICATION_DISPATCHED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"channel\": \"telegram\",\n    \"target\": \"RescueFlow Telegram Emergency Channel\",\n    \"content\": \"🚨 [SIMULATED EMERGENCY DISPATCH] Authorized response for Incident {{$json.incident_id}}\",\n    \"assigned_team\": \"Rapid Response Alpha\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-telegram-dispatch",
+      "name": "Telegram Alert Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [3980, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"NOTIFICATION_DISPATCHED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"channel\": \"email\",\n    \"target\": \"rescueflow.demo@gmail.com\",\n    \"content\": \"[SIMULATED DISPATCH] Authorized response for Incident {{$json.incident_id}}\",\n    \"assigned_team\": \"Rapid Response Alpha\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-email-dispatch",
+      "name": "Email Alert Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [3980, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:8000/api/incidents/{{$json.incident_id}}/status",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"responding\",\n  \"reason\": \"Automated dispatch completed by n8n Response Workflow\",\n  \"actor\": \"n8n Master Orchestrator\"\n}",
+        "options": {}
+      },
+      "id": "node-status-responding",
+      "name": "Update Status Responding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [4220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/n8n/events",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"APPROVAL_REJECTED\",\n  \"incident_id\": \"{{$json.incident_id}}\",\n  \"payload\": {\n    \"decision\": \"rejected\",\n    \"reason\": \"{{$json.reason || 'Operator rejection'}}\",\n    \"rejected_by\": \"{{$json.decided_by || 'Duty Supervisor'}}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-log-rejection",
+      "name": "Log Rejection in Audit Trail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [3980, 520]
+    }
+  ],
+  "connections": {
+    "React Web / CSV Webhook": {
+      "main": [[{ "node": "Message Normalization", "type": "main", "index": 0 }]]
+    },
+    "Telegram Bot Trigger": {
+      "main": [[{ "node": "Message Normalization", "type": "main", "index": 0 }]]
+    },
+    "Gmail Inbox Trigger": {
+      "main": [[{ "node": "Message Normalization", "type": "main", "index": 0 }]]
+    },
+    "Message Normalization": {
+      "main": [[{ "node": "Groq AI Classification", "type": "main", "index": 0 }]]
+    },
+    "Groq AI Classification": {
+      "main": [[{ "node": "Parse Classification", "type": "main", "index": 0 }]]
+    },
+    "Parse Classification": {
+      "main": [[{ "node": "Is Emergency?", "type": "main", "index": 0 }]]
+    },
+    "Is Emergency?": {
+      "main": [
+        [{ "node": "Groq AI Extraction", "type": "main", "index": 0 }],
+        [{ "node": "Archive Casual Message", "type": "main", "index": 0 }]
+      ]
+    },
+    "Groq AI Extraction": {
+      "main": [[{ "node": "JSON Validation", "type": "main", "index": 0 }]]
+    },
+    "JSON Validation": {
+      "main": [[{ "node": "Get Active Incidents", "type": "main", "index": 0 }]]
+    },
+    "Get Active Incidents": {
+      "main": [[{ "node": "Duplicate Detection", "type": "main", "index": 0 }]]
+    },
+    "Duplicate Detection": {
+      "main": [[{ "node": "Existing Incident?", "type": "main", "index": 0 }]]
+    },
+    "Existing Incident?": {
+      "main": [
+        [{ "node": "Merge with Existing Incident", "type": "main", "index": 0 }],
+        [{ "node": "Priority Calculation", "type": "main", "index": 0 }]
+      ]
+    },
+    "Priority Calculation": {
+      "main": [[{ "node": "Persist to MongoDB & Dashboard Event", "type": "main", "index": 0 }]]
+    },
+    "Persist to MongoDB & Dashboard Event": {
+      "main": [[{ "node": "Critical or High?", "type": "main", "index": 0 }]]
+    },
+    "Critical or High?": {
+      "main": [
+        [{ "node": "Human Approval Decision Webhook", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Human Approval Decision Webhook": {
+      "main": [[{ "node": "Is Approved?", "type": "main", "index": 0 }]]
+    },
+    "Is Approved?": {
+      "main": [
+        [
+          { "node": "Telegram Alert Notification", "type": "main", "index": 0 },
+          { "node": "Email Alert Notification", "type": "main", "index": 0 }
+        ],
+        [{ "node": "Log Rejection in Audit Trail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Telegram Alert Notification": {
+      "main": [[{ "node": "Update Status Responding", "type": "main", "index": 0 }]]
+    }
+  }
+}
