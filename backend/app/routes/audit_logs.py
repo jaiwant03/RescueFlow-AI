@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Query
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 
 router = APIRouter(prefix="/api/audit-logs", tags=["Audit Logs"])
 
@@ -25,5 +25,6 @@ async def get_audit_logs(
     return {
         "total": total,
         "count": len(items),
-        "audit_logs": items
+        "audit_logs": clean_mongo_doc(items)
     }
+

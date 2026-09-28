@@ -2,8 +2,17 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import ENCODERS_BY_TYPE
+
+try:
+    from bson import ObjectId
+    ENCODERS_BY_TYPE[ObjectId] = str
+except ImportError:
+    pass
+
 from app.config import settings
 from app.database import connect_to_mongo, close_mongo_connection
+
 from app.routes import (
     health,
     dashboard,

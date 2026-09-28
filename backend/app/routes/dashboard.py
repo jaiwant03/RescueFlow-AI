@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
@@ -40,5 +40,6 @@ async def get_dashboard_stats():
             "non_emergency_filtered": non_emergency_messages,
             "deduplication_saved": dedup_saved
         },
-        "recent_incidents": recent_incidents
+        "recent_incidents": clean_mongo_doc(recent_incidents)
     }
+

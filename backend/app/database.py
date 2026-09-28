@@ -211,3 +211,35 @@ def get_database():
     if db_manager.db is None:
         return in_memory_db
     return db_manager.db
+
+
+def clean_mongo_doc(doc: Any) -> Any:
+    """Recursively converts MongoDB BSON types (like ObjectId) to JSON-serializable types."""
+    if doc is None:
+        return None
+    if isinstance(doc, list):
+        return [clean_mongo_doc(item) for item in doc]
+    if isinstance(doc, dict):
+        cleaned = {}
+        for k, v in doc.items():
+            if k == "_id":
+                cleaned["_id"] = str(v)
+            else:
+                cleaned[k] = clean_mongo_doc(v)
+        return cleaned
+    try:
+        from bson import ObjectId
+        if isinstance(doc, ObjectId):
+            return str(doc)
+    except ImportError:
+        pass
+    return doc
+
+# Register ObjectId with FastAPI jsonable_encoder
+try:
+    from bson import ObjectId
+    from fastapi.encoders import ENCODERS_BY_TYPE
+    ENCODERS_BY_TYPE[ObjectId] = str
+except ImportError:
+    pass
+
