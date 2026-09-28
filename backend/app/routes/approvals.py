@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 from app.schemas.approval import ApprovalDecisionRequest
 from app.services.mongodb import execute_approval_decision
 
@@ -24,8 +24,9 @@ async def get_approvals(
     return {
         "total": total,
         "pending_count": pending_count,
-        "approvals": items
+        "approvals": clean_mongo_doc(items)
     }
+
 
 @router.post("/{approval_id}/decision")
 async def submit_approval_decision(approval_id: str, payload: ApprovalDecisionRequest):

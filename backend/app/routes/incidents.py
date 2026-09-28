@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, Query
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 from app.schemas.incident import IncidentStatusUpdate, IncidentApproveReject, IncidentAssignTeam
 from app.services.mongodb import execute_approval_decision
 from app.services.realtime import broadcaster
@@ -45,7 +45,7 @@ async def get_incidents(
     return {
         "total": total,
         "count": len(items),
-        "incidents": items
+        "incidents": clean_mongo_doc(items)
     }
 
 @router.get("/{incident_id}")
@@ -54,10 +54,11 @@ async def get_incident(incident_id: str):
     incident = await db["incidents"].find_one({"incident_id": incident_id})
     if not incident:
         raise HTTPException(status_code=404, detail=f"Incident {incident_id} not found")
-    return incident
+    return clean_mongo_doc(incident)
 
 @router.post("/{incident_id}/status")
 async def update_incident_status(incident_id: str, payload: IncidentStatusUpdate):
+
     db = get_database()
     incident = await db["incidents"].find_one({"incident_id": incident_id})
     if not incident:
@@ -98,8 +99,10 @@ async def update_incident_status(incident_id: str, payload: IncidentStatusUpdate
     )
 
     updated = await db["incidents"].find_one({"incident_id": incident_id})
-    await broadcaster.broadcast("INCIDENT_UPDATED", updated)
-    return updated
+    cleaned_updated = clean_mongo_doc(updated)
+    await broadcaster.broadcast("INCIDENT_UPDATED", cleaned_updated)
+    return cleaned_updated
+
 
 @router.post("/{incident_id}/approve")
 async def approve_incident(incident_id: str, payload: IncidentApproveReject):
@@ -161,8 +164,10 @@ async def assign_team(incident_id: str, payload: IncidentAssignTeam):
     )
 
     updated = await db["incidents"].find_one({"incident_id": incident_id})
-    await broadcaster.broadcast("INCIDENT_UPDATED", updated)
-    return updated
+    cleaned_updated = clean_mongo_doc(updated)
+    await broadcaster.broadcast("INCIDENT_UPDATED", cleaned_updated)
+    return cleaned_updated
+
 
 @router.get("/{incident_id}/timeline")
 async def get_incident_timeline(incident_id: str):

@@ -4,10 +4,11 @@ from typing import Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from sse_starlette.sse import EventSourceResponse
 from app.services.realtime import broadcaster
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 
 logger = logging.getLogger("rescueflow.routes.realtime")
 router = APIRouter(tags=["Realtime & Response Tasks"])
+
 
 @router.get("/api/realtime/events")
 async def sse_event_stream():
@@ -62,5 +63,6 @@ async def get_response_tasks(
     items = await cursor.to_list(limit)
     return {
         "total": len(items),
-        "tasks": items
+        "tasks": clean_mongo_doc(items)
     }
+

@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
-from app.database import get_database
+from app.database import get_database, clean_mongo_doc
 
 router = APIRouter(prefix="/api/messages", tags=["Messages"])
 
@@ -25,7 +25,7 @@ async def get_messages(
     return {
         "total": total,
         "count": len(items),
-        "messages": items
+        "messages": clean_mongo_doc(items)
     }
 
 @router.get("/{message_id}")
@@ -34,4 +34,5 @@ async def get_single_message(message_id: str):
     msg = await db["messages"].find_one({"message_id": message_id})
     if not msg:
         raise HTTPException(status_code=404, detail=f"Message {message_id} not found")
-    return msg
+    return clean_mongo_doc(msg)
+
