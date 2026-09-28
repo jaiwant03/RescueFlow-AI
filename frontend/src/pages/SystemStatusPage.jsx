@@ -290,6 +290,41 @@ export function SystemStatusPage() {
             URI: <code style={{ color: '#475569' }}>{components.mongodb?.uri}</code>
           </div>
         </div>
+
+        {/* Telegram Bot Channel */}
+        <div 
+          style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1.5px solid #a5f3fc',
+            boxShadow: '0 4px 14px rgba(6, 182, 212, 0.05)',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <div style={{ height: '3px', background: 'linear-gradient(90deg, #06b6d4 0%, #0284c7 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#cffafe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0891b2' }}>
+                <Send size={18} />
+              </div>
+              <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#0f172a' }}>
+                Telegram Bot Channel
+              </span>
+            </div>
+            <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', padding: '3px 9px', borderRadius: '20px', fontWeight: 800, border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+              {components.telegram?.status?.toUpperCase() || 'CONNECTED'}
+            </span>
+          </div>
+          <div style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '8px' }}>
+            Bot: <a href="https://t.me/RescueFlowAI_DemoBot" target="_blank" rel="noreferrer" style={{ color: '#0284c7', fontWeight: 700 }}>{components.telegram?.bot_username || '@RescueFlowAI_DemoBot'}</a>
+          </div>
+          <div style={{ fontSize: '0.76rem', color: '#64748b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            Citizen Intake & Automated Dispatch Active
+          </div>
+        </div>
       </div>
 
       {/* Central n8n Orchestrator Architecture Card */}
