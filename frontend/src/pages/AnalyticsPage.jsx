@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
+import { DisasterLineChart } from '../components/DisasterLineChart';
 import { 
   BarChart3, 
   RotateCw, 
@@ -16,7 +17,8 @@ import {
   ShieldCheck,
   Zap,
   Users,
-  AlertTriangle
+  AlertTriangle,
+  LineChart
 } from 'lucide-react';
 
 export function AnalyticsPage() {
@@ -48,7 +50,8 @@ export function AnalyticsPage() {
           background: '#ffffff',
           borderRadius: '16px',
           border: '1.5px solid #e2e8f0',
-          color: '#64748b' 
+          color: '#64748b',
+          boxShadow: '0 8px 24px -4px rgba(13, 148, 136, 0.06)'
         }}
       >
         <RotateCw size={26} className="spin" style={{ margin: '0 auto 12px', color: 'var(--rama-green)' }} />
@@ -57,10 +60,20 @@ export function AnalyticsPage() {
     );
   }
 
-  const { metrics, incidents_by_type, incidents_by_priority, incidents_by_status, messages_by_channel } = data;
+  const { metrics, incidents_by_type, incidents_by_priority, incidents_by_status, messages_by_channel, timeline_trend } = data;
 
   const totalIncidents = metrics.total_incidents || 1;
   const totalReports = metrics.total_reports_ingested || 1;
+
+  // Find peak disaster category
+  let peakType = 'None';
+  let peakCount = 0;
+  Object.entries(incidents_by_type || {}).forEach(([t, count]) => {
+    if (count > peakCount) {
+      peakCount = count;
+      peakType = t;
+    }
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -77,14 +90,15 @@ export function AnalyticsPage() {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              flexShrink: 0
+              flexShrink: 0,
+              boxShadow: '0 2px 6px rgba(13, 148, 136, 0.15)'
             }}>
-              <BarChart3 size={20} color="var(--rama-green)" />
+              <LineChart size={20} color="var(--rama-green)" />
             </span>
             <span className="heading-cursive-multicolor">Disaster Intelligence & Operational Analytics</span>
           </h2>
           <p style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '4px', marginBottom: 0, fontWeight: 500 }}>
-            Deduplication efficiency, multi-channel distribution, and incident severity metrics across all active zones
+            Real-time classification spline curves, deduplication efficiency, and severity trajectory metrics across operational zones
           </p>
         </div>
 
@@ -97,7 +111,7 @@ export function AnalyticsPage() {
             gap: '8px',
             background: '#ffffff',
             border: '1.5px solid #e2e8f0',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.04)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
             padding: '8px 16px',
             borderRadius: '10px',
             color: '#0f766e',
@@ -112,7 +126,7 @@ export function AnalyticsPage() {
         </button>
       </div>
 
-      {/* Top Benchmark KPI Cards */}
+      {/* Top 4 Modeled Benchmark KPI Cards */}
       <div 
         style={{ 
           display: 'grid', 
@@ -127,12 +141,12 @@ export function AnalyticsPage() {
             borderRadius: '16px',
             padding: '18px 20px',
             border: '1.5px solid #ccfbf1',
-            boxShadow: '0 4px 14px rgba(13, 148, 136, 0.06)',
+            boxShadow: '0 8px 20px -4px rgba(13, 148, 136, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
             position: 'relative',
             overflow: 'hidden'
           }}
         >
-          <div style={{ height: '3px', background: 'linear-gradient(90deg, #0d9488 0%, #14b8a6 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #0d9488 0%, #14b8a6 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.74rem', color: '#0f766e', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -158,12 +172,12 @@ export function AnalyticsPage() {
             borderRadius: '16px',
             padding: '18px 20px',
             border: '1.5px solid #bae6fd',
-            boxShadow: '0 4px 14px rgba(2, 132, 199, 0.06)',
+            boxShadow: '0 8px 20px -4px rgba(2, 132, 199, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
             position: 'relative',
             overflow: 'hidden'
           }}
         >
-          <div style={{ height: '3px', background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.74rem', color: '#0369a1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -189,12 +203,12 @@ export function AnalyticsPage() {
             borderRadius: '16px',
             padding: '18px 20px',
             border: '1.5px solid #ddd6fe',
-            boxShadow: '0 4px 14px rgba(139, 92, 246, 0.06)',
+            boxShadow: '0 8px 20px -4px rgba(139, 92, 246, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
             position: 'relative',
             overflow: 'hidden'
           }}
         >
-          <div style={{ height: '3px', background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.74rem', color: '#6d28d9', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -220,12 +234,12 @@ export function AnalyticsPage() {
             borderRadius: '16px',
             padding: '18px 20px',
             border: '1.5px solid #fed7aa',
-            boxShadow: '0 4px 14px rgba(249, 115, 22, 0.06)',
+            boxShadow: '0 8px 20px -4px rgba(249, 115, 22, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
             position: 'relative',
             overflow: 'hidden'
           }}
         >
-          <div style={{ height: '3px', background: 'linear-gradient(90deg, #f97316 0%, #fb923c 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #f97316 0%, #fb923c 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: '0.74rem', color: '#c2410c', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -245,149 +259,167 @@ export function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Visual Distribution Grids */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px' }}>
-        {/* Incidents by Disaster Type */}
+      {/* Visual Analytics Grid (Line Chart on Left + Priority Breakdown on Right) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.45fr) minmax(0, 1fr)', gap: '20px' }}>
+        {/* Card 1: Modeled Disaster Classification Line Chart */}
         <div 
           style={{
             background: '#ffffff',
             borderRadius: '16px',
-            border: '1.5px solid #e2e8f0',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
-            padding: '20px',
+            border: '1.5px solid #ccfbf1',
+            boxShadow: '0 10px 25px -4px rgba(13, 148, 136, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
+            padding: '22px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.96rem', fontWeight: 800, color: '#0f172a' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#ccfbf1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <PieChart size={16} color="var(--rama-green)" />
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #0d9488 0%, #0077b6 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+
+          {/* Card Header with Peak Badge & Category Tag */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#ccfbf1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rama-green)' }}>
+                <LineChart size={17} />
               </div>
-              <span>Incidents by Disaster Classification</span>
+              <div>
+                <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#0f172a' }}>
+                  Incidents by Disaster Classification
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                  Interactive multi-series trajectory & classification spline
+                </div>
+              </div>
             </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0d9488', background: '#f0fdfa', padding: '3px 8px', borderRadius: '6px', border: '1px solid #ccfbf1' }}>
-              {Object.keys(incidents_by_type).length} Types Active
-            </span>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span 
+                style={{ 
+                  fontSize: '0.74rem', 
+                  fontWeight: 700, 
+                  color: '#0f766e', 
+                  background: '#f0fdfa', 
+                  padding: '4px 10px', 
+                  borderRadius: '20px', 
+                  border: '1px solid #ccfbf1',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#0d9488' }} />
+                Peak: <strong style={{ textTransform: 'capitalize' }}>{peakType}</strong> ({peakCount})
+              </span>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {Object.entries(incidents_by_type).length === 0 ? (
-              <div style={{ color: '#94a3b8', fontSize: '0.84rem', padding: '30px', textAlign: 'center' }}>
-                No disaster classification data recorded yet.
-              </div>
-            ) : (
-              Object.entries(incidents_by_type).map(([type, count]) => {
-                const pct = Math.round((count / totalIncidents) * 100);
-                return (
-                  <div key={type}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
-                      <span style={{ textTransform: 'capitalize', fontWeight: 700, color: '#1e293b' }}>
-                        {type.replace(/_/g, ' ')}
-                      </span>
-                      <span style={{ color: '#0f766e', fontWeight: 700, fontFamily: 'var(--font-mono)', fontSize: '0.82rem' }}>
-                        {count} incidents <span style={{ color: '#64748b', fontWeight: 500 }}>({pct}%)</span>
-                      </span>
-                    </div>
-                    <div style={{ height: '9px', background: '#f1f5f9', borderRadius: '5px', overflow: 'hidden' }}>
-                      <div 
-                        style={{ 
-                          width: `${pct}%`, 
-                          height: '100%', 
-                          background: 'linear-gradient(90deg, #0d9488 0%, #0077b6 100%)', 
-                          borderRadius: '5px',
-                          transition: 'width 0.4s ease'
-                        }} 
-                      />
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          {/* Bespoke Interactive Line Chart */}
+          <DisasterLineChart
+            timelineData={timeline_trend}
+            incidentsByType={incidents_by_type}
+            totalIncidents={totalIncidents}
+          />
         </div>
 
-        {/* Priority Tier Distribution */}
+        {/* Card 2: Severity & Priority Tier Breakdown */}
         <div 
           style={{
             background: '#ffffff',
             borderRadius: '16px',
-            border: '1.5px solid #e2e8f0',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
-            padding: '20px',
+            border: '1.5px solid #fecaca',
+            boxShadow: '0 10px 25px -4px rgba(239, 68, 68, 0.08), 0 2px 6px -1px rgba(0,0,0,0.03)',
+            padding: '22px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
+          <div style={{ height: '3.5px', background: 'linear-gradient(90deg, #ef4444 0%, #f97316 100%)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.96rem', fontWeight: 800, color: '#0f172a' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Flame size={16} color="#ef4444" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Flame size={17} color="#ef4444" />
               </div>
-              <span>Severity & Priority Tier Breakdown</span>
+              <div>
+                <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#0f172a' }}>
+                  Severity & Priority Tier Breakdown
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                  Multi-factor AI triage scoring tiers
+                </div>
+              </div>
             </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ef4444', background: '#fef2f2', padding: '3px 8px', borderRadius: '6px', border: '1px solid #fecaca' }}>
-              Multi-factor AI Scored
+            <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#dc2626', background: '#fef2f2', padding: '4px 10px', borderRadius: '20px', border: '1px solid #fecaca' }}>
+              Dynamic SLA
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
             {/* Critical */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 700, color: '#dc2626', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: '#fef2f2', padding: '12px 14px', borderRadius: '12px', border: '1px solid #fecaca' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
+                <span style={{ fontWeight: 800, color: '#dc2626', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} />
                   CRITICAL (Score 80 - 100)
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#991b1b' }}>
-                  {incidents_by_priority.critical || 0} incidents
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#991b1b', background: '#ffffff', padding: '2px 8px', borderRadius: '6px', border: '1px solid #fecaca', fontSize: '0.80rem' }}>
+                  {incidents_by_priority.critical || 0} incidents ({Math.round(((incidents_by_priority.critical || 0) / totalIncidents) * 100)}%)
                 </span>
               </div>
-              <div style={{ height: '9px', background: '#fee2e2', borderRadius: '5px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: '#fee2e2', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, ((incidents_by_priority.critical || 0) / totalIncidents) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)', borderRadius: '5px' }} />
               </div>
             </div>
 
             {/* High */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 700, color: '#c2410c', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: '#fff7ed', padding: '12px 14px', borderRadius: '12px', border: '1px solid #fed7aa' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
+                <span style={{ fontWeight: 800, color: '#c2410c', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f97316' }} />
                   HIGH (Score 60 - 79)
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#9a3412' }}>
-                  {incidents_by_priority.high || 0} incidents
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#9a3412', background: '#ffffff', padding: '2px 8px', borderRadius: '6px', border: '1px solid #fed7aa', fontSize: '0.80rem' }}>
+                  {incidents_by_priority.high || 0} incidents ({Math.round(((incidents_by_priority.high || 0) / totalIncidents) * 100)}%)
                 </span>
               </div>
-              <div style={{ height: '9px', background: '#ffedd5', borderRadius: '5px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: '#ffedd5', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, ((incidents_by_priority.high || 0) / totalIncidents) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, #f97316 0%, #ea580c 100%)', borderRadius: '5px' }} />
               </div>
             </div>
 
             {/* Medium */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 700, color: '#a16207', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: '#fefce8', padding: '12px 14px', borderRadius: '12px', border: '1px solid #fef08a' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
+                <span style={{ fontWeight: 800, color: '#a16207', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#eab308' }} />
                   MEDIUM (Score 30 - 59)
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#854d0e' }}>
-                  {incidents_by_priority.medium || 0} incidents
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#854d0e', background: '#ffffff', padding: '2px 8px', borderRadius: '6px', border: '1px solid #fef08a', fontSize: '0.80rem' }}>
+                  {incidents_by_priority.medium || 0} incidents ({Math.round(((incidents_by_priority.medium || 0) / totalIncidents) * 100)}%)
                 </span>
               </div>
-              <div style={{ height: '9px', background: '#fef9c3', borderRadius: '5px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: '#fef9c3', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, ((incidents_by_priority.medium || 0) / totalIncidents) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, #eab308 0%, #ca8a04 100%)', borderRadius: '5px' }} />
               </div>
             </div>
 
             {/* Low */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 700, color: '#047857', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: '#ecfdf5', padding: '12px 14px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.84rem', marginBottom: '6px' }}>
+                <span style={{ fontWeight: 800, color: '#047857', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
                   LOW (Score 0 - 29)
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#065f46' }}>
-                  {incidents_by_priority.low || 0} incidents
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#065f46', background: '#ffffff', padding: '2px 8px', borderRadius: '6px', border: '1px solid #a7f3d0', fontSize: '0.80rem' }}>
+                  {incidents_by_priority.low || 0} incidents ({Math.round(((incidents_by_priority.low || 0) / totalIncidents) * 100)}%)
                 </span>
               </div>
-              <div style={{ height: '9px', background: '#ecfdf5', borderRadius: '5px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: '#d1fae5', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, ((incidents_by_priority.low || 0) / totalIncidents) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, #10b981 0%, #059669 100%)', borderRadius: '5px' }} />
               </div>
             </div>
@@ -395,20 +427,20 @@ export function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Channel Intake Breakdown */}
+      {/* Modeled Multi-Channel Ingestion Performance Breakdown */}
       <div 
         style={{
           background: '#ffffff',
           borderRadius: '16px',
           border: '1.5px solid #e2e8f0',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
-          padding: '20px',
+          boxShadow: '0 8px 24px -4px rgba(0,0,0,0.04)',
+          padding: '22px',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.96rem', fontWeight: 800, color: '#0f172a' }}>
-            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Radio size={16} color="#8b5cf6" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.98rem', fontWeight: 800, color: '#0f172a' }}>
+            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Radio size={17} color="#8b5cf6" />
             </div>
             <span>Multi-Channel Emergency Ingestion Performance</span>
           </div>
@@ -428,6 +460,7 @@ export function AnalyticsPage() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '14px',
+              boxShadow: '0 2px 6px rgba(13, 148, 136, 0.05)',
               transition: 'transform 0.15s ease'
             }}
           >
@@ -457,6 +490,7 @@ export function AnalyticsPage() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '14px',
+              boxShadow: '0 2px 6px rgba(234, 88, 12, 0.05)',
               transition: 'transform 0.15s ease'
             }}
           >
@@ -486,6 +520,7 @@ export function AnalyticsPage() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '14px',
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.05)',
               transition: 'transform 0.15s ease'
             }}
           >
@@ -515,6 +550,7 @@ export function AnalyticsPage() {
               display: 'flex', 
               alignItems: 'center', 
               gap: '14px',
+              boxShadow: '0 2px 6px rgba(139, 92, 246, 0.05)',
               transition: 'transform 0.15s ease'
             }}
           >
