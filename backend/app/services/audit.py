@@ -31,7 +31,8 @@ async def log_audit_event(
     }
 
     try:
-        await db["audit_logs"].insert_one(audit_entry)
+        insert_res = await db["audit_logs"].insert_one(audit_entry)
+        audit_entry["_id"] = str(insert_res.inserted_id)
         # Broadcast audit event
         await broadcaster.broadcast("AUDIT_LOG_CREATED", audit_entry)
         logger.info(f"[AUDIT] {event_type} - Incident: {incident_id} | Actor: {actor}")
