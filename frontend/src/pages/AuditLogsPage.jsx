@@ -200,7 +200,7 @@ export function AuditLogsPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(5, 10, 20, 0.85)',
+            backgroundColor: 'rgba(15, 39, 56, 0.65)',
             backdropFilter: 'blur(5px)',
             display: 'flex',
             alignItems: 'center',
@@ -211,18 +211,18 @@ export function AuditLogsPage() {
         >
           <div
             style={{
-              background: 'var(--bg-card)',
+              background: '#ffffff',
               border: '1px solid var(--border-medium)',
               borderRadius: '12px',
               padding: '20px',
               width: '90%',
               maxWidth: '560px',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6)',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                   Audit Event: {selectedEvent.event_type}
                 </h3>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
