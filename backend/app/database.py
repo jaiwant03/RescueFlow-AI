@@ -165,6 +165,8 @@ in_memory_db = InMemoryDatabase()
 async def connect_to_mongo():
     logger.info("Connecting to MongoDB at %s...", settings.MONGO_URI)
     try:
+        if AsyncIOMotorClient is Any:
+            raise ImportError("Motor module not available in active environment.")
         db_manager.client = AsyncIOMotorClient(
             settings.MONGO_URI,
             serverSelectionTimeoutMS=2000
