@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSystem } from '../context/SystemContext';
 import { useAuth } from '../context/AuthContext';
 import { CubeLogo } from './CubeLogo';
+import { NotificationPanel } from './NotificationPanel';
+import { UserProfileMenu } from './UserProfileMenu';
 import { 
   Workflow, 
   Cpu, 
   Database, 
   Bell, 
-  ChevronDown, 
-  AlertTriangle 
+  ChevronDown 
 } from 'lucide-react';
 
 export function Header() {
-  const { systemStatus } = useSystem();
+  const { systemStatus, unreadCount, bellRinging } = useSystem();
   const { user } = useAuth();
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const getInitials = (name) => {
+    if (!name) return 'OP';
+    const parts = name.split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
 
   return (
     <header
@@ -199,69 +209,120 @@ export function Header() {
           />
         </div>
 
-        {/* Notification Bell with red dot */}
-        <div
-          style={{
-            position: 'relative',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#64748b',
-          }}
-        >
-          <Bell size={18} />
-          <span
-            style={{
-              position: 'absolute',
-              top: '6px',
-              right: '6px',
-              width: '7px',
-              height: '7px',
-              borderRadius: '50%',
-              backgroundColor: '#ef4444',
-              border: '1px solid #ffffff',
+        {/* Interactive Notification Bell with Unread Badge & Sound Tone */}
+        <div style={{ position: 'relative' }}>
+          <button
+            id="navbar-notification-btn"
+            onClick={() => {
+              setIsNotificationOpen(prev => !prev);
+              setIsProfileOpen(false);
             }}
-          />
-        </div>
-
-        {/* User Profile Avatar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            paddingLeft: '6px',
-            cursor: 'pointer',
-          }}
-        >
-          <div
+            title="Emergency Notifications & Dispatch Alerts"
+            className={bellRinging ? 'bell-ringing' : ''}
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: '#0284c7',
+              position: 'relative',
+              width: '36px',
+              height: '36px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
-              fontWeight: 700,
-              fontSize: '0.78rem',
+              cursor: 'pointer',
+              color: isNotificationOpen ? '#0d9488' : '#475569',
+              background: isNotificationOpen ? '#f0fdfa' : '#f8fafc',
+              border: `1px solid ${isNotificationOpen ? '#99f6e4' : '#e2e8f0'}`,
+              borderRadius: '10px',
+              boxShadow: isNotificationOpen ? '0 0 0 3px rgba(13, 148, 136, 0.15)' : 'none',
+              transition: 'all 0.15s ease',
             }}
           >
-            SC
-          </div>
-          <div style={{ lineHeight: 1.15 }}>
-            <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
-              Sarah Connor
+            <Bell size={18} />
+            {unreadCount > 0 && (
+              <span
+                className="pulse-badge"
+                style={{
+                  position: 'absolute',
+                  top: '-4px',
+                  right: '-4px',
+                  minWidth: '18px',
+                  height: '18px',
+                  padding: '0 4px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#ef4444',
+                  color: '#ffffff',
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px solid #ffffff',
+                  boxShadow: '0 2px 5px rgba(239, 68, 68, 0.4)',
+                }}
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {/* Modeled Notification Panel */}
+          <NotificationPanel
+            isOpen={isNotificationOpen}
+            onClose={() => setIsNotificationOpen(false)}
+          />
+        </div>
+
+        {/* Interactive User Profile Avatar & Dropdown Menu */}
+        <div style={{ position: 'relative' }}>
+          <button
+            id="navbar-user-profile-btn"
+            onClick={() => {
+              setIsProfileOpen(prev => !prev);
+              setIsNotificationOpen(false);
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '4px 8px 4px 6px',
+              borderRadius: '12px',
+              background: isProfileOpen ? '#f8fafc' : 'transparent',
+              border: `1px solid ${isProfileOpen ? '#cbd5e1' : 'transparent'}`,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #0077b6 0%, #0d9488 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                boxShadow: '0 2px 6px rgba(0, 119, 182, 0.25)',
+              }}
+            >
+              {getInitials(user?.name)}
             </div>
-            <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 500 }}>
-              Operations Commander
+            <div style={{ lineHeight: 1.15, textAlign: 'left' }}>
+              <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
+                {user?.name || 'Sarah Connor'}
+              </div>
+              <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 500 }}>
+                {user?.role || 'Operations Commander'}
+              </div>
             </div>
-          </div>
-          <ChevronDown size={14} color="#94a3b8" />
+            <ChevronDown size={14} color="#94a3b8" />
+          </button>
+
+          {/* Modeled User Profile Menu */}
+          <UserProfileMenu
+            isOpen={isProfileOpen}
+            onClose={() => setIsProfileOpen(false)}
+          />
         </div>
       </div>
     </header>

@@ -15,6 +15,7 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { SystemStatusPage } from './pages/SystemStatusPage';
 import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
 
 export function App() {
   return (
@@ -22,7 +23,8 @@ export function App() {
       <SystemProvider>
         <Router>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage initialMode="login" />} />
+            <Route path="/signup" element={<SignupPage />} />
 
             {/* Main Application Layout with Navigation */}
             <Route path="/" element={<MainLayout />}>

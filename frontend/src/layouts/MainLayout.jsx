@@ -1,13 +1,19 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { LiveTicker } from '../components/LiveTicker';
 import { useSystem } from '../context/SystemContext';
+import { useAuth } from '../context/AuthContext';
 import { AlertTriangle } from 'lucide-react';
 
 export function MainLayout() {
   const { toasts } = useSystem();
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f1f5f9' }}>
