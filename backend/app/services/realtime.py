@@ -32,11 +32,16 @@ class RealtimeBroadcaster:
             logger.info(f"SSE client unregistered. Total SSE: {len(self.sse_queues)}")
 
     async def broadcast(self, event_type: str, data: Dict[str, Any]):
+        def json_serial(obj):
+            if hasattr(obj, "isoformat"):
+                return obj.isoformat()
+            return str(obj)
+
         message = {
             "type": event_type,
             "data": data,
         }
-        msg_json = json.dumps(message)
+        msg_json = json.dumps(message, default=json_serial)
 
         # Broadcast to active WebSockets
         dead_ws = []
