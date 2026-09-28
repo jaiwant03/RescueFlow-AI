@@ -1,37 +1,62 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
 import { useSystem } from '../context/SystemContext';
-import { LiveOperationsBar } from '../components/LiveOperationsBar';
+import { DemoControlBar } from '../components/DemoControlBar';
 import { IncidentMap } from '../components/IncidentMap';
-import { PriorityBadge } from '../components/PriorityBadge';
-import { StatusBadge } from '../components/StatusBadge';
 import { ApprovalModal } from '../components/ApprovalModal';
+import { PriorityBadge } from '../components/PriorityBadge';
 import { Link } from 'react-router-dom';
 import { 
-  Flame, 
+  BarChart2,
   AlertTriangle, 
-  Activity, 
-  CheckCircle, 
-  Layers, 
-  TrendingUp, 
   Clock, 
-  ArrowRight, 
-  ShieldCheck,
+  Layers, 
+  CheckCircle,
   MapPin, 
-  Users
+  ChevronDown, 
+  Check, 
+  Maximize2,
+  Cpu, 
+  Workflow, 
+  Database, 
+  ShieldCheck, 
+  ChevronRight,
+  Crosshair,
+  Hourglass,
+  Cog
 } from 'lucide-react';
+
+// Subtle smooth sparkline curve matching the screenshot cards
+function Sparkline({ color = '#0d9488' }) {
+  return (
+    <svg width="44" height="20" viewBox="0 0 44 20" fill="none" style={{ flexShrink: 0 }}>
+      <path
+        d="M2 15 Q12 19 20 10 T32 7 T42 3"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeOpacity="0.45"
+      />
+      <path
+        d="M2 15 Q12 19 20 10 T32 7 T42 3 L42 20 L2 20 Z"
+        fill={color}
+        fillOpacity="0.10"
+      />
+    </svg>
+  );
+}
 
 export function DashboardPage() {
   const { stats, refreshStats } = useSystem();
   const [incidents, setIncidents] = useState([]);
   const [approvals, setApprovals] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedIncidentForApproval, setSelectedIncidentForApproval] = useState(null);
   const [approvalAction, setApprovalAction] = useState('approve');
+  const [district, setDistrict] = useState('Coimbatore District');
+  const [currentTimeStr, setCurrentTimeStr] = useState('08:48 PM');
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
       const [incRes, appRes] = await Promise.all([
         api.getIncidents({ limit: 25 }),
         api.getApprovals('pending')
@@ -40,13 +65,15 @@ export function DashboardPage() {
       setApprovals(appRes.approvals || []);
     } catch (err) {
       console.error('Dashboard load error:', err);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     loadData();
+    // Format current time like 08:48 PM
+    const now = new Date();
+    const formatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    setCurrentTimeStr(formatted);
   }, [loadData]);
 
   const handleOpenApproval = (incident, action) => {
@@ -67,263 +94,497 @@ export function DashboardPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Real-time Emergency Operations Command Bar */}
-      <LiveOperationsBar onRefresh={loadData} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* 1. Hackathon Demo Simulation Controller Hero Banner */}
+      <DemoControlBar onScenarioComplete={loadData} />
 
-
-      {/* Top Operations Statistics Cards */}
+      {/* 2. Top 6 Operations Statistics Cards */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '14px',
+          gridTemplateColumns: 'repeat(6, 1fr)',
+          gap: '12px',
         }}
       >
         {/* Total Incidents */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--rama-green)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span>TOTAL INCIDENTS</span>
-            <Activity size={17} color="var(--rama-green)" />
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#f0fdfa',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <BarChart2 size={16} color="#0d9488" />
+            </div>
+            <Sparkline color="#0d9488" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
-            {stats.total_incidents || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Active & triage tracking
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              TOTAL INCIDENTS
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#0f2738', margin: '2px 0 2px' }}>
+              {stats.total_incidents || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>
+              Active & triage tracking
+            </div>
           </div>
         </div>
 
         {/* Critical */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-critical)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span style={{ color: 'var(--priority-critical)' }}>CRITICAL</span>
-            <Flame size={17} color="var(--priority-critical)" />
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#fef2f2',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <AlertTriangle size={16} color="#dc2626" />
+            </div>
+            <Sparkline color="#dc2626" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--priority-critical)', margin: '6px 0 2px' }}>
-            {stats.critical || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--priority-critical)', fontWeight: 700 }}>
-            Immediate life danger
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              CRITICAL
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#dc2626', margin: '2px 0 2px' }}>
+              {stats.critical || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#dc2626', fontWeight: 600 }}>
+              Immediate life danger
+            </div>
           </div>
         </div>
 
         {/* High */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-high)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span style={{ color: 'var(--priority-high)' }}>HIGH</span>
-            <AlertTriangle size={17} color="var(--priority-high)" />
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#fff7ed',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <AlertTriangle size={16} color="#ea580c" />
+            </div>
+            <Sparkline color="#ea580c" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--priority-high)', margin: '6px 0 2px' }}>
-            {stats.high || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--priority-high)', fontWeight: 700 }}>
-            High-consequence response
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              HIGH
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#ea580c', margin: '2px 0 2px' }}>
+              {stats.high || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#ea580c', fontWeight: 600 }}>
+              High-consequence response
+            </div>
           </div>
         </div>
 
         {/* Medium */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--priority-medium)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span style={{ color: '#b45309' }}>MEDIUM</span>
-            <Clock size={17} color="var(--priority-medium)" />
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#fffbeb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Clock size={16} color="#d97706" />
+            </div>
+            <Sparkline color="#d97706" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#b45309', margin: '6px 0 2px' }}>
-            {stats.medium || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Controlled triage
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              MEDIUM
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#d97706', margin: '2px 0 2px' }}>
+              {stats.medium || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>
+              Controlled triage
+            </div>
           </div>
         </div>
 
-        {/* Deduplication Efficiency */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--rama-green)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span style={{ color: 'var(--rama-deep)' }}>DEDUP SAVINGS</span>
-            <Layers size={17} color="var(--rama-green)" />
+        {/* Dedup Savings */}
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#f0fdfa',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Layers size={16} color="#0d9488" />
+            </div>
+            <Sparkline color="#0d9488" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--rama-deep)', margin: '6px 0 2px' }}>
-            {stats.deduplication_saved || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--rama-deep)', fontWeight: 700 }}>
-            Fragmented reports merged
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              DEDUP SAVINGS
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#0d9488', margin: '2px 0 2px' }}>
+              {stats.deduplication_saved || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>
+              Fragmented reports merged
+            </div>
           </div>
         </div>
 
         {/* Resolved */}
-        <div className="eoc-card" style={{ borderLeft: '5px solid var(--peacock-light)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.03em' }}>
-            <span style={{ color: 'var(--peacock-primary)' }}>RESOLVED</span>
-            <CheckCircle size={17} color="var(--peacock-light)" />
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: '#f0f9ff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CheckCircle size={16} color="#0284c7" />
+            </div>
+            <Sparkline color="#0284c7" />
           </div>
-          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--peacock-deep)', margin: '6px 0 2px' }}>
-            {stats.resolved || 0}
-          </div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Completed operations
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ fontSize: '0.66rem', fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+              RESOLVED
+            </div>
+            <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#0284c7', margin: '2px 0 2px' }}>
+              {stats.resolved || 0}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 500 }}>
+              Completed operations
+            </div>
           </div>
         </div>
       </div>
 
-
-      {/* Main Command Center Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px' }}>
-        {/* Left Column: Interactive Map & Live Incidents Feed */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Tactical Map */}
-          <div className="eoc-card" style={{ padding: '16px' }}>
-            <div className="eoc-card-header">
-              <div className="eoc-card-title">
-                <MapPin size={18} color="var(--accent-cyan)" />
-                <span>Tactical Disaster Geo-Operations Map</span>
+      {/* 3. Main Dashboard Grid (Map on Left, Authorizations & Principles on Right) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.45fr 1fr', gap: '16px' }}>
+        {/* Left: Tactical Disaster Geo-Operations Map Card */}
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '14px',
+            padding: '14px 16px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* Map Header */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '50%',
+                  background: '#f0fdfa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <MapPin size={15} color="#0d9488" />
               </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                {incidents.filter(i => i.latitude).length} Geo-Located Incidents
+              <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f2738' }}>
+                Tactical Disaster Geo-Operations Map
               </span>
             </div>
-            <IncidentMap incidents={incidents} height="360px" />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {/* Coimbatore District Dropdown */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
+                  color: '#0f766e',
+                  background: '#f0fdfa',
+                  border: '1px solid #ccfbf1',
+                  borderRadius: '9999px',
+                  padding: '3px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                <MapPin size={12} color="#0d9488" />
+                <span>{district}</span>
+                <ChevronDown size={12} color="#0f766e" />
+              </div>
+
+              {/* Last Updated Timestamp */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.72rem', color: '#64748b' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                <span>Last updated: {currentTimeStr}</span>
+              </div>
+            </div>
           </div>
 
-          {/* Active Incidents Priority Table */}
-          <div className="eoc-card">
-            <div className="eoc-card-header">
-              <div className="eoc-card-title">
-                <Activity size={18} color="#ef4444" />
-                <span>Live Priority Incident Queue</span>
-              </div>
-              <Link to="/incidents" style={{ fontSize: '0.8rem', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                View All ({incidents.length}) <ArrowRight size={14} />
-              </Link>
-            </div>
+          {/* Interactive Leaflet Map with Markers and Controls */}
+          <div style={{ position: 'relative', height: '360px', borderRadius: '10px', overflow: 'hidden' }}>
+            <IncidentMap incidents={incidents} height="360px" />
 
-            {incidents.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)' }}>
-                No active incidents recorded. Click any demo step button above to simulate an emergency intake!
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table className="eoc-table">
-                  <thead>
-                    <tr>
-                      <th>Incident ID</th>
-                      <th>Priority</th>
-                      <th>Type</th>
-                      <th>Location</th>
-                      <th>Impact</th>
-                      <th>Reports</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {incidents.slice(0, 7).map((inc) => (
-                      <tr key={inc.incident_id}>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                          <Link to={`/incidents/${inc.incident_id}`} style={{ color: 'var(--accent-cyan)' }}>
-                            {inc.incident_id}
-                          </Link>
-                        </td>
-                        <td>
-                          <PriorityBadge level={inc.priority_level} score={inc.priority_score} />
-                        </td>
-                        <td style={{ textTransform: 'capitalize', fontWeight: 600 }}>
-                          {inc.type}
-                        </td>
-                        <td style={{ color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
-                          {inc.location}
-                        </td>
-                        <td>
-                          <span style={{ fontWeight: 600, color: inc.people_affected > 0 ? '#ffffff' : 'var(--text-muted)' }}>
-                            {inc.people_affected || 0}
-                          </span>
-                        </td>
-                        <td>
-                          <span
-                            style={{
-                              background: inc.report_count > 1 ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
-                              color: inc.report_count > 1 ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontWeight: 700,
-                            }}
-                          >
-                            {inc.report_count}
-                          </span>
-                        </td>
-                        <td>
-                          <StatusBadge status={inc.status} />
-                        </td>
-                        <td>
-                          <Link to={`/incidents/${inc.incident_id}`} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.75rem' }}>
-                            Inspect
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            {/* View Full Map button in bottom right overlay */}
+            <Link
+              to="/incidents"
+              style={{
+                position: 'absolute',
+                bottom: '12px',
+                right: '12px',
+                background: '#ffffff',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
+                padding: '5px 12px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                color: '#0f2738',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                zIndex: 1000,
+              }}
+            >
+              <Maximize2 size={12} />
+              View Full Map
+            </Link>
           </div>
         </div>
 
-        {/* Right Column: Approvals Queue & Channel Stream */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Pending Human Approvals */}
-          <div className="eoc-card" style={{ borderTop: '4px solid #f59e0b' }}>
-            <div className="eoc-card-header">
-              <div className="eoc-card-title">
-                <ShieldCheck size={18} color="#f59e0b" />
-                <span>Pending Human Authorizations</span>
+        {/* Right Column: Pending Authorizations & Orchestration Principles */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Card 1: Pending Human Authorizations */}
+          <div
+            style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '14px',
+              padding: '14px 18px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+              minHeight: '170px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid #f1f5f9',
+                paddingBottom: '10px',
+                marginBottom: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Hourglass size={16} color="#0d9488" />
+                <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#0f2738' }}>
+                  Pending Human Authorizations
+                </span>
               </div>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b' }}>
+              <span
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: approvals.length > 0 ? '#ea580c' : '#059669',
+                }}
+              >
                 {approvals.length} REQUIRED
               </span>
             </div>
 
             {approvals.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-                ✓ All high-priority incidents authorized or none pending.
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '14px 0',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '50%',
+                    background: '#10b981',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    marginBottom: '8px',
+                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <Check size={24} strokeWidth={3} />
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 500 }}>
+                  All high-priority incidents authorized or none pending.
+                </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {approvals.slice(0, 3).map((app) => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {approvals.slice(0, 2).map((app) => (
                   <div
                     key={app.approval_id}
                     style={{
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--border-subtle)',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
                       borderRadius: '8px',
-                      padding: '14px',
+                      padding: '10px 12px',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--peacock-deep)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.82rem', color: '#0f2738' }}>
                         {app.incident_id}
                       </span>
                       <PriorityBadge level={app.priority_level} score={app.priority_score} />
                     </div>
-
-                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--peacock-deep)', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f2738', marginBottom: '6px' }}>
                       {app.disaster_type?.toUpperCase()} — {app.location}
                     </div>
-
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '10px' }}>
-                      {app.people_affected || 0} affected | Units: {(app.recommended_resources || []).join(', ') || 'First Responders'}
-                    </div>
-
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button
                         onClick={() => handleOpenApproval({ incident_id: app.incident_id, ...app }, 'approve')}
-                        className="btn btn-primary"
-                        style={{ flex: 1, padding: '6px 10px', fontSize: '0.78rem' }}
+                        style={{
+                          flex: 1,
+                          padding: '5px 10px',
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          background: '#0d9488',
+                          color: '#ffffff',
+                          borderRadius: '6px',
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
                       >
                         Approve Response
                       </button>
                       <button
                         onClick={() => handleOpenApproval({ incident_id: app.incident_id, ...app }, 'reject')}
-                        className="btn btn-secondary"
-                        style={{ padding: '6px 10px', fontSize: '0.78rem', color: '#ef4444' }}
+                        style={{
+                          padding: '5px 10px',
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          background: '#ffffff',
+                          color: '#dc2626',
+                          border: '1px solid #fecaca',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                        }}
                       >
                         Reject
                       </button>
@@ -334,60 +595,157 @@ export function DashboardPage() {
             )}
           </div>
 
-          {/* Real-Time Response Telemetry & Dispatch Channels */}
+          {/* Card 2: Orchestration Pipeline Principles */}
           <div
-            className="eoc-card"
             style={{
               background: '#ffffff',
-              border: '1px solid var(--border-medium)',
+              border: '1px solid #e2e8f0',
+              borderRadius: '14px',
+              padding: '14px 18px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
             }}
           >
-            <div className="eoc-card-header">
-              <div className="eoc-card-title" style={{ fontSize: '0.94rem', fontWeight: 800 }}>
-                <TrendingUp size={16} color="var(--rama-green)" />
-                <span>Real-Time Response Telemetry</span>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid #f1f5f9',
+                paddingBottom: '10px',
+                marginBottom: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Cog size={16} color="#0d9488" />
+                <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#0f2738' }}>
+                  Orchestration Pipeline Principles
+                </span>
               </div>
-              <Link to="/activity" style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--peacock-primary)' }}>
-                View Dispatches &rarr;
+              <Link
+                to="/status"
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  color: '#0284c7',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                }}
+              >
+                View Details &rarr;
               </Link>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--peacock-primary)', fontWeight: 800, fontSize: '0.8rem' }}>AI UNDERSTANDS:</span>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Groq extracts triage, impact & location</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* Row 1: AI Understands */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '6px',
+                  background: '#f8fafc',
+                  border: '1px solid #f1f5f9',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Cpu size={16} color="#0284c7" />
+                  <div>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0284c7', marginRight: '8px' }}>
+                      AI UNDERSTANDS
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      Groq LLM extracts needs, disaster type & location
+                    </span>
+                  </div>
                 </div>
-                <span className="badge badge-rama">ACTIVE</span>
+                <ChevronRight size={14} color="#94a3b8" />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--peacock-deep)', fontWeight: 800, fontSize: '0.8rem' }}>n8n AUTOMATES:</span>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Orchestrator routes alerts to units</span>
+
+              {/* Row 2: n8n Automates */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '6px',
+                  background: '#f8fafc',
+                  border: '1px solid #f1f5f9',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Workflow size={16} color="#0d9488" />
+                  <div>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0d9488', marginRight: '8px' }}>
+                      n8n AUTOMATES
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      Central workflows coordinate intake & notifications
+                    </span>
+                  </div>
                 </div>
-                <span className="badge badge-peacock">READY</span>
+                <ChevronRight size={14} color="#94a3b8" />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--rama-deep)', fontWeight: 800, fontSize: '0.8rem' }}>MONGODB STORES:</span>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Deduplication merges reports</span>
+
+              {/* Row 3: MongoDB Remembers */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '6px',
+                  background: '#f8fafc',
+                  border: '1px solid #f1f5f9',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Database size={16} color="#10b981" />
+                  <div>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#10b981', marginRight: '8px' }}>
+                      MONGODB REMEMBERS
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      Corroborating reports merge without data loss
+                    </span>
+                  </div>
                 </div>
-                <span className="badge badge-rama">SYNCED</span>
+                <ChevronRight size={14} color="#94a3b8" />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-main)', border: '1px solid var(--border-subtle)', borderRadius: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#ea580c', fontWeight: 800, fontSize: '0.8rem' }}>HUMAN APPROVES:</span>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Critical dispatches require operator decision</span>
+
+              {/* Row 4: Human Approves */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '6px',
+                  background: '#f8fafc',
+                  border: '1px solid #f1f5f9',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <ShieldCheck size={16} color="#3b82f6" />
+                  <div>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#3b82f6', marginRight: '8px' }}>
+                      HUMAN APPROVES
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      Critical dispatches require operator decision
+                    </span>
+                  </div>
                 </div>
-                <span className="badge badge-high" style={{ padding: '2px 6px', fontSize: '0.68rem' }}>REQUIRED</span>
+                <ChevronRight size={14} color="#94a3b8" />
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* Approval Action Modal */}
+      {/* Approval Modal */}
       <ApprovalModal
         isOpen={Boolean(selectedIncidentForApproval)}
         onClose={() => setSelectedIncidentForApproval(null)}

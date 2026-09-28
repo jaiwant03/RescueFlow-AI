@@ -10,12 +10,9 @@ export function MainLayout() {
   const { toasts } = useSystem();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-main)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f1f5f9' }}>
       {/* Main Header */}
       <Header />
-
-      {/* Live Activity Ticker */}
-      <LiveTicker />
 
       {/* App Body (Sidebar + Content) */}
       <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
@@ -23,14 +20,16 @@ export function MainLayout() {
         <main
           style={{
             flex: 1,
-            padding: '24px',
+            padding: '16px 20px',
             overflowY: 'auto',
-            maxHeight: 'calc(100vh - 75px)',
+            maxHeight: 'calc(100vh - 58px)',
+            background: '#f1f5f9',
           }}
         >
           <Outlet />
         </main>
       </div>
+
 
 
       {/* Floating Notification Toasts */}
