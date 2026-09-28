@@ -13,7 +13,8 @@ import {
   MapPin, 
   Truck,
   Clock,
-  Sparkles
+  Sparkles,
+  Layers
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -90,35 +91,61 @@ export function ApprovalCenterPage() {
         </button>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
+      {/* Modeled Segmented Tabs */}
+      <div
+        style={{
+          display: 'inline-flex',
+          background: '#f1f5f9',
+          padding: '4px',
+          borderRadius: '12px',
+          border: '1px solid #e2e8f0',
+          gap: '4px',
+          width: 'fit-content',
+        }}
+      >
         <button
+          type="button"
           onClick={() => setStatusTab('pending')}
           style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            background: statusTab === 'pending' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-            color: statusTab === 'pending' ? '#f59e0b' : 'var(--text-secondary)',
-            border: statusTab === 'pending' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 18px',
+            borderRadius: '9px',
+            fontSize: '0.84rem',
+            fontWeight: statusTab === 'pending' ? 700 : 600,
+            background: statusTab === 'pending' ? '#ffffff' : 'transparent',
+            color: statusTab === 'pending' ? '#0f766e' : '#64748b',
+            boxShadow: statusTab === 'pending' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
-          Pending Authorizations
+          <Clock size={15} color={statusTab === 'pending' ? 'var(--rama-green)' : 'currentColor'} />
+          <span>Pending Authorizations</span>
         </button>
         <button
+          type="button"
           onClick={() => setStatusTab('all')}
           style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            background: statusTab === 'all' ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
-            color: statusTab === 'all' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-            border: statusTab === 'all' ? '1px solid rgba(6, 182, 212, 0.4)' : '1px solid transparent',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 18px',
+            borderRadius: '9px',
+            fontSize: '0.84rem',
+            fontWeight: statusTab === 'all' ? 700 : 600,
+            background: statusTab === 'all' ? '#ffffff' : 'transparent',
+            color: statusTab === 'all' ? '#0f766e' : '#64748b',
+            boxShadow: statusTab === 'all' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
           }}
         >
-          All Authorization Records
+          <Layers size={15} color={statusTab === 'all' ? 'var(--rama-green)' : 'currentColor'} />
+          <span>All Authorization Records</span>
         </button>
       </div>
 
