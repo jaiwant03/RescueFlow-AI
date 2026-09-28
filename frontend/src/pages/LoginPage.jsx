@@ -78,7 +78,7 @@ export function LoginPage() {
           </p>
         </div>
 
-        {/* 1-Click Demo Bypass Button */}
+        {/* 1-Click Command Center Access */}
         <button
           onClick={handleQuickDemoAccess}
           className="btn btn-primary"
@@ -88,15 +88,23 @@ export function LoginPage() {
             fontSize: '0.92rem',
             fontWeight: 700,
             marginBottom: '20px',
-            background: 'var(--gradient-peacock-rama)',
+            background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
             boxShadow: '0 4px 14px rgba(13, 148, 136, 0.35)',
+            border: 'none',
+            borderRadius: '10px',
+            color: '#ffffff',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
           }}
         >
-          <Sparkles size={16} /> Enter as Operations Commander (Demo Access)
+          <Sparkles size={16} /> Enter as Operations Commander
         </button>
 
-        <div style={{ textAlign: 'center', margin: '14px 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-          &mdash; OR CONFIGURE DEMO OPERATOR PROFILE &mdash;
+        <div style={{ textAlign: 'center', margin: '14px 0', fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>
+          &mdash; OR CONFIGURE OPERATOR CREDENTIALS &mdash;
         </div>
 
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
