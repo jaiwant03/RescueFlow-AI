@@ -339,12 +339,17 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                   <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                     Simulated Channel Source
                   </label>
-                  <select value={source} onChange={(e) => setSource(e.target.value)} style={{ width: '100%' }}>
-                    <option value="web">Web Emergency Portal</option>
-                    <option value="telegram">Telegram Bot</option>
-                    <option value="email">Gmail / Email</option>
-                    <option value="radio">VHF Radio / Dispatch</option>
-                  </select>
+                  <ModeledSelect
+                    value={source}
+                    onChange={setSource}
+                    options={[
+                      { value: 'web', label: 'Web Emergency Portal', dotColor: '#0ea5e9' },
+                      { value: 'telegram', label: 'Telegram Bot', dotColor: '#0284c7' },
+                      { value: 'email', label: 'Gmail / Email', dotColor: '#ea4335' },
+                      { value: 'radio', label: 'VHF Radio / Dispatch', dotColor: '#10b981' },
+                    ]}
+                    minWidth="100%"
+                  />
                 </div>
               </div>
 
