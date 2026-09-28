@@ -113,7 +113,7 @@ export function IncidentDetailPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <h1 style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: '#ffffff' }}>
+              <h1 style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--peacock-deep)' }}>
                 {incident.incident_id}
               </h1>
               <PriorityBadge level={incident.priority_level} score={incident.priority_score} />
@@ -189,33 +189,33 @@ export function IncidentDetailPage() {
               </span>
             </div>
 
-            <div style={{ fontSize: '0.95rem', color: '#ffffff', lineHeight: 1.6, marginBottom: '16px' }}>
+            <div style={{ fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: 1.6, marginBottom: '16px' }}>
               {incident.ai_summary || 'Urgent emergency requiring tactical field response and immediate triage.'}
             </div>
 
             {/* Quick Metrics */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginBottom: '16px' }}>
-              <div style={{ background: 'var(--bg-surface)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>LOCATION</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--peacock-deep)', marginTop: '2px' }}>
                   {incident.location}
                 </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>PEOPLE AFFECTED</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--peacock-deep)', marginTop: '2px' }}>
                   {incident.people_affected || 0} residents
                 </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>CORROBORATION</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--accent-cyan)', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--rama-green)', marginTop: '2px' }}>
                   {incident.report_count || 1} independent reports
                 </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ background: 'var(--bg-main)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ASSIGNED TEAM</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--peacock-deep)', marginTop: '2px' }}>
                   {incident.assigned_team || 'Pending dispatch'}
                 </div>
               </div>
@@ -311,7 +311,7 @@ export function IncidentDetailPage() {
                       >
                         {msg.source}
                       </span>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#ffffff' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                         {msg.sender || 'Citizen'}
                       </span>
                       {msg.phone && (
@@ -325,7 +325,7 @@ export function IncidentDetailPage() {
                     </span>
                   </div>
 
-                  <p style={{ fontSize: '0.85rem', color: '#e2e8f0', lineHeight: 1.4 }}>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
                     "{msg.message}"
                   </p>
                 </div>
@@ -361,14 +361,14 @@ export function IncidentDetailPage() {
                     alignItems: 'center',
                     gap: '10px',
                     fontSize: '0.82rem',
-                    background: 'var(--bg-surface)',
+                    background: 'var(--bg-main)',
                     padding: '8px 10px',
                     borderRadius: '6px',
-                    borderLeft: '3px solid #10b981',
+                    borderLeft: '3px solid var(--rama-green)',
                   }}
                 >
-                  <CheckCircle size={14} color="#10b981" style={{ flexShrink: 0 }} />
-                  <span style={{ color: '#ffffff' }}>{reason}</span>
+                  <CheckCircle size={14} color="var(--rama-green)" style={{ flexShrink: 0 }} />
+                  <span style={{ color: 'var(--peacock-deep)', fontWeight: 600 }}>{reason}</span>
                 </div>
               ))}
             </div>
@@ -420,7 +420,7 @@ export function IncidentDetailPage() {
                   />
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#ffffff' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--peacock-deep)' }}>
                         {item.event_type}
                       </span>
                       <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
@@ -459,7 +459,7 @@ export function IncidentDetailPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(5, 10, 20, 0.85)',
+            backgroundColor: 'rgba(15, 39, 56, 0.65)',
             backdropFilter: 'blur(5px)',
             display: 'flex',
             alignItems: 'center',
@@ -467,8 +467,8 @@ export function IncidentDetailPage() {
             zIndex: 9999,
           }}
         >
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '400px' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '14px', color: '#ffffff' }}>
+          <div style={{ background: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '400px', boxShadow: 'var(--shadow-lg)' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '14px', color: 'var(--peacock-deep)' }}>
               Assign Field Response Team
             </h3>
             <form onSubmit={handleAssignTeam}>
