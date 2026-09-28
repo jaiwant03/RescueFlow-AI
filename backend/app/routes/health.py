@@ -33,8 +33,10 @@ async def system_status():
     n8n_health = await n8n_service.check_health()
     
     # 4. Telegram & Email configuration checks
-    telegram_token = settings.__dict__.get("TELEGRAM_BOT_TOKEN", None)
-    telegram_status = "configured" if telegram_token else "simulation_ready"
+    from app.services.telegram_service import telegram_service
+    tg_info = await telegram_service.get_bot_info()
+    telegram_connected = tg_info.get("status") == "connected"
+    telegram_status = "connected" if telegram_connected else ("configured" if telegram_service.is_configured else "simulation_ready")
     email_status = "simulation_ready"
 
     return {
@@ -65,8 +67,10 @@ async def system_status():
             },
             "telegram": {
                 "status": telegram_status,
-                "healthy": True,
-                "note": "Messages processed via n8n Telegram Trigger or simulation input"
+                "healthy": telegram_connected or not telegram_service.is_configured,
+                "bot_username": tg_info.get("username", "@RescueFlowAI_DemoBot"),
+                "bot_name": tg_info.get("first_name", "rescue flow ai"),
+                "note": f"Live Bot Active: {tg_info.get('username')}" if telegram_connected else "Messages processed via n8n Telegram Trigger or simulation input"
             },
             "email": {
                 "status": email_status,
