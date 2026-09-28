@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { api } from '../services/api';
 import { useSystem } from '../context/SystemContext';
 import { 
-  Play, 
-  RotateCcw, 
   Sparkles, 
-  CheckCircle, 
+  RotateCcw, 
   Layers, 
   Flame, 
   HeartHandshake, 
@@ -17,7 +15,6 @@ import {
 export function DemoControlBar({ onScenarioComplete }) {
   const { addToast, refreshStats } = useSystem();
   const [runningKey, setRunningKey] = useState(null);
-  const [activeStep, setActiveStep] = useState(0);
   const [processingModal, setProcessingModal] = useState(null);
 
   const scenarios = [
@@ -26,7 +23,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       stepNum: '1',
       title: 'Flood @ PSG',
       subtitle: '5 trapped (Telegram)',
-      color: '#ef4444',
+      color: '#dc2626',
       icon: <Radio size={14} />,
     },
     {
@@ -34,7 +31,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       stepNum: '2',
       title: 'Corroborate #2',
       subtitle: 'Water in homes (Email)',
-      color: '#f97316',
+      color: '#ea580c',
       icon: <Layers size={14} />,
     },
     {
@@ -42,7 +39,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       stepNum: '3',
       title: 'Corroborate #3',
       subtitle: '3 Reports Merged (Web)',
-      color: '#06b6d4',
+      color: '#0d9488',
       icon: <Layers size={14} />,
     },
     {
@@ -50,7 +47,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       stepNum: '4',
       title: 'Fire @ Gandhipuram',
       subtitle: 'Building trapped (Telegram)',
-      color: '#f43f5e',
+      color: '#e11d48',
       icon: <Flame size={14} />,
     },
     {
@@ -58,7 +55,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       stepNum: '5',
       title: 'Medical @ RS Puram',
       subtitle: 'Elderly assistance (Web)',
-      color: '#eab308',
+      color: '#d97706',
       icon: <HeartHandshake size={14} />,
     },
     {
@@ -84,24 +81,27 @@ export function DemoControlBar({ onScenarioComplete }) {
     setRunningKey(sc.key);
     setProcessingModal({
       scenario: sc,
-      currentStepIndex: 0
+      currentStepIndex: 0,
     });
 
-    // Animate through processing steps for realistic AI orchestration visual
-    for (let i = 0; i < processingSteps.length - 1; i++) {
-      setActiveStep(i);
-      setProcessingModal(prev => prev ? { ...prev, currentStepIndex: i } : null);
-      await new Promise(r => setTimeout(r, 220));
-    }
+    const stepInterval = setInterval(() => {
+      setProcessingModal((prev) => {
+        if (!prev) return null;
+        if (prev.currentStepIndex < processingSteps.length - 1) {
+          return { ...prev, currentStepIndex: prev.currentStepIndex + 1 };
+        }
+        return prev;
+      });
+    }, 450);
 
     try {
-      const res = await api.runDemoScenario(sc.key);
-      setActiveStep(processingSteps.length - 1);
-      setProcessingModal(prev => prev ? { ...prev, currentStepIndex: processingSteps.length - 1 } : null);
-      
-      await new Promise(r => setTimeout(r, 350));
-      setProcessingModal(null);
-      setRunningKey(null);
+      const res = await api.runScenario(sc.key);
+      clearInterval(stepInterval);
+
+      setTimeout(() => {
+        setProcessingModal(null);
+        setRunningKey(null);
+      }, 500);
 
       const status = res.pipeline_result?.status;
       const incId = res.pipeline_result?.incident_id;
@@ -126,6 +126,7 @@ export function DemoControlBar({ onScenarioComplete }) {
       if (onScenarioComplete) onScenarioComplete(res);
     } catch (err) {
       console.error('Error running scenario:', err);
+      clearInterval(stepInterval);
       setProcessingModal(null);
       setRunningKey(null);
       addToast('Simulation Error', err.response?.data?.detail || err.message, 'warning');
@@ -148,18 +149,18 @@ export function DemoControlBar({ onScenarioComplete }) {
   return (
     <div
       style={{
-        background: 'linear-gradient(180deg, #111a2f 0%, #0d1527 100%)',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%)',
         border: '1px solid var(--border-medium)',
         borderRadius: '12px',
-        padding: '12px 18px',
+        padding: '14px 18px',
         marginBottom: '20px',
-        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        boxShadow: 'var(--shadow-md)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={16} color="var(--accent-cyan)" />
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff', letterSpacing: '0.04em' }}>
+          <Sparkles size={16} color="var(--rama-green)" />
+          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--peacock-deep)', letterSpacing: '0.04em' }}>
             HACKATHON DEMO SIMULATION CONTROLLER
           </span>
           <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
@@ -170,7 +171,7 @@ export function DemoControlBar({ onScenarioComplete }) {
         <button
           onClick={handleReset}
           className="btn btn-secondary"
-          style={{ fontSize: '0.75rem', padding: '4px 10px', height: '28px', color: '#94a3b8' }}
+          style={{ fontSize: '0.75rem', padding: '4px 12px', height: '28px', color: 'var(--peacock-primary)' }}
           title="Reset database to initial zero state"
         >
           <RotateCcw size={12} /> Reset Demo Data
@@ -182,7 +183,7 @@ export function DemoControlBar({ onScenarioComplete }) {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-          gap: '8px',
+          gap: '10px',
         }}
       >
         {scenarios.map((sc) => {
@@ -193,47 +194,57 @@ export function DemoControlBar({ onScenarioComplete }) {
               onClick={() => handleRunScenario(sc)}
               disabled={Boolean(runningKey)}
               style={{
-                background: isRunning ? 'rgba(6, 182, 212, 0.2)' : 'var(--bg-surface)',
-                border: `1px solid ${isRunning ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
+                background: isRunning ? 'var(--rama-bg)' : '#ffffff',
+                border: `1px solid ${isRunning ? 'var(--rama-green)' : 'var(--border-subtle)'}`,
                 borderRadius: '8px',
-                padding: '8px 10px',
+                padding: '10px 12px',
                 textAlign: 'left',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '10px',
                 cursor: runningKey ? 'not-allowed' : 'pointer',
                 opacity: runningKey && !isRunning ? 0.5 : 1,
-                transition: 'all 0.15s ease',
+                boxShadow: isRunning ? '0 0 12px rgba(13, 148, 136, 0.3)' : 'var(--shadow-sm)',
+                transition: 'all var(--transition-fast)',
               }}
               onMouseEnter={(e) => {
-                if (!runningKey) e.currentTarget.style.borderColor = sc.color;
+                if (!runningKey) {
+                  e.currentTarget.style.borderColor = 'var(--rama-green)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
               }}
               onMouseLeave={(e) => {
-                if (!runningKey) e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                if (!runningKey) {
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
               }}
             >
               <div
                 style={{
-                  width: '26px',
-                  height: '26px',
+                  width: '28px',
+                  height: '28px',
                   borderRadius: '6px',
-                  background: `${sc.color}22`,
+                  background: `${sc.color}15`,
                   color: sc.color,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  border: `1px solid ${sc.color}33`,
                 }}
               >
                 {isRunning ? <Loader2 size={14} className="animate-spin" /> : sc.stepNum}
               </div>
               <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--peacock-deep)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {sc.title}
                 </div>
-                <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {sc.subtitle}
                 </div>
               </div>
@@ -251,7 +262,7 @@ export function DemoControlBar({ onScenarioComplete }) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(5, 10, 20, 0.85)',
+            backgroundColor: 'rgba(15, 39, 56, 0.65)',
             backdropFilter: 'blur(5px)',
             display: 'flex',
             alignItems: 'center',
@@ -261,22 +272,22 @@ export function DemoControlBar({ onScenarioComplete }) {
         >
           <div
             style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--accent-cyan)',
+              background: '#ffffff',
+              border: '2px solid var(--rama-green)',
               borderRadius: '14px',
               padding: '24px 30px',
               width: '90%',
               maxWidth: '460px',
-              boxShadow: '0 0 35px rgba(6, 182, 212, 0.3)',
+              boxShadow: '0 20px 50px rgba(0, 91, 130, 0.25)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <Loader2 size={22} color="var(--accent-cyan)" style={{ animation: 'spin 1s linear infinite' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <Loader2 size={24} color="var(--rama-green)" style={{ animation: 'spin 1s linear infinite' }} />
               <div>
-                <h3 style={{ fontSize: '1.05rem', color: '#ffffff', fontWeight: 700 }}>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--peacock-deep)', fontWeight: 800 }}>
                   RescueFlow AI Orchestration
                 </h3>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
                   Executing {processingModal.scenario.title} ({processingModal.scenario.subtitle})
                 </p>
               </div>
@@ -295,22 +306,24 @@ export function DemoControlBar({ onScenarioComplete }) {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '10px',
-                      fontSize: '0.82rem',
-                      color: isDone ? '#10b981' : isCurrent ? '#ffffff' : 'var(--text-muted)',
-                      fontWeight: isCurrent ? 600 : 400,
+                      fontSize: '0.84rem',
+                      color: isDone ? 'var(--rama-deep)' : isCurrent ? 'var(--peacock-deep)' : 'var(--text-muted)',
+                      fontWeight: isCurrent ? 700 : isDone ? 600 : 400,
                     }}
                   >
                     <div
                       style={{
-                        width: '18px',
-                        height: '18px',
+                        width: '20px',
+                        height: '20px',
                         borderRadius: '50%',
-                        border: isDone ? '1px solid #10b981' : isCurrent ? '2px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
-                        background: isDone ? 'rgba(16, 185, 129, 0.2)' : isCurrent ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
+                        border: isDone ? '1px solid var(--rama-green)' : isCurrent ? '2px solid var(--peacock-primary)' : '1px solid var(--border-medium)',
+                        background: isDone ? 'var(--rama-bg)' : isCurrent ? 'var(--peacock-bg)' : 'transparent',
+                        color: isDone ? 'var(--rama-deep)' : isCurrent ? 'var(--peacock-primary)' : 'inherit',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '0.65rem',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
                         flexShrink: 0,
                       }}
                     >
