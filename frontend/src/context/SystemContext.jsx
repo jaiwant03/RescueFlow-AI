@@ -10,8 +10,9 @@ export function SystemProvider({ children }) {
     mongodb: { status: 'checking', healthy: true },
     groq_ai: { status: 'checking', healthy: true },
     n8n: { status: 'checking', healthy: false },
-    telegram: { status: 'simulation_ready', healthy: true },
-    email: { status: 'simulation_ready', healthy: true },
+    telegram: { status: 'ready', healthy: true },
+    email: { status: 'ready', healthy: true },
+
   });
 
   const [toasts, setToasts] = useState([]);
