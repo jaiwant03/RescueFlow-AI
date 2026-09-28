@@ -352,6 +352,7 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
             details={"location": new_incident["location"], "type": new_incident["type"], "priority": priority_level}
         )
 
+        new_incident = sanitize_doc(new_incident)
         await broadcaster.broadcast("INCIDENT_CREATED", new_incident)
         return {"status": "created", "incident_id": inc_id, "incident": new_incident}
 
