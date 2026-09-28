@@ -3,9 +3,14 @@ import asyncio
 from typing import Optional, Dict, Any, List
 try:
     from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+    HAS_MOTOR = True
 except ImportError:
-    AsyncIOMotorClient = Any
-    AsyncIOMotorDatabase = Any
+    class AsyncIOMotorClient:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+    class AsyncIOMotorDatabase:  # type: ignore
+        pass
+    HAS_MOTOR = False
 from app.config import settings
 
 logger = logging.getLogger("rescueflow.database")
@@ -165,7 +170,7 @@ in_memory_db = InMemoryDatabase()
 async def connect_to_mongo():
     logger.info("Connecting to MongoDB at %s...", settings.MONGO_URI)
     try:
-        if AsyncIOMotorClient is Any:
+        if not HAS_MOTOR:
             raise ImportError("Motor module not available in active environment.")
         db_manager.client = AsyncIOMotorClient(
             settings.MONGO_URI,
