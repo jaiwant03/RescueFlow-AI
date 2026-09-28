@@ -468,7 +468,7 @@ export function IncidentDetailPage() {
           }}
         >
           <div style={{ background: '#ffffff', border: '1px solid var(--border-medium)', borderRadius: '12px', padding: '24px', width: '90%', maxWidth: '400px', boxShadow: 'var(--shadow-lg)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '14px', color: 'var(--peacock-deep)' }}>
+            <h3 className="heading-cursive-multicolor" style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '14px' }}>
               Assign Field Response Team
             </h3>
             <form onSubmit={handleAssignTeam}>
