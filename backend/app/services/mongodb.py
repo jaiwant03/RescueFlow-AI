@@ -2,47 +2,11 @@ import logging
 import uuid
 from datetime import datetime
 from typing import Dict, Any, Optional, List
-from app.database import get_database
-from app.services.realtime import broadcaster
-from app.services.groq_service import groq_service
-from app.services.priority_engine import calculate_priority_score
-from app.services.deduplication import deduplication_engine
-from app.services.audit import log_audit_event
-from app.services.n8n import n8n_service
-
-logger = logging.getLogger("rescueflow.mongo_service")
-
-# Default Coimbatore area coordinates for realistic map visualization
-COIMBATORE_LOCATIONS = {
-    "psg college": {"lat": 11.0248, "lng": 77.0028},
-    "psg": {"lat": 11.0248, "lng": 77.0028},
-    "gandhipuram": {"lat": 11.0168, "lng": 76.9674},
-    "rs puram": {"lat": 11.0085, "lng": 76.9489},
-    "peelamedu": {"lat": 11.0315, "lng": 77.0065},
-    "singanallur": {"lat": 10.9996, "lng": 77.0264},
-    "saravanampatti": {"lat": 11.0805, "lng": 76.9958},
-    "town hall": {"lat": 10.9967, "lng": 76.9629},
-    "railway station": {"lat": 10.9983, "lng": 76.9678},
-}
-
-Tuple_coords = tuple[Optional[float], Optional[float]]
-
-def resolve_coords(location_str: str, lat: Optional[float], lng: Optional[float]) -> Tuple_coords:
-    if lat and lng:
-        return lat, lng
-    loc_lower = str(location_str or "").lower()
-    for key, coords in COIMBATORE_LOCATIONS.items():
-        if key in loc_lower:
-            return coords["lat"], coords["lng"]
-    return None, None
+from app.database import get_database, clean_mongo_doc
 
 def sanitize_doc(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-    if not doc:
-        return doc
-    clean = dict(doc)
-    if "_id" in clean:
-        clean["_id"] = str(clean["_id"])
-    return clean
+    return clean_mongo_doc(doc)
+
 
 async def get_next_incident_id(db) -> str:
     count = await db["incidents"].count_documents({})
