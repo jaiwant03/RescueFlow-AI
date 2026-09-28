@@ -42,8 +42,15 @@ async def lifespan(app: FastAPI):
     logger.info(f"   Mode: {'DEMO SIMULATION' if settings.DEMO_MODE else 'PRODUCTION'}")
     logger.info("==================================================")
     await connect_to_mongo()
+    from app.services.telegram_service import telegram_service
+    if telegram_service.is_configured:
+        await telegram_service.start_polling()
+        logger.info("Telegram Bot poller initialized for real-time citizen message ingestion.")
     yield
     # Shutdown
+    from app.services.telegram_service import telegram_service
+    if telegram_service.is_configured:
+        await telegram_service.stop_polling()
     await close_mongo_connection()
     logger.info("RescueFlow AI shutdown complete.")
 
