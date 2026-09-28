@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { CubeLogo } from './CubeLogo';
 import { NotificationPanel } from './NotificationPanel';
 import { UserProfileMenu } from './UserProfileMenu';
+import { EditProfileModal } from './EditProfileModal';
 import { 
   Workflow, 
   Cpu, 
@@ -17,6 +18,7 @@ export function Header() {
   const { user } = useAuth();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   const getInitials = (name) => {
     if (!name) return 'OP';
