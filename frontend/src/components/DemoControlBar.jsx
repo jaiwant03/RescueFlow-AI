@@ -177,16 +177,17 @@ export function DemoControlBar({ onScenarioComplete }) {
           </div>
           <div>
             <h2
+              className="heading-cursive-multicolor"
               style={{
-                fontSize: '1.08rem',
+                fontSize: '1.25rem',
                 fontWeight: 800,
-                color: '#0f2738',
                 lineHeight: 1.2,
-                letterSpacing: '-0.01em',
+                letterSpacing: '0.01em',
               }}
             >
               Hackathon Demo Simulation Controller
             </h2>
+
             <p
               style={{
                 fontSize: '0.74rem',

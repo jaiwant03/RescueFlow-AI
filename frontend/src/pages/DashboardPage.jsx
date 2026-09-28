@@ -396,9 +396,10 @@ export function DashboardPage() {
               >
                 <MapPin size={15} color="#0d9488" />
               </div>
-              <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f2738' }}>
+              <span className="heading-cursive-multicolor" style={{ fontSize: '1.15rem', fontWeight: 800 }}>
                 Tactical Disaster Geo-Operations Map
               </span>
+
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -489,9 +490,10 @@ export function DashboardPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Hourglass size={16} color="#0d9488" />
-                <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#0f2738' }}>
+                <span className="heading-cursive-multicolor" style={{ fontSize: '1.12rem', fontWeight: 800 }}>
                   Pending Human Authorizations
                 </span>
+
               </div>
               <span
                 style={{
@@ -617,9 +619,10 @@ export function DashboardPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Cog size={16} color="#0d9488" />
-                <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#0f2738' }}>
+                <span className="heading-cursive-multicolor" style={{ fontSize: '1.12rem', fontWeight: 800 }}>
                   Orchestration Pipeline Principles
                 </span>
+
               </div>
               <Link
                 to="/status"

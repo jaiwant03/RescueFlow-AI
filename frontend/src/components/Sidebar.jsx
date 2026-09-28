@@ -83,20 +83,20 @@ export function Sidebar() {
           <div
             style={{
               position: 'absolute',
-              bottom: '12px',
+              bottom: '8px',
               left: '0',
               right: '0',
               textAlign: 'center',
-              color: '#0f766e',
-              fontSize: '0.74rem',
-              fontWeight: 700,
-              lineHeight: 1.25,
+              lineHeight: 1.15,
               textShadow: '0 1px 2px rgba(255,255,255,0.9)',
-              letterSpacing: '0.01em',
             }}
           >
-            <div>Safer Communities</div>
-            <div>Stronger Tomorrow</div>
+            <div className="heading-cursive-multicolor" style={{ fontSize: '1.02rem', fontWeight: 700, display: 'block' }}>
+              Safer Communities
+            </div>
+            <div className="heading-cursive-vibrant" style={{ fontSize: '0.92rem', fontWeight: 700, display: 'block' }}>
+              Stronger Tomorrow
+            </div>
           </div>
         </div>
       </div>
