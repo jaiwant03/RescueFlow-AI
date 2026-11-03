@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSystem } from '../context/SystemContext';
@@ -23,6 +23,27 @@ export function LoginPage({ initialMode = 'login' }) {
   const navigate = useNavigate();
   const { login, signup } = useAuth();
   const { addToast } = useSystem();
+
+  // Intro 5-second splash animation state
+  const [showSplash, setShowSplash] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  useEffect(() => {
+    // Start fading out slightly before 5 seconds for smooth cross-fade transition
+    const fadeTimer = setTimeout(() => {
+      setIsFadingOut(true);
+    }, 4500);
+
+    // Complete splash exactly at 5000ms
+    const endTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(endTimer);
+    };
+  }, []);
 
   // If navigated to /signup, start in signup mode
   const isSignupRoute = location.pathname === '/signup' || initialMode === 'signup';
@@ -135,6 +156,95 @@ export function LoginPage({ initialMode = 'login' }) {
       }
     }, 300);
   };
+
+  // 5-second splash screen before opening login page
+  if (showSplash) {
+    return (
+      <div
+        onClick={() => setShowSplash(false)}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 999999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f8fafc',
+          backgroundImage: 'radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px)',
+          backgroundSize: '24px 24px',
+          opacity: isFadingOut ? 0 : 1,
+          transition: 'opacity 0.5s ease-in-out',
+          cursor: 'pointer',
+          overflow: 'hidden',
+          userSelect: 'none',
+          fontFamily: "'Plus Jakarta Sans', 'Outfit', -apple-system, sans-serif",
+        }}
+      >
+        {/* Ambient Glow Orb */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '460px',
+            height: '460px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(13, 148, 136, 0.16) 0%, rgba(2, 132, 199, 0.10) 50%, transparent 70%)',
+            filter: 'blur(55px)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Center Intro: Only Logo and RescueFlow AI Name */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            zIndex: 10,
+          }}
+        >
+          {/* Logo rotates exactly one time */}
+          <div
+            style={{
+              animation: 'logoIntroRotate 3.2s cubic-bezier(0.25, 1, 0.5, 1) forwards',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              filter: 'drop-shadow(0 14px 30px rgba(13, 148, 136, 0.32))',
+            }}
+          >
+            <CubeLogo size={84} />
+          </div>
+
+          {/* Below logo RescueFlow AI name comes */}
+          <div
+            style={{
+              marginTop: '26px',
+              animation: 'nameIntroFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.8s forwards',
+              opacity: 0,
+              textAlign: 'center',
+            }}
+          >
+            <h1
+              className="brand-title-modern"
+              style={{
+                fontSize: '2.6rem',
+                fontWeight: 800,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.1,
+                color: '#0f172a',
+                margin: 0,
+              }}
+            >
+              RescueFlow <span className="brand-gradient-text">AI</span>
+            </h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
