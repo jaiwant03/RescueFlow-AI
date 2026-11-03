@@ -63,7 +63,7 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
   const validIncidents = incidents.filter(i => i.latitude && i.longitude);
 
   return (
-    <div style={{ height, width: '100%', position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
+    <div style={{ height, width: '100%', position: 'relative', borderRadius: '10px', overflow: 'hidden', isolation: 'isolate' }}>
       <MapContainer
         center={defaultCenter}
         zoom={12}

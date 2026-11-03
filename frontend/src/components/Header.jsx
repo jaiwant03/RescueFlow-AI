@@ -36,7 +36,7 @@ export function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        zIndex: 50,
+        zIndex: 1100,
         position: 'sticky',
         top: 0,
         boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
