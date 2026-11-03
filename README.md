@@ -240,7 +240,7 @@ DB_NAME=rescueflow
 In a terminal:
 ```bash
 # If using the included virtual environment:
-.\backend_venv\Scripts\activate
+.\venv\Scripts\activate
 # Or install dependencies:
 pip install -r requirements.txt # (or pip install fastapi uvicorn pydantic motor pymongo httpx python-dotenv sse-starlette)
 
