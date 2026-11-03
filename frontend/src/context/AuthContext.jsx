@@ -36,28 +36,26 @@ export function AuthProvider({ children }) {
       } catch (e) {
         console.warn('Failed parsing current user from storage', e);
       }
-    }
-    return currentUser;
-  });
-
-    // Recover photo from registeredUsers if available
-    try {
-      const savedReg = localStorage.getItem('rescueflow_registered_users');
-      if (savedReg) {
-        const regList = JSON.parse(savedReg);
-        if (Array.isArray(regList)) {
-          const match = regList.find(
-            u => (currentUser.id && u.id === currentUser.id) ||
-                 (currentUser.email && u.email?.toLowerCase() === currentUser.email?.toLowerCase()) ||
-                 (currentUser.name && u.name?.toLowerCase() === currentUser.name?.toLowerCase())
-          );
-          if (match && match.photo) {
-            currentUser = { ...currentUser, photo: match.photo };
+    if (currentUser) {
+      // Recover photo from registeredUsers if available
+      try {
+        const savedReg = localStorage.getItem('rescueflow_registered_users');
+        if (savedReg) {
+          const regList = JSON.parse(savedReg);
+          if (Array.isArray(regList)) {
+            const match = regList.find(
+              u => (currentUser.id && u.id === currentUser.id) ||
+                   (currentUser.email && u.email?.toLowerCase() === currentUser.email?.toLowerCase()) ||
+                   (currentUser.name && u.name?.toLowerCase() === currentUser.name?.toLowerCase())
+            );
+            if (match && match.photo) {
+              currentUser = { ...currentUser, photo: match.photo };
+            }
           }
         }
+      } catch (e) {
+        // Ignore
       }
-    } catch (e) {
-      // Ignore
     }
 
     return currentUser;
