@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
       } catch (e) {
         console.warn('Failed parsing current user from storage', e);
       }
+    }
     if (currentUser) {
       // Recover photo from registeredUsers if available
       try {
