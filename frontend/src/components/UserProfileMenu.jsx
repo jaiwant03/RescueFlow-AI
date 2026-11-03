@@ -55,8 +55,8 @@ export function UserProfileMenu({ isOpen, onClose, onOpenEditProfile }) {
       ref={menuRef}
       style={{
         position: 'absolute',
-        top: '52px',
-        right: '24px',
+        top: '50px',
+        right: '0',
         width: '300px',
         background: '#ffffff',
         borderRadius: '16px',
@@ -64,7 +64,7 @@ export function UserProfileMenu({ isOpen, onClose, onOpenEditProfile }) {
         border: '1px solid #e2e8f0',
         zIndex: 9999,
         overflow: 'hidden',
-        animation: 'slideIn 0.16s cubic-bezier(0.16, 1, 0.3, 1)',
+        animation: 'panelDropdown 0.16s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       {/* Top Gradient Accent */}
