@@ -137,9 +137,9 @@ web,"An elderly person requires urgent medical assistance near RS Puram.",2026-0
 email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
 
     const blob = new Blob([sampleCSVContent], { type: 'text/csv' });
-    const file = new File([blob], 'demo_disaster_reports.csv', { type: 'text/csv' });
+    const file = new File([blob], 'disaster_telemetry_batch.csv', { type: 'text/csv' });
     setCsvFile(file);
-    addToast('Demo CSV Loaded', "Sample emergency CSV dataset ready. Click 'Process CSV Batch' to execute.", 'info');
+    addToast('Batch Dataset Ready', "Emergency CSV batch ready. Click 'Process CSV Batch' to execute.", 'info');
   };
 
   return (
