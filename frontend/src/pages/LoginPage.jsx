@@ -6,7 +6,6 @@ import { ModeledSelect } from '../components/ModeledSelect';
 import { CubeLogo } from '../components/CubeLogo';
 import { 
   Shield, 
-  Sparkles, 
   Lock, 
   Mail, 
   User, 
@@ -14,25 +13,26 @@ import {
   Eye, 
   EyeOff, 
   ArrowRight, 
-  CheckCircle2, 
   AlertCircle,
   Radio,
-  KeyRound
+  KeyRound,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 
 export function LoginPage({ initialMode = 'login' }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, signup, user: currentUser } = useAuth();
+  const { login, signup } = useAuth();
   const { addToast } = useSystem();
 
   // If navigated to /signup, start in signup mode
   const isSignupRoute = location.pathname === '/signup' || initialMode === 'signup';
   const [mode, setMode] = useState(isSignupRoute ? 'signup' : 'login');
 
-  // Login form state
-  const [loginEmail, setLoginEmail] = useState('commander@rescueflow.ai');
-  const [loginPassword, setLoginPassword] = useState('admin');
+  // Login form state - clean, real-time (no hardcoded demo pre-fills)
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [loginRole, setLoginRole] = useState('Operations Commander');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [rememberTerminal, setRememberTerminal] = useState(true);
@@ -45,7 +45,7 @@ export function LoginPage({ initialMode = 'login' }) {
   const [signupDepartment, setSignupDepartment] = useState('National Disaster Response Force (NDRF)');
   const [signupRole, setSignupRole] = useState('Operations Commander');
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [agreeTacticalTerms, setAgreeTacticalTerms] = useState(false);
+  const [agreeTacticalTerms, setAgreeTacticalTerms] = useState(true);
 
   // UI state
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,37 +57,20 @@ export function LoginPage({ initialMode = 'login' }) {
     setErrorMessage('');
   };
 
-  // 1-Click Fast Commander Access
-  const handleQuickCommanderAccess = () => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      const res = login({
-        name: 'Sarah Connor',
-        role: 'Operations Commander',
-        department: 'Disaster Operations Command (HQ)',
-        callsign: 'COMMAND-1',
-        badge: 'EOC-7701',
-      });
-      setIsSubmitting(false);
-      if (res.success) {
-        addToast('Tactical Terminal Authenticated', 'Welcome back, Commander Sarah Connor.', 'info');
-        navigate('/');
-      }
-    }, 200);
-  };
-
-  // Quick Preset Selection
-  const applyPreset = (name, email, role, callsign, badge) => {
-    setLoginEmail(email);
-    setLoginRole(role);
-    setLoginPassword('admin');
-    setErrorMessage('');
-  };
-
   // Handle Login Submit
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!loginEmail.trim()) {
+      setErrorMessage('Please enter your official email or operator identifier.');
+      return;
+    }
+    if (!loginPassword) {
+      setErrorMessage('Please enter your security passcode.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     setTimeout(() => {
@@ -100,10 +83,10 @@ export function LoginPage({ initialMode = 'login' }) {
       setIsSubmitting(false);
 
       if (result.success) {
-        addToast('Session Established', `Welcome back, ${result.user.name}.`, 'info');
+        addToast('Operator Authenticated', `Welcome to RescueFlow Console, ${result.user.name}.`, 'info');
         navigate('/');
       } else {
-        setErrorMessage(result.error || 'Authentication failed. Please verify credentials.');
+        setErrorMessage(result.error || 'Authentication failed. Please check credentials.');
       }
     }, 250);
   };
@@ -118,7 +101,7 @@ export function LoginPage({ initialMode = 'login' }) {
       return;
     }
     if (!signupEmail.trim() || !signupEmail.includes('@')) {
-      setErrorMessage('Please provide a valid tactical email address.');
+      setErrorMessage('Please provide a valid official email address.');
       return;
     }
     if (!signupPassword) {
@@ -148,10 +131,10 @@ export function LoginPage({ initialMode = 'login' }) {
       setIsSubmitting(false);
 
       if (result.success) {
-        addToast('Account Registered & Activated', `Welcome to RescueFlow AI, ${result.user.name}!`, 'info');
+        addToast('Profile Activated', `Welcome to RescueFlow AI, ${result.user.name}!`, 'info');
         navigate('/');
       } else {
-        setErrorMessage(result.error || 'Failed to create tactical account.');
+        setErrorMessage(result.error || 'Failed to create operator account.');
       }
     }, 300);
   };
@@ -163,47 +146,47 @@ export function LoginPage({ initialMode = 'login' }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'radial-gradient(circle at 50% 25%, #ffffff 0%, #f0fdfa 45%, #e0f2fe 100%)',
-        padding: '24px 16px',
+        background: 'radial-gradient(circle at 50% 20%, #ffffff 0%, #f0fdfa 45%, #e2e8f0 100%)',
+        padding: '32px 16px',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Background Decorative Mesh Gradients */}
+      {/* Background Subtle Gradient Accents */}
       <div
         style={{
           position: 'absolute',
-          top: '-10%',
-          left: '15%',
-          width: '500px',
-          height: '500px',
+          top: '-15%',
+          left: '10%',
+          width: '520px',
+          height: '520px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
       <div
         style={{
           position: 'absolute',
-          bottom: '-10%',
-          right: '15%',
-          width: '550px',
-          height: '550px',
+          bottom: '-15%',
+          right: '10%',
+          width: '560px',
+          height: '560px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0, 119, 182, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(2, 132, 199, 0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Main Modeled Card Container */}
+      {/* Main Clean Card Container */}
       <div
         style={{
           width: '100%',
-          maxWidth: '490px',
+          maxWidth: '460px',
           background: '#ffffff',
-          borderRadius: '20px',
+          borderRadius: '18px',
           border: '1px solid #e2e8f0',
-          boxShadow: '0 24px 50px -12px rgba(0, 91, 130, 0.18), 0 0 0 1px rgba(226, 232, 240, 0.95)',
+          boxShadow: '0 24px 48px -12px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(0, 0, 0, 0.03)',
           overflow: 'hidden',
           position: 'relative',
           zIndex: 10,
@@ -212,13 +195,13 @@ export function LoginPage({ initialMode = 'login' }) {
         {/* Top Gradient Accent Stripe */}
         <div
           style={{
-            height: '5px',
+            height: '4px',
             width: '100%',
-            background: 'linear-gradient(90deg, #0d9488 0%, #0077b6 50%, #8b5cf6 100%)',
+            background: 'linear-gradient(90deg, #0d9488 0%, #0284c7 50%, #6366f1 100%)',
           }}
         />
 
-        <div style={{ padding: '32px 32px 28px' }}>
+        <div style={{ padding: '32px 30px 26px' }}>
           {/* Header Brand */}
           <div style={{ textAlign: 'center', marginBottom: '22px' }}>
             <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '10px' }}>
@@ -228,7 +211,7 @@ export function LoginPage({ initialMode = 'login' }) {
             <h1
               className="heading-cursive-multicolor"
               style={{
-                fontSize: '2.05rem',
+                fontSize: '1.95rem',
                 fontWeight: 800,
                 letterSpacing: '0.02em',
                 lineHeight: 1.15,
@@ -266,8 +249,8 @@ export function LoginPage({ initialMode = 'login' }) {
                 letterSpacing: '0.03em',
               }}
             >
-              <Radio size={12} color="#059669" />
-              <span>TACTICAL EMERGENCY COMMAND TERMINAL</span>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+              <span>LIVE EMERGENCY OPERATIONS PORTAL</span>
             </div>
           </div>
 
@@ -287,9 +270,9 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('login')}
               style={{
                 flex: 1,
-                padding: '9px 12px',
+                padding: '8px 12px',
                 borderRadius: '9px',
-                fontSize: '0.82rem',
+                fontSize: '0.80rem',
                 fontWeight: 700,
                 background: mode === 'login' ? '#ffffff' : 'transparent',
                 color: mode === 'login' ? '#0f766e' : '#64748b',
@@ -298,10 +281,12 @@ export function LoginPage({ initialMode = 'login' }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
+                border: 'none',
+                cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
             >
-              <KeyRound size={15} />
+              <KeyRound size={14} />
               <span>Operator Sign In</span>
             </button>
 
@@ -310,9 +295,9 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('signup')}
               style={{
                 flex: 1,
-                padding: '9px 12px',
+                padding: '8px 12px',
                 borderRadius: '9px',
-                fontSize: '0.82rem',
+                fontSize: '0.80rem',
                 fontWeight: 700,
                 background: mode === 'signup' ? '#ffffff' : 'transparent',
                 color: mode === 'signup' ? '#0284c7' : '#64748b',
@@ -321,10 +306,12 @@ export function LoginPage({ initialMode = 'login' }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
+                border: 'none',
+                cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
             >
-              <User size={15} />
+              <User size={14} />
               <span>Create Account</span>
             </button>
           </div>
@@ -354,184 +341,166 @@ export function LoginPage({ initialMode = 'login' }) {
 
           {/* MODE 1: SIGN IN */}
           {mode === 'login' && (
-            <div>
-              {/* 1-Click Fast Commander Access */}
+            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                  Official Email or Username
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="text"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="e.g. operator@rescueflow.ai"
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      color: '#0f172a',
+                      outline: 'none',
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                  Security Passcode
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type={showLoginPassword ? 'text' : 'password'}
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Enter security passcode..."
+                    style={{
+                      width: '100%',
+                      padding: '10px 38px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      color: '#0f172a',
+                      outline: 'none',
+                    }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(p => !p)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#94a3b8',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex',
+                    }}
+                  >
+                    {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                  Operational Clearance Role
+                </label>
+                <ModeledSelect
+                  value={loginRole}
+                  onChange={setLoginRole}
+                  options={[
+                    { value: 'Operations Commander', label: 'Operations Commander (Authorizes Dispatches)', dotColor: '#0f766e' },
+                    { value: 'Tactical Supervisor', label: 'Tactical Supervisor (Evaluates Reports)', dotColor: '#0284c7' },
+                    { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer (Telemetry Observer)', dotColor: '#8b5cf6' },
+                    { value: 'Emergency Responder', label: 'Emergency Responder (Field Operations)', dotColor: '#ea580c' },
+                  ]}
+                  minWidth="100%"
+                />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '2px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
+                  <input
+                    type="checkbox"
+                    checked={rememberTerminal}
+                    onChange={(e) => setRememberTerminal(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span>Remember terminal</span>
+                </label>
+                <span
+                  style={{ color: '#0d9488', fontWeight: 600, cursor: 'pointer' }}
+                  onClick={() => addToast('Credential Information', 'Enter your assigned operator passcode, or create a new account.', 'info')}
+                >
+                  Passcode Help?
+                </span>
+              </div>
+
               <button
-                type="button"
-                onClick={handleQuickCommanderAccess}
+                type="submit"
                 disabled={isSubmitting}
                 style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  marginBottom: '16px',
-                  background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
-                  boxShadow: '0 4px 14px rgba(13, 148, 136, 0.35)',
-                  border: 'none',
+                  marginTop: '8px',
+                  padding: '12px',
                   borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #0f766e 0%, #0369a1 100%)',
                   color: '#ffffff',
-                  cursor: 'pointer',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  border: 'none',
+                  boxShadow: '0 4px 14px rgba(15, 118, 110, 0.28)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  letterSpacing: '0.01em',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   transition: 'all 0.15s ease',
+                  opacity: isSubmitting ? 0.8 : 1,
                 }}
               >
-                <Sparkles size={17} />
-                <span>Enter as Operations Commander (Sarah Connor)</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Authenticating Terminal...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Launch Tactical Console</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
               </button>
 
-              {/* Quick Operator Presets */}
-              <div style={{ marginBottom: '18px' }}>
-                <div style={{ fontSize: '0.70rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', textAlign: 'center' }}>
-                  Quick Operator Clearance Presets
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                  {[
-                    { name: 'Sarah Connor', email: 'commander@rescueflow.ai', role: 'Operations Commander', label: 'Commander', color: '#0d9488' },
-                    { name: 'Alex Miller', email: 'supervisor@rescueflow.ai', role: 'Tactical Supervisor', label: 'Supervisor', color: '#0284c7' },
-                    { name: 'Maya Lin', email: 'dispatcher@rescueflow.ai', role: 'Field Dispatch Officer', label: 'Dispatcher', color: '#8b5cf6' },
-                  ].map((p) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      onClick={() => applyPreset(p.name, p.email, p.role)}
-                      style={{
-                        padding: '6px 4px',
-                        borderRadius: '8px',
-                        background: loginEmail === p.email ? '#ecfdf5' : '#f8fafc',
-                        border: `1px solid ${loginEmail === p.email ? '#99f6e4' : '#e2e8f0'}`,
-                        color: loginEmail === p.email ? '#0f766e' : '#475569',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        textAlign: 'center',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', margin: '14px 0', color: '#94a3b8' }}>
-                <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-                <span style={{ padding: '0 12px', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.05em', color: '#94a3b8' }}>
-                  OR SIGN IN WITH CREDENTIALS
+              <div style={{ textAlign: 'center', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                  Need a new operator profile?{' '}
+                  <button
+                    type="button"
+                    onClick={() => handleModeSwitch('signup')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#0d9488',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
+                    Create Account
+                  </button>
                 </span>
-                <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
               </div>
-
-              {/* Login Form */}
-              <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
-                    Tactical Identifier or Email
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type="text"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="e.g. commander@rescueflow.ai"
-                      style={{ width: '100%', paddingLeft: '38px', borderRadius: '10px' }}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
-                    Security Passcode
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type={showLoginPassword ? 'text' : 'password'}
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="Enter security passcode..."
-                      style={{ width: '100%', paddingLeft: '38px', paddingRight: '38px', borderRadius: '10px' }}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowLoginPassword(p => !p)}
-                      style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#94a3b8',
-                        padding: 0,
-                      }}
-                    >
-                      {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
-                    Operational Clearance Role
-                  </label>
-                  <ModeledSelect
-                    value={loginRole}
-                    onChange={setLoginRole}
-                    options={[
-                      { value: 'Operations Commander', label: 'Operations Commander (Authorizes Dispatches)', dotColor: '#0f766e' },
-                      { value: 'Tactical Supervisor', label: 'Tactical Supervisor (Evaluates Reports)', dotColor: '#0284c7' },
-                      { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer (Telemetry Observer)', dotColor: '#8b5cf6' },
-                    ]}
-                    minWidth="100%"
-                  />
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '2px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
-                    <input
-                      type="checkbox"
-                      checked={rememberTerminal}
-                      onChange={(e) => setRememberTerminal(e.target.checked)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <span>Remember terminal</span>
-                  </label>
-                  <span style={{ color: '#0d9488', fontWeight: 600, cursor: 'pointer' }} onClick={() => addToast('Bypass Code', 'Use default passcode "admin" for evaluation.', 'info')}>
-                    Passcode Help?
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  style={{
-                    marginTop: '8px',
-                    padding: '12px',
-                    borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #0f766e 0%, #0369a1 100%)',
-                    color: '#ffffff',
-                    fontWeight: 800,
-                    fontSize: '0.90rem',
-                    border: 'none',
-                    boxShadow: '0 4px 12px rgba(15, 118, 110, 0.25)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <span>{isSubmitting ? 'Authenticating Terminal...' : 'Launch Tactical Console'}</span>
-                  <ArrowRight size={16} />
-                </button>
-              </form>
-            </div>
+            </form>
           )}
 
           {/* MODE 2: SIGN UP */}
@@ -547,8 +516,17 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="text"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
-                    placeholder="e.g. Captain David Chen"
-                    style={{ width: '100%', paddingLeft: '38px', borderRadius: '10px' }}
+                    placeholder="Enter your full name..."
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      color: '#0f172a',
+                      outline: 'none',
+                    }}
                     required
                   />
                 </div>
@@ -564,8 +542,16 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    placeholder="e.g. dchen@disaster-response.gov"
-                    style={{ width: '100%', paddingLeft: '38px', borderRadius: '10px' }}
+                    placeholder="Enter your official email..."
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      color: '#0f172a',
+                      outline: 'none',
+                    }}
                     required
                   />
                 </div>
@@ -581,8 +567,16 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="text"
                     value={signupDepartment}
                     onChange={(e) => setSignupDepartment(e.target.value)}
-                    placeholder="e.g. National Disaster Response Force (NDRF)"
-                    style={{ width: '100%', paddingLeft: '38px', borderRadius: '10px' }}
+                    placeholder="e.g. Disaster Operations Team"
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      color: '#0f172a',
+                      outline: 'none',
+                    }}
                     required
                   />
                 </div>
@@ -599,7 +593,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     { value: 'Operations Commander', label: 'Operations Commander (Full Dispatch Authority)', dotColor: '#0f766e' },
                     { value: 'Tactical Supervisor', label: 'Tactical Supervisor (Incident Evaluation)', dotColor: '#0284c7' },
                     { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer (Fleet Coordination)', dotColor: '#8b5cf6' },
-                    { value: 'First Responder Lead', label: 'First Responder Lead (Ground Unit Lead)', dotColor: '#ea580c' },
+                    { value: 'Emergency Responder Lead', label: 'Emergency Responder Lead (Ground Units)', dotColor: '#ea580c' },
                   ]}
                   minWidth="100%"
                 />
@@ -617,7 +611,15 @@ export function LoginPage({ initialMode = 'login' }) {
                       value={signupPassword}
                       onChange={(e) => setSignupPassword(e.target.value)}
                       placeholder="Passcode"
-                      style={{ width: '100%', paddingLeft: '32px', borderRadius: '10px' }}
+                      style={{
+                        width: '100%',
+                        padding: '9px 10px 9px 32px',
+                        borderRadius: '10px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.82rem',
+                        color: '#0f172a',
+                        outline: 'none',
+                      }}
                       required
                     />
                   </div>
@@ -634,7 +636,15 @@ export function LoginPage({ initialMode = 'login' }) {
                       value={signupConfirmPassword}
                       onChange={(e) => setSignupConfirmPassword(e.target.value)}
                       placeholder="Confirm"
-                      style={{ width: '100%', paddingLeft: '32px', borderRadius: '10px' }}
+                      style={{
+                        width: '100%',
+                        padding: '9px 10px 9px 32px',
+                        borderRadius: '10px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.82rem',
+                        color: '#0f172a',
+                        outline: 'none',
+                      }}
                       required
                     />
                   </div>
@@ -645,7 +655,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 <button
                   type="button"
                   onClick={() => setShowSignupPassword(p => !p)}
-                  style={{ color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   {showSignupPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   <span>{showSignupPassword ? 'Hide Passcodes' : 'Show Passcodes'}</span>
@@ -679,25 +689,56 @@ export function LoginPage({ initialMode = 'login' }) {
                 type="submit"
                 disabled={isSubmitting}
                 style={{
-                  marginTop: '10px',
+                  marginTop: '8px',
                   padding: '12px',
                   borderRadius: '12px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
                   color: '#ffffff',
                   fontWeight: 800,
-                  fontSize: '0.90rem',
+                  fontSize: '0.88rem',
                   border: 'none',
                   boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  cursor: 'pointer',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   transition: 'all 0.15s ease',
+                  opacity: isSubmitting ? 0.8 : 1,
                 }}
               >
-                <span>{isSubmitting ? 'Registering Operator...' : 'Register Operator Account &rarr;'}</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Registering Operator...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Register Operator Account</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
               </button>
+
+              <div style={{ textAlign: 'center', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+                  Already registered?{' '}
+                  <button
+                    type="button"
+                    onClick={() => handleModeSwitch('login')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#0284c7',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
+                    Sign In
+                  </button>
+                </span>
+              </div>
             </form>
           )}
 
