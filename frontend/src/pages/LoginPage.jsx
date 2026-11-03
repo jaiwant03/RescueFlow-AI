@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSystem } from '../context/SystemContext';
 import { ModeledSelect } from '../components/ModeledSelect';
 import { CubeLogo } from '../components/CubeLogo';
 import { 
   Shield, 
+  ShieldCheck,
   Lock, 
   Mail, 
   User, 
@@ -17,7 +18,12 @@ import {
   Radio,
   KeyRound,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Zap,
+  Cpu,
+  Waves,
+  Activity,
+  Sparkles
 } from 'lucide-react';
 
 export function LoginPage({ initialMode = 'login' }) {
@@ -30,7 +36,7 @@ export function LoginPage({ initialMode = 'login' }) {
   const isSignupRoute = location.pathname === '/signup' || initialMode === 'signup';
   const [mode, setMode] = useState(isSignupRoute ? 'signup' : 'login');
 
-  // Login form state - clean, real-time (no hardcoded demo pre-fills)
+  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginRole, setLoginRole] = useState('Operations Commander');
@@ -140,117 +146,388 @@ export function LoginPage({ initialMode = 'login' }) {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'radial-gradient(circle at 50% 20%, #ffffff 0%, #f0fdfa 45%, #e2e8f0 100%)',
-        padding: '32px 16px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Background Subtle Gradient Accents */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-15%',
-          left: '10%',
-          width: '520px',
-          height: '520px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.07) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '-15%',
-          right: '10%',
-          width: '560px',
-          height: '560px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(2, 132, 199, 0.07) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
+    <div className="login-split-container">
+      <style>{`
+        .login-split-container {
+          display: flex;
+          min-height: 100vh;
+          width: 100%;
+          font-family: var(--font-sans);
+          background: #ffffff;
+        }
 
-      {/* Main Clean Card Container */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '460px',
-          background: '#ffffff',
-          borderRadius: '18px',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 24px 48px -12px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(0, 0, 0, 0.03)',
-          overflow: 'hidden',
-          position: 'relative',
-          zIndex: 10,
-        }}
-      >
-        {/* Top Gradient Accent Stripe */}
-        <div
-          style={{
-            height: '4px',
-            width: '100%',
-            background: 'linear-gradient(90deg, #0d9488 0%, #0284c7 50%, #6366f1 100%)',
-          }}
-        />
+        /* LEFT PANEL: TACTICAL HERO SHOWCASE */
+        .login-left-panel {
+          flex: 1.15;
+          background: #021321;
+          background-image: 
+            radial-gradient(circle at 15% 20%, rgba(13, 148, 136, 0.22) 0%, transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(2, 132, 199, 0.18) 0%, transparent 45%),
+            radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+          background-size: 100% 100%, 100% 100%, 30px 30px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 48px 56px;
+          position: relative;
+          overflow: hidden;
+          color: #ffffff;
+          border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-        <div style={{ padding: '32px 30px 26px' }}>
-          {/* Header Brand */}
-          <div style={{ textAlign: 'center', marginBottom: '22px' }}>
-            <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '10px' }}>
-              <CubeLogo size={42} />
+        /* Ambient Glow Orb */
+        .login-glow-orb {
+          position: absolute;
+          top: 30%;
+          left: 40%;
+          width: 480px;
+          height: 480px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, transparent 70%);
+          pointer-events: none;
+          filter: blur(40px);
+        }
+
+        /* Interactive Telemetry Card */
+        .login-telemetry-card {
+          background: rgba(6, 28, 46, 0.75);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(13, 148, 136, 0.35);
+          border-radius: 16px;
+          padding: 22px 24px;
+          box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 25px rgba(13, 148, 136, 0.15);
+          margin: 32px 0;
+          position: relative;
+          z-index: 2;
+        }
+
+        /* Pillar Feature Box */
+        .login-feature-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          padding: 12px 14px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          transition: all 0.2s ease;
+        }
+        .login-feature-item:hover {
+          background: rgba(255, 255, 255, 0.06);
+          border-color: rgba(13, 148, 136, 0.3);
+          transform: translateX(3px);
+        }
+
+        /* RIGHT PANEL: AUTHENTICATION TERMINAL */
+        .login-right-panel {
+          flex: 1;
+          background: #ffffff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 40px 36px;
+          position: relative;
+          overflow-y: auto;
+        }
+
+        .login-form-card {
+          width: 100%;
+          max-width: 440px;
+        }
+
+        /* Form Controls */
+        .login-input {
+          width: 100%;
+          padding: 11px 14px 11px 40px;
+          border-radius: 10px;
+          border: 1.5px solid #cbd5e1;
+          background: #f8fafc;
+          font-size: 0.88rem;
+          color: #0f172a;
+          transition: all 0.18s ease;
+          outline: none;
+          font-family: inherit;
+        }
+        .login-input:focus {
+          border-color: #0d9488;
+          background: #ffffff;
+          box-shadow: 0 0 0 3.5px rgba(13, 148, 136, 0.16);
+        }
+        .login-input::placeholder {
+          color: #94a3b8;
+        }
+
+        .login-btn-primary {
+          width: 100%;
+          padding: 12px 18px;
+          border-radius: 11px;
+          background: linear-gradient(135deg, #0d9488 0%, #005b82 100%);
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 0.92rem;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          box-shadow: 0 4px 14px rgba(13, 148, 136, 0.32);
+          transition: all 0.18s ease;
+          letter-spacing: 0.01em;
+        }
+        .login-btn-primary:hover:not(:disabled) {
+          background: linear-gradient(135deg, #14b8a6 0%, #0077b6 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(13, 148, 136, 0.40);
+        }
+        .login-btn-primary:active:not(:disabled) {
+          transform: translateY(0);
+        }
+        .login-btn-primary:disabled {
+          opacity: 0.75;
+          cursor: not-allowed;
+        }
+
+        /* RESPONSIVE COLLAPSE */
+        @media (max-width: 1024px) {
+          .login-left-panel {
+            display: none;
+          }
+          .login-right-panel {
+            flex: 1;
+            background: radial-gradient(circle at 50% 15%, #ffffff 0%, #f0fdfa 50%, #e2e8f0 100%);
+            padding: 32px 16px;
+          }
+          .login-form-card {
+            background: #ffffff;
+            padding: 36px 28px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.12);
+          }
+        }
+      `}</style>
+
+      {/* ============================================================ */}
+      {/* 1. LEFT PANEL: HIGH-TECH EMERGENCY COMMAND SHOWCASE           */}
+      {/* ============================================================ */}
+      <div className="login-left-panel">
+        <div className="login-glow-orb" />
+
+        {/* Top Header Identity */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
+            <CubeLogo size={42} />
+            <div>
+              <div style={{ fontSize: '1.65rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                RescueFlow <span style={{ color: '#14b8a6' }}>AI</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                Disaster Prioritization & Response Automation
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center Hero Proposition */}
+        <div style={{ position: 'relative', zIndex: 2, margin: '20px 0' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              borderRadius: '9999px',
+              background: 'rgba(13, 148, 136, 0.16)',
+              border: '1px solid rgba(20, 184, 166, 0.35)',
+              fontSize: '0.70rem',
+              fontWeight: 700,
+              color: '#5eead4',
+              marginBottom: '16px',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+            }}
+          >
+            <Radio size={12} color="#2dd4bf" />
+            <span>Autonomous Emergency Intelligence Engine</span>
+          </div>
+
+          <h2
+            style={{
+              fontSize: '2.1rem',
+              fontWeight: 800,
+              lineHeight: 1.22,
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
+              marginBottom: '14px',
+            }}
+          >
+            Sub-second triage when <span style={{ background: 'linear-gradient(120deg, #2dd4bf 0%, #38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>every second matters.</span>
+          </h2>
+
+          <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.6, maxWidth: '520px' }}>
+            Continuous ingestion from Telegram, citizen hotlines, and web feeds. Powered by Groq Llama 3.3-70B for zero-data-loss deduplication and verified dispatch routing.
+          </p>
+
+          {/* Interactive Live Telemetry Feed Mock */}
+          <div className="login-telemetry-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 10px #ef4444' }} />
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.06em', color: '#fca5a5', textTransform: 'uppercase' }}>
+                  Live Incident Telemetry
+                </span>
+              </div>
+              <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontFamily: 'monospace' }}>
+                ⚡ 0.32s Latency &bull; Groq Llama 3.3
+              </span>
             </div>
 
-            <h1
-              className="heading-cursive-multicolor"
-              style={{
-                fontSize: '1.95rem',
-                fontWeight: 800,
-                letterSpacing: '0.02em',
-                lineHeight: 1.15,
-                margin: '0 auto',
-                display: 'block',
-              }}
-            >
-              RescueFlow AI
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' }}>
+              <div>
+                <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#ffffff' }}>
+                  Flash Flood Barrier Breach &bull; PSG Sector
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '2px' }}>
+                  3 Multi-Channel Reports Corroborated (Telegram + Citizen Web)
+                </div>
+              </div>
+              <span
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#f87171',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.70rem',
+                  fontWeight: 800,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                P1 CRITICAL
+              </span>
+            </div>
 
-            <p
+            <div
               style={{
-                fontSize: '0.78rem',
-                color: '#64748b',
-                fontWeight: 500,
-                marginTop: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.72rem',
+                color: '#5eead4',
+                background: 'rgba(13, 148, 136, 0.12)',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(13, 148, 136, 0.25)',
               }}
             >
-              Disaster Message Prioritization & Response Automation
+              <CheckCircle2 size={14} color="#2dd4bf" />
+              <span>Deduplication confidence 94.6% &bull; Dispatch packet ready for supervisor authorization</span>
+            </div>
+          </div>
+
+          {/* 3 Mission Pillars */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="login-feature-item">
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(13, 148, 136, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2dd4bf', flexShrink: 0 }}>
+                <Zap size={16} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f1f5f9' }}>Real-Time Multi-Channel Ingest</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Immediate ingestion across Telegram bots, SMS gateways, and public emergency web forms.</div>
+              </div>
+            </div>
+
+            <div className="login-feature-item">
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(2, 132, 199, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8', flexShrink: 0 }}>
+                <Cpu size={16} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f1f5f9' }}>70B Semantic Deduplication & Scoring</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Clusters related panic reports into a single consolidated master ticket without data loss.</div>
+              </div>
+            </div>
+
+            <div className="login-feature-item">
+              <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc', flexShrink: 0 }}>
+                <ShieldCheck size={16} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f1f5f9' }}>Human-in-the-Loop Safe Authorization</div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>High-consequence dispatches are held for one-click commander review before n8n broadcast.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Metrics Bar */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingTop: '20px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            zIndex: 2,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2dd4bf' }}>&lt; 350ms</div>
+            <div style={{ fontSize: '0.68rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Triage Latency</div>
+          </div>
+          <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.12)' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }}>99.4%</div>
+            <div style={{ fontSize: '0.68rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Priority Accuracy</div>
+          </div>
+          <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.12)' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#a78bfa' }}>Zero Loss</div>
+            <div style={{ fontSize: '0.68rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Corroboration</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 2. RIGHT PANEL: CLEAN AUTHENTICATION TERMINAL                */}
+      {/* ============================================================ */}
+      <div className="login-right-panel">
+        <div className="login-form-card">
+          {/* Mobile-only logo */}
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <CubeLogo size={38} />
+            </div>
+            <h2 style={{ fontSize: '1.65rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#0f172a', margin: 0 }}>
+              RescueFlow <span style={{ color: '#0d9488' }}>AI</span>
+            </h2>
+            <p style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+              Emergency Operations Command Terminal
             </p>
+          </div>
 
+          {/* Clean Status Pill */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px' }}>
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                marginTop: '10px',
-                padding: '3px 12px',
+                padding: '4px 12px',
                 borderRadius: '9999px',
                 background: '#ecfdf5',
                 border: '1px solid #a7f3d0',
-                fontSize: '0.68rem',
+                fontSize: '0.70rem',
                 fontWeight: 700,
                 color: '#065f46',
                 letterSpacing: '0.03em',
               }}
             >
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
-              <span>LIVE EMERGENCY OPERATIONS PORTAL</span>
+              <span>OPERATIONS CLEARANCE PORTAL</span>
             </div>
           </div>
 
@@ -261,7 +538,7 @@ export function LoginPage({ initialMode = 'login' }) {
               background: '#f1f5f9',
               borderRadius: '12px',
               padding: '4px',
-              marginBottom: '20px',
+              marginBottom: '22px',
               border: '1px solid #e2e8f0',
             }}
           >
@@ -270,9 +547,9 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('login')}
               style={{
                 flex: 1,
-                padding: '8px 12px',
+                padding: '9px 12px',
                 borderRadius: '9px',
-                fontSize: '0.80rem',
+                fontSize: '0.82rem',
                 fontWeight: 700,
                 background: mode === 'login' ? '#ffffff' : 'transparent',
                 color: mode === 'login' ? '#0f766e' : '#64748b',
@@ -286,7 +563,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 transition: 'all 0.15s ease',
               }}
             >
-              <KeyRound size={14} />
+              <KeyRound size={15} />
               <span>Operator Sign In</span>
             </button>
 
@@ -295,9 +572,9 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('signup')}
               style={{
                 flex: 1,
-                padding: '8px 12px',
+                padding: '9px 12px',
                 borderRadius: '9px',
-                fontSize: '0.80rem',
+                fontSize: '0.82rem',
                 fontWeight: 700,
                 background: mode === 'signup' ? '#ffffff' : 'transparent',
                 color: mode === 'signup' ? '#0284c7' : '#64748b',
@@ -311,7 +588,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 transition: 'all 0.15s ease',
               }}
             >
-              <User size={14} />
+              <User size={15} />
               <span>Create Account</span>
             </button>
           </div>
@@ -325,7 +602,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 borderLeft: '4px solid #ef4444',
                 borderRadius: '10px',
                 padding: '10px 14px',
-                marginBottom: '16px',
+                marginBottom: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
@@ -341,53 +618,38 @@ export function LoginPage({ initialMode = 'login' }) {
 
           {/* MODE 1: SIGN IN */}
           {mode === 'login' && (
-            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
-                  Official Email or Username
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                  Official Email or Callsign
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="e.g. operator@rescueflow.ai"
+                    className="login-input"
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
                   Security Passcode
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type={showLoginPassword ? 'text' : 'password'}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Enter security passcode..."
-                    style={{
-                      width: '100%',
-                      padding: '10px 38px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    placeholder="Enter your passcode..."
+                    className="login-input"
+                    style={{ paddingRight: '40px' }}
                     required
                   />
                   <button
@@ -412,7 +674,7 @@ export function LoginPage({ initialMode = 'login' }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
                   Operational Clearance Role
                 </label>
                 <ModeledSelect
@@ -428,50 +690,34 @@ export function LoginPage({ initialMode = 'login' }) {
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '2px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.76rem', marginTop: '2px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
                   <input
                     type="checkbox"
                     checked={rememberTerminal}
                     onChange={(e) => setRememberTerminal(e.target.checked)}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', accentColor: '#0d9488' }}
                   />
-                  <span>Remember terminal</span>
+                  <span>Remember this terminal</span>
                 </label>
                 <span
                   style={{ color: '#0d9488', fontWeight: 600, cursor: 'pointer' }}
-                  onClick={() => addToast('Credential Information', 'Enter your assigned operator passcode, or create a new account.', 'info')}
+                  onClick={() => addToast('Credential Information', 'Enter your assigned operator passcode, or create an account for immediate clearance.', 'info')}
                 >
-                  Passcode Help?
+                  Need assistance?
                 </span>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                style={{
-                  marginTop: '8px',
-                  padding: '12px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #0f766e 0%, #0369a1 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  boxShadow: '0 4px 14px rgba(15, 118, 110, 0.28)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s ease',
-                  opacity: isSubmitting ? 0.8 : 1,
-                }}
+                className="login-btn-primary"
+                style={{ marginTop: '6px' }}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Authenticating Terminal...</span>
+                    <span>Authenticating Clearance...</span>
                   </>
                 ) : (
                   <>
@@ -481,9 +727,9 @@ export function LoginPage({ initialMode = 'login' }) {
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
-                  Need a new operator profile?{' '}
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                  Need a new operational clearance?{' '}
                   <button
                     type="button"
                     onClick={() => handleModeSwitch('signup')}
@@ -505,85 +751,61 @@ export function LoginPage({ initialMode = 'login' }) {
 
           {/* MODE 2: SIGN UP */}
           {mode === 'signup' && (
-            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
                   Operator Full Name
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
-                    placeholder="Enter your full name..."
+                    placeholder="e.g. Captain David Chen"
+                    className="login-input"
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
-                  Tactical Official Email
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                  Official Email Address
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    placeholder="Enter your official email..."
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    placeholder="e.g. dchen@disaster-response.gov"
+                    className="login-input"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
                   Agency / Responding Department
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={signupDepartment}
                     onChange={(e) => setSignupDepartment(e.target.value)}
-                    placeholder="e.g. Disaster Operations Team"
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    placeholder="e.g. Disaster Response Force"
+                    className="login-input"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
                   Designated Tactical Role
                 </label>
                 <ModeledSelect
@@ -601,50 +823,36 @@ export function LoginPage({ initialMode = 'login' }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
                     Create Passcode
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type={showSignupPassword ? 'text' : 'password'}
                       value={signupPassword}
                       onChange={(e) => setSignupPassword(e.target.value)}
                       placeholder="Passcode"
-                      style={{
-                        width: '100%',
-                        padding: '9px 10px 9px 32px',
-                        borderRadius: '10px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.82rem',
-                        color: '#0f172a',
-                        outline: 'none',
-                      }}
+                      className="login-input"
+                      style={{ paddingLeft: '34px' }}
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
                     Confirm Passcode
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type={showSignupPassword ? 'text' : 'password'}
                       value={signupConfirmPassword}
                       onChange={(e) => setSignupConfirmPassword(e.target.value)}
                       placeholder="Confirm"
-                      style={{
-                        width: '100%',
-                        padding: '9px 10px 9px 32px',
-                        borderRadius: '10px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.82rem',
-                        color: '#0f172a',
-                        outline: 'none',
-                      }}
+                      className="login-input"
+                      style={{ paddingLeft: '34px' }}
                       required
                     />
                   </div>
@@ -667,45 +875,29 @@ export function LoginPage({ initialMode = 'login' }) {
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '8px',
-                  marginTop: '4px',
+                  marginTop: '2px',
                   fontSize: '0.74rem',
                   color: '#475569',
                   cursor: 'pointer',
-                  lineHeight: 1.35,
+                  lineHeight: 1.4,
                 }}
               >
                 <input
                   type="checkbox"
                   checked={agreeTacticalTerms}
                   onChange={(e) => setAgreeTacticalTerms(e.target.checked)}
-                  style={{ marginTop: '2px', cursor: 'pointer' }}
+                  style={{ marginTop: '2px', cursor: 'pointer', accentColor: '#0d9488' }}
                 />
                 <span>
-                  I certify official operational clearance to access live emergency triage telemetry and dispatch automation.
+                  I certify official operational clearance to access live emergency triage telemetry and automated dispatch systems.
                 </span>
               </label>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                style={{
-                  marginTop: '8px',
-                  padding: '12px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s ease',
-                  opacity: isSubmitting ? 0.8 : 1,
-                }}
+                className="login-btn-primary"
+                style={{ marginTop: '6px' }}
               >
                 {isSubmitting ? (
                   <>
@@ -714,14 +906,14 @@ export function LoginPage({ initialMode = 'login' }) {
                   </>
                 ) : (
                   <>
-                    <span>Register Operator Account</span>
+                    <span>Register Clearance Profile</span>
                     <ArrowRight size={16} />
                   </>
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
                   Already registered?{' '}
                   <button
                     type="button"
@@ -742,10 +934,10 @@ export function LoginPage({ initialMode = 'login' }) {
             </form>
           )}
 
-          {/* Card Footer */}
+          {/* Card Footer Security Assurance */}
           <div
             style={{
-              marginTop: '22px',
+              marginTop: '28px',
               paddingTop: '16px',
               borderTop: '1px solid #f1f5f9',
               textAlign: 'center',
@@ -753,13 +945,13 @@ export function LoginPage({ initialMode = 'login' }) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
-              fontSize: '0.70rem',
+              fontSize: '0.72rem',
               color: '#94a3b8',
               fontWeight: 500,
             }}
           >
-            <Shield size={12} color="#0d9488" />
-            <span>End-to-End Cryptographic Telemetry Authentication</span>
+            <Shield size={13} color="#0d9488" />
+            <span>256-Bit Cryptographic Telemetry Authentication</span>
           </div>
         </div>
       </div>
