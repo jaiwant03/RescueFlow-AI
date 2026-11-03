@@ -239,13 +239,13 @@ DB_NAME=rescueflow
 ### Step 2: Start Backend
 In a terminal:
 ```bash
-# If using the included virtual environment:
+cd backend
+# Activate virtual environment:
 .\venv\Scripts\activate
 # Or install dependencies:
-pip install -r requirements.txt # (or pip install fastapi uvicorn pydantic motor pymongo httpx python-dotenv sse-starlette)
+pip install -r requirements.txt
 
 # Start FastAPI server
-$env:PYTHONPATH="d:\Dev\Projects\RescueFlow-AI\backend"
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Backend will be live at `http://localhost:8000` (API docs at `http://localhost:8000/docs`).
