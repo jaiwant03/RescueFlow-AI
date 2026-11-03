@@ -438,6 +438,25 @@ input::placeholder, textarea::placeholder {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Hide native Edge / IE / Chromium password reveal & clear buttons to avoid double-eye icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+
 .modern-input:focus {
   border-color: #0d9488 !important;
   box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12) !important;
