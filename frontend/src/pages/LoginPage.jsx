@@ -5,7 +5,7 @@ import { useSystem } from '../context/SystemContext';
 import { ModeledSelect } from '../components/ModeledSelect';
 import { CubeLogo } from '../components/CubeLogo';
 import { 
-  Shield, 
+  ShieldCheck, 
   Lock, 
   Mail, 
   User, 
@@ -14,10 +14,10 @@ import {
   EyeOff, 
   ArrowRight, 
   AlertCircle,
-  Radio,
   KeyRound,
   CheckCircle2,
-  Loader2
+  Loader2,
+  Sparkles
 } from 'lucide-react';
 
 export function LoginPage({ initialMode = 'login' }) {
@@ -42,7 +42,7 @@ export function LoginPage({ initialMode = 'login' }) {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
-  const [signupDepartment, setSignupDepartment] = useState('National Disaster Response Force (NDRF)');
+  const [signupDepartment, setSignupDepartment] = useState('National Disaster Response Force');
   const [signupRole, setSignupRole] = useState('Operations Commander');
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [agreeTacticalTerms, setAgreeTacticalTerms] = useState(true);
@@ -146,88 +146,108 @@ export function LoginPage({ initialMode = 'login' }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'radial-gradient(circle at 50% 20%, #ffffff 0%, #f0fdfa 45%, #e2e8f0 100%)',
-        padding: '32px 16px',
+        backgroundColor: '#f8fafc',
+        backgroundImage: 'radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px)',
+        backgroundSize: '24px 24px',
+        padding: '36px 16px',
         position: 'relative',
         overflow: 'hidden',
+        fontFamily: "'Plus Jakarta Sans', 'Outfit', -apple-system, sans-serif",
       }}
     >
-      {/* Background Subtle Gradient Accents */}
+      {/* Ambient Diffused Glow Orbs */}
       <div
         style={{
           position: 'absolute',
-          top: '-15%',
-          left: '10%',
-          width: '520px',
-          height: '520px',
+          top: '15%',
+          left: '20%',
+          width: '420px',
+          height: '420px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.07) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 65%)',
+          filter: 'blur(50px)',
           pointerEvents: 'none',
         }}
       />
       <div
         style={{
           position: 'absolute',
-          bottom: '-15%',
-          right: '10%',
-          width: '560px',
-          height: '560px',
+          bottom: '15%',
+          right: '20%',
+          width: '460px',
+          height: '460px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(2, 132, 199, 0.07) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(2, 132, 199, 0.12) 0%, transparent 65%)',
+          filter: 'blur(60px)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Main Clean Card Container */}
+      {/* Main Modern Glass Card */}
       <div
         style={{
           width: '100%',
-          maxWidth: '460px',
-          background: '#ffffff',
-          borderRadius: '18px',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 24px 48px -12px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(0, 0, 0, 0.03)',
+          maxWidth: '430px',
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '22px',
+          border: '1px solid rgba(226, 232, 240, 0.95)',
+          boxShadow: '0 24px 60px -12px rgba(15, 23, 42, 0.09), 0 2px 8px rgba(0, 0, 0, 0.02)',
           overflow: 'hidden',
           position: 'relative',
           zIndex: 10,
         }}
       >
-        {/* Top Gradient Accent Stripe */}
+        {/* Sleek Top Accent Stripe */}
         <div
           style={{
-            height: '4px',
+            height: '3.5px',
             width: '100%',
             background: 'linear-gradient(90deg, #0d9488 0%, #0284c7 50%, #6366f1 100%)',
           }}
         />
 
-        <div style={{ padding: '32px 30px 26px' }}>
+        <div style={{ padding: '34px 30px 24px' }}>
           {/* Header Brand */}
           <div style={{ textAlign: 'center', marginBottom: '22px' }}>
-            <div style={{ display: 'inline-flex', justifyContent: 'center', marginBottom: '10px' }}>
-              <CubeLogo size={42} />
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '52px',
+                height: '52px',
+                borderRadius: '16px',
+                background: 'linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%)',
+                border: '1.5px solid rgba(13, 148, 136, 0.22)',
+                boxShadow: '0 8px 24px -4px rgba(13, 148, 136, 0.18), 0 2px 6px rgba(0, 0, 0, 0.03)',
+                marginBottom: '12px',
+              }}
+            >
+              <CubeLogo size={32} />
             </div>
 
             <h1
-              className="heading-cursive-multicolor"
+              className="brand-title-modern"
               style={{
-                fontSize: '1.95rem',
+                fontSize: '1.85rem',
                 fontWeight: 800,
-                letterSpacing: '0.02em',
+                letterSpacing: '-0.035em',
                 lineHeight: 1.15,
                 margin: '0 auto',
-                display: 'block',
+                color: '#0f172a',
               }}
             >
-              RescueFlow AI
+              RescueFlow <span className="brand-gradient-text">AI</span>
             </h1>
 
             <p
               style={{
-                fontSize: '0.78rem',
+                fontSize: '0.80rem',
                 color: '#64748b',
                 fontWeight: 500,
                 marginTop: '4px',
+                letterSpacing: '-0.01em',
               }}
             >
               Disaster Message Prioritization & Response Automation
@@ -239,18 +259,26 @@ export function LoginPage({ initialMode = 'login' }) {
                 alignItems: 'center',
                 gap: '6px',
                 marginTop: '10px',
-                padding: '3px 12px',
+                padding: '3px 10px',
                 borderRadius: '9999px',
-                background: '#ecfdf5',
-                border: '1px solid #a7f3d0',
+                background: '#f0fdf4',
+                border: '1px solid #bbf7d0',
                 fontSize: '0.68rem',
-                fontWeight: 700,
-                color: '#065f46',
-                letterSpacing: '0.03em',
+                fontWeight: 600,
+                color: '#166534',
+                letterSpacing: '0.01em',
               }}
             >
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
-              <span>LIVE EMERGENCY OPERATIONS PORTAL</span>
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  boxShadow: '0 0 8px #22c55e',
+                }}
+              />
+              <span>Live Emergency Operations Network</span>
             </div>
           </div>
 
@@ -260,7 +288,7 @@ export function LoginPage({ initialMode = 'login' }) {
               display: 'flex',
               background: '#f1f5f9',
               borderRadius: '12px',
-              padding: '4px',
+              padding: '3.5px',
               marginBottom: '20px',
               border: '1px solid #e2e8f0',
             }}
@@ -275,8 +303,8 @@ export function LoginPage({ initialMode = 'login' }) {
                 fontSize: '0.80rem',
                 fontWeight: 700,
                 background: mode === 'login' ? '#ffffff' : 'transparent',
-                color: mode === 'login' ? '#0f766e' : '#64748b',
-                boxShadow: mode === 'login' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                color: mode === 'login' ? '#0f172a' : '#64748b',
+                boxShadow: mode === 'login' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -286,7 +314,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 transition: 'all 0.15s ease',
               }}
             >
-              <KeyRound size={14} />
+              <KeyRound size={14} color={mode === 'login' ? '#0d9488' : '#94a3b8'} />
               <span>Operator Sign In</span>
             </button>
 
@@ -300,8 +328,8 @@ export function LoginPage({ initialMode = 'login' }) {
                 fontSize: '0.80rem',
                 fontWeight: 700,
                 background: mode === 'signup' ? '#ffffff' : 'transparent',
-                color: mode === 'signup' ? '#0284c7' : '#64748b',
-                boxShadow: mode === 'signup' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                color: mode === 'signup' ? '#0f172a' : '#64748b',
+                boxShadow: mode === 'signup' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -311,7 +339,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 transition: 'all 0.15s ease',
               }}
             >
-              <User size={14} />
+              <User size={14} color={mode === 'signup' ? '#0284c7' : '#94a3b8'} />
               <span>Create Account</span>
             </button>
           </div>
@@ -341,53 +369,39 @@ export function LoginPage({ initialMode = 'login' }) {
 
           {/* MODE 1: SIGN IN */}
           {mode === 'login' && (
-            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '6px', color: '#334155', letterSpacing: '-0.01em' }}>
                   Official Email or Username
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="e.g. operator@rescueflow.ai"
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '12px' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '6px', color: '#334155', letterSpacing: '-0.01em' }}>
                   Security Passcode
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type={showLoginPassword ? 'text' : 'password'}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Enter security passcode..."
-                    style={{
-                      width: '100%',
-                      padding: '10px 38px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '38px' }}
                     required
                   />
                   <button
@@ -405,6 +419,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       padding: 0,
                       display: 'flex',
                     }}
+                    title={showLoginPassword ? 'Hide passcode' : 'Show passcode'}
                   >
                     {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -412,7 +427,7 @@ export function LoginPage({ initialMode = 'login' }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '6px', color: '#334155', letterSpacing: '-0.01em' }}>
                   Operational Clearance Role
                 </label>
                 <ModeledSelect
@@ -434,55 +449,44 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="checkbox"
                     checked={rememberTerminal}
                     onChange={(e) => setRememberTerminal(e.target.checked)}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', accentColor: '#0d9488' }}
                   />
-                  <span>Remember terminal</span>
+                  <span>Keep me signed in</span>
                 </label>
                 <span
                   style={{ color: '#0d9488', fontWeight: 600, cursor: 'pointer' }}
-                  onClick={() => addToast('Credential Information', 'Enter your assigned operator passcode, or create a new account.', 'info')}
+                  onClick={() => addToast('Access Help', 'Sign in with your assigned credentials or create a profile for instant clearance.', 'info')}
                 >
-                  Passcode Help?
+                  Need help?
                 </span>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
+                className="modern-btn-primary"
                 style={{
-                  marginTop: '8px',
-                  padding: '12px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #0f766e 0%, #0369a1 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  boxShadow: '0 4px 14px rgba(15, 118, 110, 0.28)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
+                  width: '100%',
+                  marginTop: '4px',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s ease',
                   opacity: isSubmitting ? 0.8 : 1,
                 }}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Authenticating Terminal...</span>
+                    <span>Authenticating...</span>
                   </>
                 ) : (
                   <>
-                    <span>Launch Tactical Console</span>
+                    <span>Sign In to Console</span>
                     <ArrowRight size={16} />
                   </>
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Need a new operator profile?{' '}
                   <button
                     type="button"
@@ -507,83 +511,62 @@ export function LoginPage({ initialMode = 'login' }) {
           {mode === 'signup' && (
             <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                   Operator Full Name
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
                     placeholder="Enter your full name..."
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '12px' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                   Tactical Official Email
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     placeholder="Enter your official email..."
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '12px' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                   Agency / Responding Department
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={signupDepartment}
                     onChange={(e) => setSignupDepartment(e.target.value)}
                     placeholder="e.g. Disaster Operations Team"
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px 10px 38px',
-                      borderRadius: '10px',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.84rem',
-                      color: '#0f172a',
-                      outline: 'none',
-                    }}
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '12px' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                   Designated Tactical Role
                 </label>
                 <ModeledSelect
@@ -601,50 +584,36 @@ export function LoginPage({ initialMode = 'login' }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                     Create Passcode
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type={showSignupPassword ? 'text' : 'password'}
                       value={signupPassword}
                       onChange={(e) => setSignupPassword(e.target.value)}
                       placeholder="Passcode"
-                      style={{
-                        width: '100%',
-                        padding: '9px 10px 9px 32px',
-                        borderRadius: '10px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.82rem',
-                        color: '#0f172a',
-                        outline: 'none',
-                      }}
+                      className="modern-input"
+                      style={{ paddingLeft: '32px', paddingRight: '10px', height: '40px' }}
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, marginBottom: '5px', color: '#1e293b' }}>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
                     Confirm Passcode
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type={showSignupPassword ? 'text' : 'password'}
                       value={signupConfirmPassword}
                       onChange={(e) => setSignupConfirmPassword(e.target.value)}
                       placeholder="Confirm"
-                      style={{
-                        width: '100%',
-                        padding: '9px 10px 9px 32px',
-                        borderRadius: '10px',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.82rem',
-                        color: '#0f172a',
-                        outline: 'none',
-                      }}
+                      className="modern-input"
+                      style={{ paddingLeft: '32px', paddingRight: '10px', height: '40px' }}
                       required
                     />
                   </div>
@@ -655,7 +624,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 <button
                   type="button"
                   onClick={() => setShowSignupPassword(p => !p)}
-                  style={{ color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{ color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {showSignupPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   <span>{showSignupPassword ? 'Hide Passcodes' : 'Show Passcodes'}</span>
@@ -678,7 +647,7 @@ export function LoginPage({ initialMode = 'login' }) {
                   type="checkbox"
                   checked={agreeTacticalTerms}
                   onChange={(e) => setAgreeTacticalTerms(e.target.checked)}
-                  style={{ marginTop: '2px', cursor: 'pointer' }}
+                  style={{ marginTop: '2px', cursor: 'pointer', accentColor: '#0d9488' }}
                 />
                 <span>
                   I certify official operational clearance to access live emergency triage telemetry and dispatch automation.
@@ -688,22 +657,12 @@ export function LoginPage({ initialMode = 'login' }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
+                className="modern-btn-primary"
                 style={{
-                  marginTop: '8px',
-                  padding: '12px',
-                  borderRadius: '12px',
+                  width: '100%',
+                  marginTop: '6px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.88rem',
-                  border: 'none',
-                  boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.15s ease',
                   opacity: isSubmitting ? 0.8 : 1,
                 }}
               >
@@ -720,8 +679,8 @@ export function LoginPage({ initialMode = 'login' }) {
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Already registered?{' '}
                   <button
                     type="button"
@@ -758,8 +717,8 @@ export function LoginPage({ initialMode = 'login' }) {
               fontWeight: 500,
             }}
           >
-            <Shield size={12} color="#0d9488" />
-            <span>End-to-End Cryptographic Telemetry Authentication</span>
+            <ShieldCheck size={14} color="#0d9488" />
+            <span>256-Bit Encrypted Telemetry &bull; Dispatch Ready</span>
           </div>
         </div>
       </div>
