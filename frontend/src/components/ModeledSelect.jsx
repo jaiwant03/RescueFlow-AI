@@ -23,6 +23,7 @@ export function ModeledSelect({
   icon: TriggerIcon,
   minWidth = '160px',
   align = 'left',
+  height,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
@@ -65,11 +66,14 @@ export function ModeledSelect({
     setIsOpen(false);
   };
 
+  const isFullWidth = minWidth === '100%';
+
   return (
     <div
       ref={containerRef}
       style={{
-        display: 'inline-flex',
+        display: isFullWidth ? 'flex' : 'inline-flex',
+        width: isFullWidth ? '100%' : 'auto',
         alignItems: 'center',
         gap: '6px',
         position: 'relative',
@@ -95,13 +99,16 @@ export function ModeledSelect({
         onClick={() => setIsOpen((prev) => !prev)}
         style={{
           minWidth: minWidth,
+          width: isFullWidth ? '100%' : 'auto',
+          height: height || '36px',
+          boxSizing: 'border-box',
           background: '#ffffff',
-          border: isOpen ? '1px solid var(--rama-green)' : '1px solid #cbd5e1',
+          border: isOpen ? '1.5px solid var(--rama-green)' : '1.5px solid #e2e8f0',
           boxShadow: isOpen
             ? '0 0 0 3px rgba(13, 148, 136, 0.15), 0 2px 5px rgba(0,0,0,0.04)'
-            : '0 1px 2px rgba(0,0,0,0.04)',
+            : 'none',
           borderRadius: '10px',
-          padding: '7px 12px',
+          padding: '0 10px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -119,8 +126,8 @@ export function ModeledSelect({
         }}
         onMouseLeave={(e) => {
           if (!isOpen) {
-            e.currentTarget.style.borderColor = '#cbd5e1';
-            e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+            e.currentTarget.style.borderColor = '#e2e8f0';
+            e.currentTarget.style.boxShadow = 'none';
           }
         }}
       >
@@ -129,8 +136,8 @@ export function ModeledSelect({
           {selectedOption.dotColor && (
             <span
               style={{
-                width: '8px',
-                height: '8px',
+                width: '7px',
+                height: '7px',
                 borderRadius: '50%',
                 backgroundColor: selectedOption.dotColor,
                 flexShrink: 0,
@@ -140,7 +147,7 @@ export function ModeledSelect({
           )}
           <span
             style={{
-              fontSize: '0.82rem',
+              fontSize: '0.80rem',
               fontWeight: 600,
               color: 'var(--peacock-deep)',
               whiteSpace: 'nowrap',
@@ -168,18 +175,19 @@ export function ModeledSelect({
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 6px)',
+            top: 'calc(100% + 4px)',
             [align === 'right' ? 'right' : 'left']: label ? 'auto' : 0,
             ...(label && { right: align === 'right' ? 0 : 'auto' }),
-            minWidth: `max(100%, ${minWidth})`,
-            maxWidth: '280px',
+            minWidth: isFullWidth ? '100%' : `max(100%, ${minWidth})`,
+            width: isFullWidth ? '100%' : 'auto',
+            maxWidth: '320px',
             background: '#ffffff',
             border: '1px solid #e2e8f0',
-            borderRadius: '12px',
+            borderRadius: '10px',
             boxShadow: '0 12px 28px -4px rgba(0, 50, 70, 0.15), 0 4px 10px -2px rgba(0, 50, 70, 0.06)',
-            padding: '5px',
-            zIndex: 1000,
-            maxHeight: '260px',
+            padding: '4px',
+            zIndex: 9999,
+            maxHeight: '220px',
             overflowY: 'auto',
             animation: 'fadeIn 0.15s ease-out',
           }}
@@ -194,10 +202,10 @@ export function ModeledSelect({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '7px 10px',
-                  borderRadius: '8px',
+                  padding: '6px 9px',
+                  borderRadius: '7px',
                   cursor: 'pointer',
-                  fontSize: '0.82rem',
+                  fontSize: '0.78rem',
                   fontWeight: isSelected ? 700 : 500,
                   color: isSelected ? 'var(--peacock-deep)' : 'var(--text-primary)',
                   background: isSelected ? '#e6f9f5' : 'transparent',
@@ -217,12 +225,12 @@ export function ModeledSelect({
                   }
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px', overflow: 'hidden' }}>
                   {opt.dotColor && (
                     <span
                       style={{
-                        width: '8px',
-                        height: '8px',
+                        width: '7px',
+                        height: '7px',
                         borderRadius: '50%',
                         backgroundColor: opt.dotColor,
                         flexShrink: 0,
@@ -236,7 +244,7 @@ export function ModeledSelect({
                 </div>
 
                 {isSelected && (
-                  <Check size={14} color="var(--rama-green)" style={{ flexShrink: 0, marginLeft: '8px' }} />
+                  <Check size={13} color="var(--rama-green)" style={{ flexShrink: 0, marginLeft: '6px' }} />
                 )}
               </div>
             );
