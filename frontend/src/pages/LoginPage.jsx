@@ -462,7 +462,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="text"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="e.g. operator@rescueflow.ai"
+                    placeholder="operator@rescueflow.ai"
                     autoFocus
                     className="modern-input"
                     style={{ paddingLeft: '40px', paddingRight: '12px' }}
