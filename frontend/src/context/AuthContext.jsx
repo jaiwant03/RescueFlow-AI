@@ -2,41 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 
 const AuthContext = createContext(null);
 
-const DEFAULT_ACCOUNTS = [
-  {
-    id: 'user-commander-1',
-    name: 'Sarah Connor',
-    email: 'commander@rescueflow.ai',
-    password: 'admin',
-    role: 'Operations Commander',
-    department: 'Disaster Operations Command (HQ)',
-    callsign: 'COMMAND-1',
-    badge: 'EOC-7701',
-    photo: null,
-  },
-  {
-    id: 'user-supervisor-2',
-    name: 'Alex Miller',
-    email: 'supervisor@rescueflow.ai',
-    password: 'admin',
-    role: 'Tactical Supervisor',
-    department: 'Metropolitan Fire & Rescue',
-    callsign: 'ALPHA-2',
-    badge: 'TAC-4520',
-    photo: null,
-  },
-  {
-    id: 'user-dispatcher-3',
-    name: 'Maya Lin',
-    email: 'dispatcher@rescueflow.ai',
-    password: 'admin',
-    role: 'Field Dispatch Officer',
-    department: 'Emergency Medical Services (EMS)',
-    callsign: 'BRAVO-9',
-    badge: 'DISP-8831',
-    photo: null,
-  },
-];
+const DEFAULT_ACCOUNTS = [];
 
 export function AuthProvider({ children }) {
   // Registered accounts stored in localStorage
@@ -46,24 +12,14 @@ export function AuthProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge with DEFAULT_ACCOUNTS to preserve missing defaults while keeping existing user edits & photos
-          const merged = [...parsed];
-          DEFAULT_ACCOUNTS.forEach(defAcc => {
-            const exists = merged.some(u => 
-              (u.email && u.email.toLowerCase() === defAcc.email.toLowerCase()) ||
-              (u.name && u.name.toLowerCase() === defAcc.name.toLowerCase())
-            );
-            if (!exists) {
-              merged.push(defAcc);
-            }
-          });
-          return merged;
+          // Filter out legacy hardcoded fictitious demo accounts
+          return parsed.filter(u => u.name !== 'Sarah Connor' && u.name !== 'Alex Miller' && u.name !== 'Maya Lin');
         }
       } catch (e) {
         console.warn('Failed parsing registered users from storage', e);
       }
     }
-    return DEFAULT_ACCOUNTS;
+    return [];
   });
 
   // Current logged in user
@@ -73,13 +29,16 @@ export function AuthProvider({ children }) {
     if (saved) {
       try {
         currentUser = JSON.parse(saved);
+        if (currentUser && (currentUser.name === 'Sarah Connor' || currentUser.name === 'Alex Miller' || currentUser.name === 'Maya Lin')) {
+          currentUser = null;
+          localStorage.removeItem('rescueflow_user');
+        }
       } catch (e) {
         console.warn('Failed parsing current user from storage', e);
       }
     }
-    if (!currentUser) {
-      currentUser = DEFAULT_ACCOUNTS[0];
-    }
+    return currentUser;
+  });
 
     // Recover photo from registeredUsers if available
     try {
