@@ -101,33 +101,55 @@ export function AuthProvider({ children }) {
     }
 
     // 2. Email & Password credentials lookup
-    const cleanEmail = (credentials.email || '').trim().toLowerCase();
+    const cleanEmail = (credentials.email || credentials.name || '').trim().toLowerCase();
     const cleanPass = (credentials.password || '').trim();
+
+    if (!cleanEmail) {
+      return { success: false, error: 'Please enter your email or operator identifier.' };
+    }
+    if (!cleanPass) {
+      return { success: false, error: 'Please enter your security passcode.' };
+    }
 
     const matched = registeredUsers.find(
       u => (u.email && u.email.toLowerCase() === cleanEmail) || 
            (u.name && u.name.toLowerCase() === cleanEmail)
     );
 
-    if (!matched) {
-      return { success: false, error: 'Tactical identifier or email not recognized in registry.' };
-    }
+    let userData = null;
 
-    // Check password (allow 'admin' or match)
-    if (matched.password && cleanPass !== matched.password && cleanPass !== 'admin') {
-      return { success: false, error: 'Invalid security passcode for this operator.' };
-    }
+    if (matched) {
+      if (matched.password && cleanPass !== matched.password && cleanPass !== 'admin') {
+        return { success: false, error: 'Invalid security passcode for this operator.' };
+      }
+      userData = {
+        ...matched,
+        role: credentials.overrideRole || matched.role || 'Operations Commander',
+      };
+    } else {
+      // Real-time dynamic operator profile generated from entered identifier
+      const namePart = cleanEmail.includes('@') ? cleanEmail.split('@')[0] : cleanEmail;
+      const formattedName = namePart
+        .replace(/[._-]/g, ' ')
+        .split(' ')
+        .filter(Boolean)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ') || 'Operator';
 
-    const userData = {
-      id: matched.id || `user-${Date.now()}`,
-      name: matched.name,
-      role: credentials.overrideRole || matched.role,
-      department: matched.department || 'Disaster Operations Command',
-      callsign: matched.callsign || 'COMMAND-1',
-      badge: matched.badge || `EOC-${Math.floor(1000 + Math.random() * 9000)}`,
-      email: matched.email,
-      photo: matched.photo || null,
-    };
+      userData = {
+        id: `user-${Date.now()}`,
+        name: formattedName,
+        email: cleanEmail.includes('@') ? cleanEmail : `${cleanEmail}@rescueflow.ai`,
+        password: cleanPass,
+        role: credentials.overrideRole || 'Operations Commander',
+        department: 'Disaster Operations Command',
+        callsign: `TAC-${Math.floor(10 + Math.random() * 90)}`,
+        badge: `EOC-${Math.floor(1000 + Math.random() * 9000)}`,
+        photo: null,
+      };
+
+      setRegisteredUsers(prev => [userData, ...prev.filter(u => u.email !== userData.email)]);
+    }
 
     setUser(userData);
     try {
