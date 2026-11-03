@@ -598,7 +598,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       type="text"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
-                      placeholder="David Chen"
+                      placeholder="XXXX"
                       autoFocus
                       className="modern-input"
                       style={{ paddingLeft: '38px', paddingRight: '10px' }}
@@ -617,7 +617,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       type="email"
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
-                      placeholder="david@agency.gov"
+                      placeholder="xxxx@agency.gov"
                       className="modern-input"
                       style={{ paddingLeft: '38px', paddingRight: '10px' }}
                       required
