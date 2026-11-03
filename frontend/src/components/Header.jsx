@@ -322,7 +322,7 @@ export function Header() {
             </div>
             <div style={{ lineHeight: 1.15, textAlign: 'left' }}>
               <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
-                {user?.name || 'Sarah Connor'}
+                {user?.name || 'Operations Officer'}
               </div>
               <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 500 }}>
                 {user?.role || 'Operations Commander'}

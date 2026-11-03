@@ -531,7 +531,7 @@ export function EditProfileModal({ isOpen, onClose }) {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Sarah Connor"
+                  placeholder="Enter your full name"
                   required
                   style={{
                     width: '100%',
