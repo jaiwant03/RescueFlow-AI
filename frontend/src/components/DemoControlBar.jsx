@@ -244,12 +244,12 @@ export function DemoControlBar({ onScenarioComplete }) {
           {runningAll ? (
             <>
               <Loader2 size={14} className="animate-spin" />
-              Injecting Scenarios...
+              Processing Inbound Telemetry...
             </>
           ) : (
             <>
               <Play size={12} fill="#ffffff" />
-              Inject All Scenarios
+              Process Inbound Stream
             </>
           )}
         </button>
