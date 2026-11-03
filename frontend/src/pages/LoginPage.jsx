@@ -522,7 +522,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem', marginTop: '2px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.78rem', marginTop: '2px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
                   <input
                     type="checkbox"
@@ -532,12 +532,6 @@ export function LoginPage({ initialMode = 'login' }) {
                   />
                   <span>Keep me signed in</span>
                 </label>
-                <span
-                  style={{ color: '#0d9488', fontWeight: 600, cursor: 'pointer' }}
-                  onClick={() => addToast('Access Help', 'Sign in with your assigned credentials or create a profile for instant clearance.', 'info')}
-                >
-                  Need help?
-                </span>
               </div>
 
               <button
