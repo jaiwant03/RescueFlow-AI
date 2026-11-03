@@ -97,47 +97,96 @@ async def upload_csv_messages(file: UploadFile = File(...)):
 sim_router = APIRouter(prefix="/api/simulate", tags=["Hackathon Demo Simulation"])
 
 CANONICAL_DEMO_CASES = {
+    # 1st Position: HIGHEST SEVERITY (P1 Critical - Commercial Fire & Trapped)
+    "step1_fire_gandhipuram": {
+        "source": "telegram",
+        "sender": "@cbe_firewatch",
+        "message": "EMERGENCY: Massive 3-alarm fire at commercial plaza near Gandhipuram Central Bus Stand! Toxic smoke blocking exit stairs, 8 civilians trapped on 3rd floor. Send fire tenders, hydraulic ladder and EMT immediately!",
+        "location": "Gandhipuram",
+        "note": "P1 Critical: Structural Commercial Fire with 8 trapped civilians (Telegram)"
+    },
+    # 2nd Position: HIGH SEVERITY (P1 Critical - Flash Flood Surge & Rooftop Trapped)
+    "step2_flood_peelamedu": {
+        "source": "telegram",
+        "sender": "@peelamedu_flood_alert",
+        "message": "URGENT! Flood barrier breached near PSG College Peelamedu. Rapid water surge exceeding 5 feet inside residential ground floors. 5 people stranded on terrace. Immediate NDRF boat rescue required!",
+        "location": "PSG College",
+        "note": "P1 Critical: Severe Flash Flood with 5 stranded on rooftop (Telegram)"
+    },
+    # 3rd Position: HIGH SEVERITY (P2 High - Urgent Medical Trauma & Wall Collapse)
+    "step3_medical_rspuram": {
+        "source": "telegram",
+        "sender": "@rspuram_resident",
+        "message": "URGENT MEDICAL: Compound wall collapsed due to torrential rains near RS Puram DB Road. 72-year-old resident suffered severe head trauma and fractures. Bleeding profusely, urgent ambulance and paramedic dispatch needed!",
+        "location": "RS Puram",
+        "note": "P2 High: Critical Medical Trauma & Structural Collapse (Telegram)"
+    },
+    # 4th Position: MEDIUM SEVERITY (P3 Medium - Live Wire Hazard & Roadblock)
+    "step4_hazard_townhall": {
+        "source": "telegram",
+        "sender": "@townhall_patrol",
+        "message": "HAZARD ALERT: Large banyan tree collapsed across Town Hall main road. Snapped 440V overhead electrical cable sparking on wet asphalt. Road completely blocked, TNEB power cutoff and clearance crew needed.",
+        "location": "Town Hall",
+        "note": "P3 Medium: Electrical Cable Snapped & Major Roadblock (Telegram)"
+    },
+    # 5th Position: LOW SEVERITY (P4 Low - Street Waterlogging & Traffic Slow)
+    "step5_waterlogging_ukkadam": {
+        "source": "telegram",
+        "sender": "@cbe_traffic_desk",
+        "message": "ADVISORY: Rainwater accumulation of approximately 1.5 feet at Ukkadam railway underpass. Slow moving vehicle traffic. No casualties or stranded persons. Municipal suction pumps requested for clearance.",
+        "location": "Ukkadam",
+        "note": "P4 Low: Minor Street Waterlogging & Traffic Advisory (Telegram)"
+    },
+    # 6th Position: LOWEST SEVERITY / FILTERED (Non-Emergency Citizen Query)
+    "step6_casual_query": {
+        "source": "telegram",
+        "sender": "@coimbatore_student",
+        "message": "Hello team, is there a red alert holiday declared for colleges tomorrow in Coimbatore? Thank you.",
+        "location": "Coimbatore",
+        "note": "P5 Filtered: Non-Emergency Citizen Query safely filtered by Groq AI (Telegram)"
+    },
+    # Aliases for backward compatibility
     "step1_flood_psg": {
         "source": "telegram",
-        "sender": "@ramesh_kumar_cbe",
-        "message": "URGENT! Flood water entered houses near PSG College. 5 people are trapped and need immediate rescue.",
+        "sender": "@peelamedu_flood_alert",
+        "message": "URGENT! Flood barrier breached near PSG College Peelamedu. Rapid water surge exceeding 5 feet inside residential ground floors. 5 people stranded on terrace. Immediate NDRF boat rescue required!",
         "location": "PSG College",
-        "note": "Primary critical flood incident creation"
+        "note": "P1 Critical: Severe Flash Flood with 5 stranded on rooftop (Telegram)"
     },
     "step2_flood_psg_corroborate": {
-        "source": "email",
-        "sender": "citizens_watch_cbe@gmail.com",
+        "source": "telegram",
+        "sender": "@citizens_watch_cbe",
         "message": "Water has entered several homes near PSG College. Residents need emergency assistance.",
         "location": "PSG College",
-        "note": "Corroborating flood report #2 (Deduplication into PSG incident)"
+        "note": "P1 Critical: Corroborating flood report (Telegram)"
     },
     "step3_flood_psg_web": {
-        "source": "web",
-        "sender": "Student Council PSG",
+        "source": "telegram",
+        "sender": "@student_council_psg",
         "message": "PSG area is flooded. Please send rescue support.",
         "location": "PSG College",
-        "note": "Corroborating flood report #3 (Increments report count to 3 & boosts priority)"
+        "note": "P1 Critical: Corroborating flood report #3 (Telegram)"
     },
     "step4_fire_gandhipuram": {
         "source": "telegram",
-        "sender": "@traffic_watch_gandhipuram",
-        "message": "Fire reported near Gandhipuram bus stand. Several people are trapped inside the building.",
+        "sender": "@cbe_firewatch",
+        "message": "EMERGENCY: Massive 3-alarm fire at commercial plaza near Gandhipuram Central Bus Stand! Toxic smoke blocking exit stairs, 8 civilians trapped on 3rd floor. Send fire tenders, hydraulic ladder and EMT immediately!",
         "location": "Gandhipuram",
-        "note": "Distinct Critical Fire incident creation"
+        "note": "P1 Critical: Structural Commercial Fire with 8 trapped civilians (Telegram)"
     },
     "step5_medical_rspuram": {
-        "source": "web",
-        "sender": "Dr. Ananya Sharma",
-        "message": "An elderly person requires urgent medical assistance near RS Puram.",
+        "source": "telegram",
+        "sender": "@rspuram_resident",
+        "message": "URGENT MEDICAL: Compound wall collapsed due to torrential rains near RS Puram DB Road. 72-year-old resident suffered severe head trauma and fractures. Bleeding profusely, urgent ambulance and paramedic dispatch needed!",
         "location": "RS Puram",
-        "note": "Distinct Medical emergency creation"
+        "note": "P2 High: Critical Medical Trauma & Structural Collapse (Telegram)"
     },
     "step6_non_emergency": {
-        "source": "email",
-        "sender": "marketing@localdeals.com",
-        "message": "Good morning everyone, have a nice day.",
+        "source": "telegram",
+        "sender": "@coimbatore_student",
+        "message": "Hello team, is there a red alert holiday declared for colleges tomorrow in Coimbatore? Thank you.",
         "location": "Coimbatore",
-        "note": "Casual non-emergency message filtered and safely archived"
+        "note": "P5 Filtered: Non-Emergency Citizen Query safely filtered by Groq AI (Telegram)"
     }
 }
 

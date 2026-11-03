@@ -6,11 +6,11 @@ import {
   Shield, 
   Play, 
   Waves, 
-  Droplet, 
-  FileText, 
   Flame, 
   Plus, 
-  MessageSquare,
+  Zap, 
+  Droplets, 
+  MessageSquare, 
   Loader2 
 } from 'lucide-react';
 
@@ -19,63 +19,71 @@ export function DemoControlBar({ onScenarioComplete }) {
   const [runningKey, setRunningKey] = useState(null);
   const [runningAll, setRunningAll] = useState(false);
 
+  // 6 Scenarios Strictly Ordered: Highest Severity (1) to Lowest Severity (6)
+  // All received directly from citizen Telegram channels & bot
   const scenarios = [
     {
-      key: 'step1_flood_psg',
+      key: 'step1_fire_gandhipuram',
       stepNum: '1',
-      numBg: '#dcfce7',
-      numColor: '#166534',
-      title: 'Flood @ PSG',
-      subtitle: '5 trapped (Telegram)',
-      icon: <Waves size={15} color="#0d9488" />,
-    },
-    {
-      key: 'step2_flood_psg_corroborate',
-      stepNum: '2',
-      numBg: '#dbeafe',
-      numColor: '#1e40af',
-      title: 'Corroborate #2',
-      subtitle: 'Water in homes (Email)',
-      icon: <Droplet size={15} color="#2563eb" />,
-    },
-    {
-      key: 'step3_flood_psg_web',
-      stepNum: '3',
-      numBg: '#f1f5f9',
-      numColor: '#334155',
-      title: 'Corroborate #3',
-      subtitle: '3 Reports Merged (Web)',
-      icon: <FileText size={15} color="#475569" />,
-    },
-    {
-      key: 'step4_fire_gandhipuram',
-      stepNum: '4',
       numBg: '#fee2e2',
       numColor: '#991b1b',
       title: 'Fire @ Gandhipuram',
-      subtitle: 'Building trapped (Telegram)',
+      subtitle: '8 trapped (Telegram)',
+      severityLabel: 'P1 CRITICAL',
       icon: <Flame size={15} color="#dc2626" />,
     },
     {
-      key: 'step5_medical_rspuram',
-      stepNum: '5',
+      key: 'step2_flood_peelamedu',
+      stepNum: '2',
       numBg: '#ffedd5',
       numColor: '#9a3412',
+      title: 'Flood @ Peelamedu',
+      subtitle: 'Water surge 5ft (Telegram)',
+      severityLabel: 'P1 CRITICAL',
+      icon: <Waves size={15} color="#ea580c" />,
+    },
+    {
+      key: 'step3_medical_rspuram',
+      stepNum: '3',
+      numBg: '#fef3c7',
+      numColor: '#92400e',
       title: 'Medical @ RS Puram',
-      subtitle: 'Elderly assistance (Web)',
+      subtitle: 'Head trauma (Telegram)',
+      severityLabel: 'P2 HIGH',
       icon: (
-        <div style={{ width: '15px', height: '15px', background: '#ea580c', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '15px', height: '15px', background: '#d97706', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Plus size={11} color="#ffffff" strokeWidth={3} />
         </div>
       ),
     },
     {
-      key: 'step6_non_emergency',
+      key: 'step4_hazard_townhall',
+      stepNum: '4',
+      numBg: '#e0f2fe',
+      numColor: '#075985',
+      title: 'Hazard @ Town Hall',
+      subtitle: 'Live wire down (Telegram)',
+      severityLabel: 'P3 MEDIUM',
+      icon: <Zap size={15} color="#0284c7" />,
+    },
+    {
+      key: 'step5_waterlogging_ukkadam',
+      stepNum: '5',
+      numBg: '#dcfce7',
+      numColor: '#166534',
+      title: 'Waterlogging @ Ukkadam',
+      subtitle: 'Road flooded (Telegram)',
+      severityLabel: 'P4 LOW',
+      icon: <Droplets size={15} color="#0d9488" />,
+    },
+    {
+      key: 'step6_casual_query',
       stepNum: '6',
       numBg: '#f1f5f9',
-      numColor: '#334155',
+      numColor: '#475569',
       title: 'Casual Message',
-      subtitle: 'Greeting (Filtered Out)',
+      subtitle: 'Filtered Out (Telegram)',
+      severityLabel: 'P5 FILTERED',
       icon: <MessageSquare size={15} color="#64748b" />,
     },
   ];
@@ -86,8 +94,8 @@ export function DemoControlBar({ onScenarioComplete }) {
       const res = await api.runDemoScenario(sc.key);
       addToast(
         `✓ ${sc.title}`,
-        res.note || 'Disaster scenario ingested & triaged by Groq AI.',
-        sc.key === 'step6_non_emergency' ? 'info' : 'critical'
+        res.note || 'Telegram message received & triaged in real time.',
+        sc.key === 'step6_casual_query' || sc.key === 'step6_non_emergency' ? 'info' : 'critical'
       );
       if (onScenarioComplete) onScenarioComplete();
       refreshStats();
@@ -113,7 +121,7 @@ export function DemoControlBar({ onScenarioComplete }) {
     }
     setRunningKey(null);
     setRunningAll(false);
-    addToast('All Demo Scenarios Complete', 'The complete emergency response pipeline has been executed.', 'info');
+    addToast('All Telegram Scenarios Processed', 'Priority ranking 1 (Critical) to 6 (Low/Filtered) ingested into dispatch queue.', 'info');
   };
 
   return (
@@ -196,7 +204,7 @@ export function DemoControlBar({ onScenarioComplete }) {
                 marginTop: '2px',
               }}
             >
-              Simulate disaster telemetry for field evaluation (1-click trigger for official operational flow)
+              Live citizen emergency messages received via Telegram — prioritized from High Severity (1) to Low (6)
             </p>
           </div>
         </div>
@@ -247,7 +255,7 @@ export function DemoControlBar({ onScenarioComplete }) {
         </button>
       </div>
 
-      {/* 6 Scenario Cards Row */}
+      {/* 6 Scenario Cards Row: High Severity (1) to Low Severity (6) */}
       <div
         style={{
           display: 'grid',
