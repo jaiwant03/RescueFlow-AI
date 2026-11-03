@@ -15,9 +15,7 @@ import {
   ArrowRight, 
   AlertCircle,
   KeyRound,
-  CheckCircle2,
-  Loader2,
-  Sparkles
+  Loader2
 } from 'lucide-react';
 
 export function LoginPage({ initialMode = 'login' }) {
@@ -30,19 +28,18 @@ export function LoginPage({ initialMode = 'login' }) {
   const isSignupRoute = location.pathname === '/signup' || initialMode === 'signup';
   const [mode, setMode] = useState(isSignupRoute ? 'signup' : 'login');
 
-  // Login form state - clean, real-time (no hardcoded demo pre-fills)
+  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginRole, setLoginRole] = useState('Operations Commander');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [rememberTerminal, setRememberTerminal] = useState(true);
 
-  // Signup form state
+  // Signup form state - clean, modern, empty by default
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
-  const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
-  const [signupDepartment, setSignupDepartment] = useState('National Disaster Response Force');
+  const [signupDepartment, setSignupDepartment] = useState('');
   const [signupRole, setSignupRole] = useState('Operations Commander');
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [agreeTacticalTerms, setAgreeTacticalTerms] = useState(true);
@@ -63,7 +60,7 @@ export function LoginPage({ initialMode = 'login' }) {
     setErrorMessage('');
 
     if (!loginEmail.trim()) {
-      setErrorMessage('Please enter your official email or operator identifier.');
+      setErrorMessage('Please enter your official email or username.');
       return;
     }
     if (!loginPassword) {
@@ -91,13 +88,13 @@ export function LoginPage({ initialMode = 'login' }) {
     }, 250);
   };
 
-  // Handle Signup Submit
+  // Handle Signup Submit - streamlined, modern
   const handleSignupSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
 
     if (!signupName.trim()) {
-      setErrorMessage('Please enter your full operator name.');
+      setErrorMessage('Please enter your full name.');
       return;
     }
     if (!signupEmail.trim() || !signupEmail.includes('@')) {
@@ -108,12 +105,12 @@ export function LoginPage({ initialMode = 'login' }) {
       setErrorMessage('Please create a security passcode.');
       return;
     }
-    if (signupPassword !== signupConfirmPassword) {
-      setErrorMessage('Security passcode confirmation does not match.');
+    if (signupPassword.length < 4) {
+      setErrorMessage('Security passcode must be at least 4 characters.');
       return;
     }
     if (!agreeTacticalTerms) {
-      setErrorMessage('You must confirm authorized operational clearance.');
+      setErrorMessage('Please accept the operational access terms.');
       return;
     }
 
@@ -125,7 +122,7 @@ export function LoginPage({ initialMode = 'login' }) {
         email: signupEmail,
         password: signupPassword,
         role: signupRole,
-        department: signupDepartment,
+        department: signupDepartment || 'Disaster Operations Command',
       });
 
       setIsSubmitting(false);
@@ -149,7 +146,7 @@ export function LoginPage({ initialMode = 'login' }) {
         backgroundColor: '#f8fafc',
         backgroundImage: 'radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px)',
         backgroundSize: '24px 24px',
-        padding: '36px 16px',
+        padding: '32px 16px',
         position: 'relative',
         overflow: 'hidden',
         fontFamily: "'Plus Jakarta Sans', 'Outfit', -apple-system, sans-serif",
@@ -207,30 +204,30 @@ export function LoginPage({ initialMode = 'login' }) {
           }}
         />
 
-        <div style={{ padding: '34px 30px 24px' }}>
+        <div style={{ padding: '32px 28px 24px' }}>
           {/* Header Brand */}
-          <div style={{ textAlign: 'center', marginBottom: '22px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '52px',
-                height: '52px',
-                borderRadius: '16px',
+                width: '50px',
+                height: '50px',
+                borderRadius: '15px',
                 background: 'linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%)',
                 border: '1.5px solid rgba(13, 148, 136, 0.22)',
                 boxShadow: '0 8px 24px -4px rgba(13, 148, 136, 0.18), 0 2px 6px rgba(0, 0, 0, 0.03)',
-                marginBottom: '12px',
+                marginBottom: '10px',
               }}
             >
-              <CubeLogo size={32} />
+              <CubeLogo size={30} />
             </div>
 
             <h1
               className="brand-title-modern"
               style={{
-                fontSize: '1.85rem',
+                fontSize: '1.80rem',
                 fontWeight: 800,
                 letterSpacing: '-0.035em',
                 lineHeight: 1.15,
@@ -243,7 +240,7 @@ export function LoginPage({ initialMode = 'login' }) {
 
             <p
               style={{
-                fontSize: '0.80rem',
+                fontSize: '0.78rem',
                 color: '#64748b',
                 fontWeight: 500,
                 marginTop: '4px',
@@ -289,7 +286,7 @@ export function LoginPage({ initialMode = 'login' }) {
               background: '#f1f5f9',
               borderRadius: '12px',
               padding: '3.5px',
-              marginBottom: '20px',
+              marginBottom: '18px',
               border: '1px solid #e2e8f0',
             }}
           >
@@ -507,12 +504,12 @@ export function LoginPage({ initialMode = 'login' }) {
             </form>
           )}
 
-          {/* MODE 2: SIGN UP */}
+          {/* MODE 2: SIGN UP - MODERN, STREAMLINED, UNCLUTTERED */}
           {mode === 'signup' && (
-            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                  Operator Full Name
+                  Full Name
                 </label>
                 <div style={{ position: 'relative' }}>
                   <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
@@ -520,7 +517,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="text"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
-                    placeholder="Enter your full name..."
+                    placeholder="e.g. Captain David Chen"
                     autoFocus
                     className="modern-input"
                     style={{ paddingLeft: '38px', paddingRight: '12px' }}
@@ -531,7 +528,7 @@ export function LoginPage({ initialMode = 'login' }) {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                  Tactical Official Email
+                  Official Email
                 </label>
                 <div style={{ position: 'relative' }}>
                   <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
@@ -539,7 +536,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    placeholder="Enter your official email..."
+                    placeholder="e.g. david.chen@response.gov"
                     className="modern-input"
                     style={{ paddingLeft: '38px', paddingRight: '12px' }}
                     required
@@ -549,7 +546,7 @@ export function LoginPage({ initialMode = 'login' }) {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                  Agency / Responding Department
+                  Agency / Department
                 </label>
                 <div style={{ position: 'relative' }}>
                   <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
@@ -557,17 +554,16 @@ export function LoginPage({ initialMode = 'login' }) {
                     type="text"
                     value={signupDepartment}
                     onChange={(e) => setSignupDepartment(e.target.value)}
-                    placeholder="e.g. Disaster Operations Team"
+                    placeholder="e.g. Fire & Rescue, EMS, Coastal Guard"
                     className="modern-input"
                     style={{ paddingLeft: '38px', paddingRight: '12px' }}
-                    required
                   />
                 </div>
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                  Designated Tactical Role
+                  Operational Role
                 </label>
                 <ModeledSelect
                   value={signupRole}
@@ -582,75 +578,63 @@ export function LoginPage({ initialMode = 'login' }) {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                    Create Passcode
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type={showSignupPassword ? 'text' : 'password'}
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      placeholder="Passcode"
-                      className="modern-input"
-                      style={{ paddingLeft: '32px', paddingRight: '10px', height: '40px' }}
-                      required
-                    />
-                  </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
+                  Security Passcode
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type={showSignupPassword ? 'text' : 'password'}
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    placeholder="Create a secure passcode..."
+                    className="modern-input"
+                    style={{ paddingLeft: '38px', paddingRight: '38px' }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(p => !p)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#94a3b8',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex',
+                    }}
+                    title={showSignupPassword ? 'Hide passcode' : 'Show passcode'}
+                  >
+                    {showSignupPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 600, marginBottom: '5px', color: '#334155' }}>
-                    Confirm Passcode
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
-                    <input
-                      type={showSignupPassword ? 'text' : 'password'}
-                      value={signupConfirmPassword}
-                      onChange={(e) => setSignupConfirmPassword(e.target.value)}
-                      placeholder="Confirm"
-                      className="modern-input"
-                      style={{ paddingLeft: '32px', paddingRight: '10px', height: '40px' }}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowSignupPassword(p => !p)}
-                  style={{ color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                >
-                  {showSignupPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  <span>{showSignupPassword ? 'Hide Passcodes' : 'Show Passcodes'}</span>
-                </button>
               </div>
 
               <label
                 style={{
                   display: 'flex',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
                   gap: '8px',
-                  marginTop: '4px',
+                  marginTop: '2px',
                   fontSize: '0.74rem',
                   color: '#475569',
                   cursor: 'pointer',
-                  lineHeight: 1.35,
+                  userSelect: 'none',
                 }}
               >
                 <input
                   type="checkbox"
                   checked={agreeTacticalTerms}
                   onChange={(e) => setAgreeTacticalTerms(e.target.checked)}
-                  style={{ marginTop: '2px', cursor: 'pointer', accentColor: '#0d9488' }}
+                  style={{ cursor: 'pointer', accentColor: '#0d9488' }}
                 />
                 <span>
-                  I certify official operational clearance to access live emergency triage telemetry and dispatch automation.
+                  I agree to authorized operational terms & access policy
                 </span>
               </label>
 
@@ -660,7 +644,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 className="modern-btn-primary"
                 style={{
                   width: '100%',
-                  marginTop: '6px',
+                  marginTop: '4px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   opacity: isSubmitting ? 0.8 : 1,
@@ -669,17 +653,17 @@ export function LoginPage({ initialMode = 'login' }) {
                 {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    <span>Registering Operator...</span>
+                    <span>Creating Profile...</span>
                   </>
                 ) : (
                   <>
-                    <span>Register Operator Account</span>
+                    <span>Create Operator Profile</span>
                     <ArrowRight size={16} />
                   </>
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+              <div style={{ textAlign: 'center', marginTop: '4px' }}>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   Already registered?{' '}
                   <button
@@ -704,8 +688,8 @@ export function LoginPage({ initialMode = 'login' }) {
           {/* Card Footer */}
           <div
             style={{
-              marginTop: '22px',
-              paddingTop: '16px',
+              marginTop: '20px',
+              paddingTop: '14px',
               borderTop: '1px solid #f1f5f9',
               textAlign: 'center',
               display: 'flex',
