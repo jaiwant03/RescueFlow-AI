@@ -433,7 +433,7 @@ export function DashboardPage() {
           </div>
 
           {/* Interactive Leaflet Map with Markers and Controls */}
-          <div style={{ position: 'relative', height: '360px', borderRadius: '10px', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', height: '360px', borderRadius: '10px', overflow: 'hidden', isolation: 'isolate' }}>
             <IncidentMap incidents={incidents} height="360px" />
 
             {/* View Full Map button in bottom right overlay */}
@@ -454,7 +454,7 @@ export function DashboardPage() {
                 alignItems: 'center',
                 gap: '6px',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                zIndex: 1000,
+                zIndex: 20,
               }}
             >
               <Maximize2 size={12} />
