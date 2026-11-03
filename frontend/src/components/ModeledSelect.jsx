@@ -100,7 +100,7 @@ export function ModeledSelect({
         style={{
           minWidth: minWidth,
           width: isFullWidth ? '100%' : 'auto',
-          height: height || '36px',
+          height: height || '42px',
           boxSizing: 'border-box',
           background: '#ffffff',
           border: isOpen ? '1.5px solid var(--rama-green)' : '1.5px solid #e2e8f0',
@@ -108,7 +108,7 @@ export function ModeledSelect({
             ? '0 0 0 3px rgba(13, 148, 136, 0.15), 0 2px 5px rgba(0,0,0,0.04)'
             : 'none',
           borderRadius: '10px',
-          padding: '0 10px',
+          padding: '0 12px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
