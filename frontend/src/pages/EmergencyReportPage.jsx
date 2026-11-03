@@ -65,11 +65,11 @@ export function EmergencyReportPage() {
           addToast('GPS Located', `Acquired coordinates: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`, 'info');
         },
         () => {
-          // Fallback to PSG College Coimbatore demo coordinates
+          // Fallback to PSG College Coimbatore emergency coordinates
           setLatitude('11.0248');
           setLongitude('77.0028');
           setLocation('PSG College, Coimbatore');
-          addToast('Demo Coordinates', 'Preset to Coimbatore emergency zone coordinates', 'info');
+          addToast('Emergency Zone Coordinates', 'Preset to Coimbatore emergency zone coordinates', 'info');
         }
       );
     }

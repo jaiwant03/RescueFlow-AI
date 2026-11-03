@@ -71,53 +71,49 @@ export function Header() {
         </div>
       </div>
 
-      {/* 2. Center Simulation Mode Active Badge */}
+      {/* 2. Center Live Operations Active Badge */}
       <div
         style={{
-          background: '#ecfdf5',
-          border: '1px solid #a7f3d0',
+          background: '#f0fdf4',
+          border: '1px solid #bbf7d0',
           borderRadius: '9999px',
-          padding: '4px 18px',
+          padding: '5px 18px',
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          boxShadow: '0 1px 2px rgba(16, 185, 129, 0.05)',
+          gap: '9px',
+          boxShadow: '0 1px 3px rgba(16, 185, 129, 0.08)',
         }}
       >
         <div
           style={{
-            width: '20px',
-            height: '20px',
+            width: '8px',
+            height: '8px',
             borderRadius: '50%',
-            background: '#10b981',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#ffffff',
+            background: '#16a34a',
+            boxShadow: '0 0 8px #16a34a',
             flexShrink: 0,
           }}
-        >
-          <Bell size={11} fill="#ffffff" />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', lineHeight: 1.2 }}>
+          <span
+            style={{
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              color: '#166534',
+              letterSpacing: '0.02em',
+            }}
+          >
+            LIVE OPERATIONS ACTIVE
+          </span>
+          <span style={{ color: '#86efac' }}>&bull;</span>
           <span
             style={{
               fontSize: '0.68rem',
-              fontWeight: 800,
-              color: '#065f46',
-              letterSpacing: '0.04em',
+              color: '#15803d',
+              fontWeight: 600,
             }}
           >
-            SIMULATION MODE ACTIVE
-          </span>
-          <span
-            style={{
-              fontSize: '0.64rem',
-              color: '#047857',
-              fontWeight: 500,
-            }}
-          >
-            Automated responses and dispatches are simulated for Hackathon Evaluation
+            Real-Time Emergency Telemetry & Dispatch Pipeline Connected
           </span>
         </div>
       </div>
