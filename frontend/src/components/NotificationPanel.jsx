@@ -142,14 +142,14 @@ export function NotificationPanel({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Quick Header Actions: Sound Toggle + Test Alert + Mark Read */}
+          {/* Quick Header Actions: Sound Toggle + Mark Read */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {/* Audio chime toggle */}
             <button
               onClick={toggleSound}
               title={soundEnabled ? 'Mute alert chime' : 'Enable alert chime'}
               style={{
-                padding: '5px',
+                padding: '4px 8px',
                 borderRadius: '7px',
                 background: soundEnabled ? '#ecfdf5' : '#f1f5f9',
                 color: soundEnabled ? '#059669' : '#94a3b8',
@@ -157,29 +157,14 @@ export function NotificationPanel({ isOpen, onClose }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}
-            >
-              {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            </button>
-
-            {/* Test Alert Button */}
-            <button
-              onClick={sendTestNotification}
-              title="Trigger a simulated real-time alert with audio chime"
-              style={{
-                padding: '4px 8px',
-                borderRadius: '7px',
-                background: '#eff6ff',
-                color: '#0284c7',
-                border: '1px solid #bfdbfe',
-                fontSize: '0.70rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
                 gap: '4px',
+                fontSize: '0.70rem',
+                fontWeight: 600,
+                cursor: 'pointer',
               }}
             >
-              <Zap size={12} /> Test Alert
+              {soundEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
+              <span>{soundEnabled ? 'Chime On' : 'Muted'}</span>
             </button>
 
             {/* Mark All Read */}
@@ -198,6 +183,7 @@ export function NotificationPanel({ isOpen, onClose }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
+                  cursor: 'pointer',
                 }}
               >
                 <CheckCheck size={12} /> Read All
