@@ -85,8 +85,8 @@ export function NotificationPanel({ isOpen, onClose }) {
       ref={panelRef}
       style={{
         position: 'absolute',
-        top: '52px',
-        right: '12px',
+        top: '50px',
+        right: '0',
         width: '420px',
         maxWidth: 'calc(100vw - 24px)',
         background: '#ffffff',
@@ -95,7 +95,7 @@ export function NotificationPanel({ isOpen, onClose }) {
         border: '1px solid #e2e8f0',
         zIndex: 9999,
         overflow: 'hidden',
-        animation: 'slideIn 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+        animation: 'panelDropdown 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       {/* Modeled Top Gradient Stripe */}
