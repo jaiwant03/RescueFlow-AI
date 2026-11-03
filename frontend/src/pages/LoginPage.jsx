@@ -294,6 +294,7 @@ export function LoginPage({ initialMode = 'login' }) {
         style={{
           width: '100%',
           maxWidth: '490px',
+          minHeight: '530px',
           background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(20px)',
           borderRadius: '20px',
@@ -303,6 +304,8 @@ export function LoginPage({ initialMode = 'login' }) {
           zIndex: 10,
           boxSizing: 'border-box',
           overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Subtle Top Accent Stripe */}
