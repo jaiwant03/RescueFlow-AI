@@ -598,7 +598,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       type="text"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
-                      placeholder="e.g. David Chen"
+                      placeholder="David Chen"
                       autoFocus
                       className="modern-input"
                       style={{ paddingLeft: '38px', paddingRight: '10px' }}
@@ -617,7 +617,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       type="email"
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
-                      placeholder="e.g. david@agency.gov"
+                      placeholder="david@agency.gov"
                       className="modern-input"
                       style={{ paddingLeft: '38px', paddingRight: '10px' }}
                       required
@@ -638,7 +638,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       type="text"
                       value={signupDepartment}
                       onChange={(e) => setSignupDepartment(e.target.value)}
-                      placeholder="e.g. Fire & Rescue"
+                      placeholder="Fire & Rescue"
                       className="modern-input"
                       style={{ paddingLeft: '38px', paddingRight: '10px' }}
                     />
