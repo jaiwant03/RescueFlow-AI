@@ -5,7 +5,6 @@ import { useSystem } from '../context/SystemContext';
 import { ModeledSelect } from '../components/ModeledSelect';
 import { CubeLogo } from '../components/CubeLogo';
 import { 
-  ShieldCheck, 
   Lock, 
   Mail, 
   User, 
@@ -15,6 +14,7 @@ import {
   ArrowRight, 
   AlertCircle,
   KeyRound,
+  UserPlus,
   Loader2
 } from 'lucide-react';
 
@@ -63,7 +63,6 @@ export function LoginPage({ initialMode = 'login' }) {
   const [signupDepartment, setSignupDepartment] = useState('');
   const [signupRole, setSignupRole] = useState('Operations Commander');
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [agreeTacticalTerms, setAgreeTacticalTerms] = useState(true);
 
   // UI state
   const [errorMessage, setErrorMessage] = useState('');
@@ -128,10 +127,6 @@ export function LoginPage({ initialMode = 'login' }) {
     }
     if (signupPassword.length < 4) {
       setErrorMessage('Security passcode must be at least 4 characters.');
-      return;
-    }
-    if (!agreeTacticalTerms) {
-      setErrorMessage('Please accept the operational access terms.');
       return;
     }
 
@@ -259,7 +254,7 @@ export function LoginPage({ initialMode = 'login' }) {
         backgroundColor: '#f8fafc',
         backgroundImage: 'radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px)',
         backgroundSize: '24px 24px',
-        padding: '12px',
+        padding: '16px',
         position: 'relative',
         overflow: 'hidden',
         boxSizing: 'border-box',
@@ -272,11 +267,11 @@ export function LoginPage({ initialMode = 'login' }) {
           position: 'absolute',
           top: '15%',
           left: '20%',
-          width: '400px',
-          height: '400px',
+          width: '420px',
+          height: '420px',
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 65%)',
-          filter: 'blur(50px)',
+          filter: 'blur(55px)',
           pointerEvents: 'none',
         }}
       />
@@ -285,8 +280,8 @@ export function LoginPage({ initialMode = 'login' }) {
           position: 'absolute',
           bottom: '15%',
           right: '20%',
-          width: '420px',
-          height: '420px',
+          width: '440px',
+          height: '440px',
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(2, 132, 199, 0.12) 0%, transparent 65%)',
           filter: 'blur(60px)',
@@ -298,53 +293,53 @@ export function LoginPage({ initialMode = 'login' }) {
       <div
         style={{
           width: '100%',
-          maxWidth: '460px',
+          maxWidth: '490px',
           background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '18px',
-          border: '1px solid rgba(226, 232, 240, 0.92)',
-          boxShadow: '0 20px 48px -10px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02)',
+          borderRadius: '20px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 20px 48px -12px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02)',
           position: 'relative',
           zIndex: 10,
           boxSizing: 'border-box',
           overflow: 'hidden',
         }}
       >
-        {/* Sleek Top Accent Stripe */}
+        {/* Subtle Top Accent Stripe */}
         <div
           style={{
-            height: '3px',
+            height: '3.5px',
             width: '100%',
             background: 'linear-gradient(90deg, #0d9488 0%, #0284c7 50%, #6366f1 100%)',
           }}
         />
 
-        <div style={{ padding: '20px 24px 16px', boxSizing: 'border-box' }}>
-          {/* Header Brand */}
-          <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+        <div style={{ padding: '28px 34px 26px', boxSizing: 'border-box' }}>
+          {/* Header Brand - Clean, Airy & Minimalist */}
+          <div style={{ textAlign: 'center', marginBottom: '18px' }}>
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                borderRadius: '12px',
+                width: '46px',
+                height: '46px',
+                borderRadius: '14px',
                 background: 'linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%)',
-                border: '1.5px solid rgba(13, 148, 136, 0.22)',
-                boxShadow: '0 6px 16px -3px rgba(13, 148, 136, 0.16)',
-                marginBottom: '6px',
+                border: '1.5px solid rgba(13, 148, 136, 0.20)',
+                boxShadow: '0 6px 18px -4px rgba(13, 148, 136, 0.18)',
+                marginBottom: '10px',
               }}
             >
-              <CubeLogo size={24} />
+              <CubeLogo size={28} />
             </div>
 
             <h1
               className="brand-title-modern"
               style={{
-                fontSize: '1.40rem',
+                fontSize: '1.55rem',
                 fontWeight: 800,
-                letterSpacing: '-0.03em',
+                letterSpacing: '-0.035em',
                 lineHeight: 1.15,
                 margin: 0,
                 color: '#0f172a',
@@ -355,42 +350,15 @@ export function LoginPage({ initialMode = 'login' }) {
 
             <p
               style={{
-                fontSize: '0.70rem',
+                fontSize: '0.84rem',
                 color: '#64748b',
                 fontWeight: 500,
-                marginTop: '3px',
+                marginTop: '4px',
                 marginBottom: 0,
               }}
             >
-              Disaster Message Prioritization & Response Automation
+              Emergency Operations & Dispatch Platform
             </p>
-
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                marginTop: '6px',
-                padding: '2px 8px',
-                borderRadius: '9999px',
-                background: '#f0fdf4',
-                border: '1px solid #bbf7d0',
-                fontSize: '0.62rem',
-                fontWeight: 600,
-                color: '#166534',
-              }}
-            >
-              <span
-                style={{
-                  width: '5px',
-                  height: '5px',
-                  borderRadius: '50%',
-                  background: '#22c55e',
-                  boxShadow: '0 0 6px #22c55e',
-                }}
-              />
-              <span>Live Emergency Operations Network</span>
-            </div>
           </div>
 
           {/* Mode Switcher Segmented Control */}
@@ -398,9 +366,9 @@ export function LoginPage({ initialMode = 'login' }) {
             style={{
               display: 'flex',
               background: '#f1f5f9',
-              borderRadius: '10px',
-              padding: '3px',
-              marginBottom: '12px',
+              borderRadius: '12px',
+              padding: '3.5px',
+              marginBottom: '18px',
               border: '1px solid #e2e8f0',
             }}
           >
@@ -409,23 +377,23 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('login')}
               style={{
                 flex: 1,
-                padding: '6px 10px',
-                borderRadius: '8px',
-                fontSize: '0.77rem',
-                fontWeight: 700,
+                padding: '7px 12px',
+                borderRadius: '9px',
+                fontSize: '0.82rem',
+                fontWeight: 600,
                 background: mode === 'login' ? '#ffffff' : 'transparent',
                 color: mode === 'login' ? '#0f172a' : '#64748b',
                 boxShadow: mode === 'login' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px',
+                gap: '7px',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
             >
-              <KeyRound size={13} color={mode === 'login' ? '#0d9488' : '#94a3b8'} />
+              <KeyRound size={15} color={mode === 'login' ? '#0d9488' : '#94a3b8'} />
               <span>Operator Sign In</span>
             </button>
 
@@ -434,23 +402,23 @@ export function LoginPage({ initialMode = 'login' }) {
               onClick={() => handleModeSwitch('signup')}
               style={{
                 flex: 1,
-                padding: '6px 10px',
-                borderRadius: '8px',
-                fontSize: '0.77rem',
-                fontWeight: 700,
+                padding: '7px 12px',
+                borderRadius: '9px',
+                fontSize: '0.82rem',
+                fontWeight: 600,
                 background: mode === 'signup' ? '#ffffff' : 'transparent',
                 color: mode === 'signup' ? '#0f172a' : '#64748b',
                 boxShadow: mode === 'signup' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px',
+                gap: '7px',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
             >
-              <User size={13} color={mode === 'signup' ? '#0284c7' : '#94a3b8'} />
+              <UserPlus size={15} color={mode === 'signup' ? '#0284c7' : '#94a3b8'} />
               <span>Create Account</span>
             </button>
           </div>
@@ -461,32 +429,32 @@ export function LoginPage({ initialMode = 'login' }) {
               style={{
                 background: '#fef2f2',
                 border: '1px solid #fecaca',
-                borderLeft: '3.5px solid #ef4444',
-                borderRadius: '8px',
-                padding: '7px 10px',
-                marginBottom: '10px',
+                borderLeft: '4px solid #ef4444',
+                borderRadius: '10px',
+                padding: '8px 12px',
+                marginBottom: '14px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                fontSize: '0.73rem',
+                gap: '9px',
+                fontSize: '0.80rem',
                 color: '#b91c1c',
                 fontWeight: 600,
               }}
             >
-              <AlertCircle size={15} color="#ef4444" style={{ flexShrink: 0 }} />
+              <AlertCircle size={16} color="#ef4444" style={{ flexShrink: 0 }} />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          {/* MODE 1: SIGN IN */}
+          {/* MODE 1: SIGN IN - CLEAN & SPACIOUS */}
           {mode === 'login' && (
-            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.71rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                   Official Email or Username
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Mail size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="text"
                     value={loginEmail}
@@ -494,25 +462,25 @@ export function LoginPage({ initialMode = 'login' }) {
                     placeholder="e.g. operator@rescueflow.ai"
                     autoFocus
                     className="modern-input"
-                    style={{ paddingLeft: '34px', paddingRight: '10px' }}
+                    style={{ paddingLeft: '40px', paddingRight: '12px' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.71rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                   Security Passcode
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={15} color="#94a3b8" style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type={showLoginPassword ? 'text' : 'password'}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Enter security passcode..."
                     className="modern-input"
-                    style={{ paddingLeft: '34px', paddingRight: '34px' }}
+                    style={{ paddingLeft: '40px', paddingRight: '40px' }}
                     required
                   />
                   <button
@@ -520,7 +488,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     onClick={() => setShowLoginPassword(p => !p)}
                     style={{
                       position: 'absolute',
-                      right: '10px',
+                      right: '12px',
                       top: '50%',
                       transform: 'translateY(-50%)',
                       color: '#94a3b8',
@@ -532,30 +500,30 @@ export function LoginPage({ initialMode = 'login' }) {
                     }}
                     title={showLoginPassword ? 'Hide passcode' : 'Show passcode'}
                   >
-                    {showLoginPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.71rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
-                  Operational Clearance Role
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
+                  Operational Role
                 </label>
                 <ModeledSelect
                   value={loginRole}
                   onChange={setLoginRole}
                   options={[
-                    { value: 'Operations Commander', label: 'Operations Commander (Authorizes Dispatches)', dotColor: '#0f766e' },
-                    { value: 'Tactical Supervisor', label: 'Tactical Supervisor (Evaluates Reports)', dotColor: '#0284c7' },
-                    { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer (Telemetry Observer)', dotColor: '#8b5cf6' },
-                    { value: 'Emergency Responder', label: 'Emergency Responder (Field Operations)', dotColor: '#ea580c' },
+                    { value: 'Operations Commander', label: 'Operations Commander', dotColor: '#0f766e' },
+                    { value: 'Tactical Supervisor', label: 'Tactical Supervisor', dotColor: '#0284c7' },
+                    { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer', dotColor: '#8b5cf6' },
+                    { value: 'Emergency Responder', label: 'Emergency Responder', dotColor: '#ea580c' },
                   ]}
                   minWidth="100%"
                 />
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', marginTop: '1px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.78rem', marginTop: '2px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
                   <input
                     type="checkbox"
                     checked={rememberTerminal}
@@ -578,26 +546,26 @@ export function LoginPage({ initialMode = 'login' }) {
                 className="modern-btn-primary"
                 style={{
                   width: '100%',
-                  marginTop: '2px',
+                  marginTop: '4px',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   opacity: isSubmitting ? 0.8 : 1,
                 }}
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={15} className="animate-spin" />
+                    <Loader2 size={16} className="animate-spin" />
                     <span>Authenticating...</span>
                   </>
                 ) : (
                   <>
                     <span>Sign In to Console</span>
-                    <ArrowRight size={15} />
+                    <ArrowRight size={16} />
                   </>
                 )}
               </button>
 
-              <div style={{ textAlign: 'center', marginTop: '2px' }}>
-                <span style={{ fontSize: '0.73rem', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.80rem', color: '#64748b' }}>
                   Need a new operator profile?{' '}
                   <button
                     type="button"
@@ -618,17 +586,17 @@ export function LoginPage({ initialMode = 'login' }) {
             </form>
           )}
 
-          {/* MODE 2: SIGN UP - MODERN 2-COLUMN BALANCED LAYOUT (ZERO SCROLL) */}
+          {/* MODE 2: SIGN UP - FREE, CLEAN & UNCLUTTERED */}
           {mode === 'signup' && (
-            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+            <form onSubmit={handleSignupSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Row 1: Name and Email in 2 columns */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.70rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                     Full Name
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <User size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <User size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type="text"
                       value={signupName}
@@ -636,25 +604,25 @@ export function LoginPage({ initialMode = 'login' }) {
                       placeholder="e.g. David Chen"
                       autoFocus
                       className="modern-input"
-                      style={{ paddingLeft: '32px', paddingRight: '8px' }}
+                      style={{ paddingLeft: '38px', paddingRight: '10px' }}
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.70rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                     Official Email
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Mail size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Mail size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type="email"
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
                       placeholder="e.g. david@agency.gov"
                       className="modern-input"
-                      style={{ paddingLeft: '32px', paddingRight: '8px' }}
+                      style={{ paddingLeft: '38px', paddingRight: '10px' }}
                       required
                     />
                   </div>
@@ -662,26 +630,26 @@ export function LoginPage({ initialMode = 'login' }) {
               </div>
 
               {/* Row 2: Agency and Role in 2 columns */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.70rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                     Agency / Department
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <Building size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <Building size={16} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                     <input
                       type="text"
                       value={signupDepartment}
                       onChange={(e) => setSignupDepartment(e.target.value)}
                       placeholder="e.g. Fire & Rescue"
                       className="modern-input"
-                      style={{ paddingLeft: '32px', paddingRight: '8px' }}
+                      style={{ paddingLeft: '38px', paddingRight: '10px' }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.70rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                  <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                     Operational Role
                   </label>
                   <ModeledSelect
@@ -691,7 +659,7 @@ export function LoginPage({ initialMode = 'login' }) {
                       { value: 'Operations Commander', label: 'Operations Commander', dotColor: '#0f766e' },
                       { value: 'Tactical Supervisor', label: 'Tactical Supervisor', dotColor: '#0284c7' },
                       { value: 'Field Dispatch Officer', label: 'Field Dispatch Officer', dotColor: '#8b5cf6' },
-                      { value: 'Emergency Responder Lead', label: 'Emergency Responder Lead', dotColor: '#ea580c' },
+                      { value: 'Emergency Responder Lead', label: 'Emergency Responder', dotColor: '#ea580c' },
                     ]}
                     minWidth="100%"
                   />
@@ -700,18 +668,18 @@ export function LoginPage({ initialMode = 'login' }) {
 
               {/* Row 3: Security Passcode */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.70rem', fontWeight: 600, marginBottom: '3px', color: '#334155' }}>
+                <label style={{ display: 'block', fontSize: '0.80rem', fontWeight: 600, marginBottom: '6px', color: '#334155' }}>
                   Security Passcode
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <Lock size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                  <Lock size={16} color="#94a3b8" style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type={showSignupPassword ? 'text' : 'password'}
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
                     placeholder="Create a secure passcode..."
                     className="modern-input"
-                    style={{ paddingLeft: '32px', paddingRight: '34px' }}
+                    style={{ paddingLeft: '40px', paddingRight: '40px' }}
                     required
                   />
                   <button
@@ -719,7 +687,7 @@ export function LoginPage({ initialMode = 'login' }) {
                     onClick={() => setShowSignupPassword(p => !p)}
                     style={{
                       position: 'absolute',
-                      right: '10px',
+                      right: '12px',
                       top: '50%',
                       transform: 'translateY(-50%)',
                       color: '#94a3b8',
@@ -731,32 +699,10 @@ export function LoginPage({ initialMode = 'login' }) {
                     }}
                     title={showSignupPassword ? 'Hide passcode' : 'Show passcode'}
                   >
-                    {showSignupPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    {showSignupPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
-
-              {/* Terms Checkbox */}
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.71rem',
-                  color: '#475569',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  marginTop: '1px',
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={agreeTacticalTerms}
-                  onChange={(e) => setAgreeTacticalTerms(e.target.checked)}
-                  style={{ cursor: 'pointer', accentColor: '#0d9488' }}
-                />
-                <span>I agree to operational telemetry & access policy</span>
-              </label>
 
               {/* Action Button */}
               <button
@@ -765,7 +711,7 @@ export function LoginPage({ initialMode = 'login' }) {
                 className="modern-btn-primary"
                 style={{
                   width: '100%',
-                  marginTop: '2px',
+                  marginTop: '4px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   opacity: isSubmitting ? 0.8 : 1,
@@ -773,20 +719,20 @@ export function LoginPage({ initialMode = 'login' }) {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={15} className="animate-spin" />
+                    <Loader2 size={16} className="animate-spin" />
                     <span>Creating Profile...</span>
                   </>
                 ) : (
                   <>
                     <span>Create Operator Profile</span>
-                    <ArrowRight size={15} />
+                    <ArrowRight size={16} />
                   </>
                 )}
               </button>
 
               {/* Bottom switch link */}
-              <div style={{ textAlign: 'center', marginTop: '2px' }}>
-                <span style={{ fontSize: '0.73rem', color: '#64748b' }}>
+              <div style={{ textAlign: 'center', marginTop: '4px' }}>
+                <span style={{ fontSize: '0.80rem', color: '#64748b' }}>
                   Already registered?{' '}
                   <button
                     type="button"
@@ -806,26 +752,6 @@ export function LoginPage({ initialMode = 'login' }) {
               </div>
             </form>
           )}
-
-          {/* Card Footer */}
-          <div
-            style={{
-              marginTop: '10px',
-              paddingTop: '8px',
-              borderTop: '1px solid #f1f5f9',
-              textAlign: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              fontSize: '0.67rem',
-              color: '#94a3b8',
-              fontWeight: 500,
-            }}
-          >
-            <ShieldCheck size={13} color="#0d9488" />
-            <span>256-Bit Encrypted Telemetry &bull; Dispatch Ready</span>
-          </div>
         </div>
       </div>
     </div>
