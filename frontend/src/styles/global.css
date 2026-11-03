@@ -396,3 +396,15 @@ input::placeholder, textarea::placeholder {
   animation: pulse-badge 2s infinite ease-in-out;
 }
 
+@keyframes panelDropdown {
+  from {
+    transform: translateY(-8px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+}
+
