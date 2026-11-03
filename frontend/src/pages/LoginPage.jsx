@@ -701,6 +701,19 @@ export function LoginPage({ initialMode = 'login' }) {
                 </div>
               </div>
 
+              {/* Keep me signed in row (matching Login size) */}
+              <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.78rem', marginTop: '2px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#475569', fontWeight: 500 }}>
+                  <input
+                    type="checkbox"
+                    checked={rememberTerminal}
+                    onChange={(e) => setRememberTerminal(e.target.checked)}
+                    style={{ cursor: 'pointer', accentColor: '#0d9488' }}
+                  />
+                  <span>Keep me signed in</span>
+                </label>
+              </div>
+
               {/* Action Button */}
               <button
                 type="submit"
@@ -728,7 +741,7 @@ export function LoginPage({ initialMode = 'login' }) {
               </button>
 
               {/* Bottom switch link */}
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
+              <div style={{ textAlign: 'center', marginTop: '6px' }}>
                 <span style={{ fontSize: '0.80rem', color: '#64748b' }}>
                   Already registered?{' '}
                   <button
