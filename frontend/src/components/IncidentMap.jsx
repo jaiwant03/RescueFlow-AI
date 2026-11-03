@@ -145,7 +145,7 @@ export function IncidentMap({ incidents = [], selectedIncident = null, height = 
           boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
           display: 'flex',
           gap: '12px',
-          zIndex: 1000,
+          zIndex: 20,
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
