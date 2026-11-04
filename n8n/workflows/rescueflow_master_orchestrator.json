@@ -80,7 +80,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'llama-3.3-70b-versatile'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency message classification engine. Determine whether an incoming message describes a disaster situation. Output ONLY valid JSON: {\\\"is_emergency\\\": boolean, \\\"emergency_type\\\": string, \\\"confidence\\\": number, \\\"reason\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'openai/gpt-oss-120b'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency message classification engine. Determine whether an incoming message describes a disaster situation. Output ONLY valid JSON: {\\\"is_emergency\\\": boolean, \\\"emergency_type\\\": string, \\\"confidence\\\": number, \\\"reason\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
         "options": {}
       },
       "id": "node-groq-classify",
@@ -151,7 +151,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'llama-3.3-70b-versatile'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency information extraction engine. Extract explicitly stated facts. Output valid JSON: {\\\"disaster_type\\\": string, \\\"location\\\": string, \\\"people_affected\\\": number, \\\"vulnerable_people\\\": {\\\"detected\\\": boolean, \\\"types\\\": string[]}, \\\"immediate_need\\\": string[], \\\"resources_required\\\": string[], \\\"severity\\\": string, \\\"summary\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
+        "jsonBody": "={\n  \"model\": \"{{$env.GROQ_MODEL || 'openai/gpt-oss-120b'}}\",\n  \"temperature\": 0.1,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an emergency information extraction engine. Extract explicitly stated facts. Output valid JSON: {\\\"disaster_type\\\": string, \\\"location\\\": string, \\\"people_affected\\\": number, \\\"vulnerable_people\\\": {\\\"detected\\\": boolean, \\\"types\\\": string[]}, \\\"immediate_need\\\": string[], \\\"resources_required\\\": string[], \\\"severity\\\": string, \\\"summary\\\": string}\"\n    },\n    { \"role\": \"user\", \"content\": \"{{$json.message}}\" }\n  ]\n}",
         "options": {}
       },
       "id": "node-groq-extract",
