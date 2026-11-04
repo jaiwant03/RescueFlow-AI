@@ -242,7 +242,7 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
               <Zap size={14} color="var(--rama-green)" /> Quick Emergency Scenario Presets (1-Click Fill)
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
               <button
                 type="button"
                 onClick={() => handleApplyTemplate({
