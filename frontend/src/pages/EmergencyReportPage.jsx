@@ -19,7 +19,10 @@ import {
   User,
   Phone,
   RotateCcw,
-  ArrowRight
+  ArrowRight,
+  Camera,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -36,8 +39,40 @@ export function EmergencyReportPage() {
   const [longitude, setLongitude] = useState('');
   const [source, setSource] = useState('web');
   const [message, setMessage] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFileName, setImageFileName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [lastSubmissionResult, setLastSubmissionResult] = useState(null);
+
+  const handleImageFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      addToast('Invalid File', 'Please select a valid image file (PNG, JPG, WebP).', 'warning');
+      return;
+    }
+    setImageFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 900;
+          const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          setImagePreview(compressed);
+          addToast('Photo Attached', 'Disaster scene photo attached and optimized.', 'info');
+        } catch (err) {
+          setImagePreview(e.target.result);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
 
   // CSV Upload State
   const [csvFile, setCsvFile] = useState(null);
