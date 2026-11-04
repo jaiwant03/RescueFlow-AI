@@ -149,6 +149,7 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
         "sender": sender,
         "phone": message_payload.get("phone"),
         "message": raw_message,
+        "image_url": message_payload.get("image_url"),
         "timestamp": now_iso
     }
 
@@ -162,6 +163,10 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
             new_extraction=extraction,
             source_message=source_msg_entry
         )
+
+        if message_payload.get("image_url") and not merged_data.get("image_url"):
+            merged_data["image_url"] = message_payload.get("image_url")
+            merged_data.setdefault("images", []).append(message_payload.get("image_url"))
 
         # Recalculate priority with new corroboration count
         new_score, new_priority_level, new_reasons = calculate_priority_score(
