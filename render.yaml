@@ -1,0 +1,51 @@
+services:
+  # 1. FastAPI Backend Core
+  - type: web
+    name: rescueflow-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: DB_NAME
+        value: rescueflow
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: N8N_BASE_URL
+        sync: false
+      - key: N8N_INTAKE_WEBHOOK_URL
+        sync: false
+      - key: N8N_APPROVAL_WEBHOOK_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: SIMILARITY_THRESHOLD
+        value: "0.75"
+      - key: DEMO_MODE
+        value: "false"
+
+  # 2. n8n Master Orchestrator
+  - type: web
+    name: rescueflow-n8n
+    runtime: image
+    image:
+      url: docker.n8n.io/n8nio/n8n
+    plan: free
+    envVars:
+      - key: N8N_PORT
+        value: "5678"
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: "false"
+      - key: N8N_DIAGNOSTICS_ENABLED
+        value: "false"
+      - key: WEBHOOK_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
