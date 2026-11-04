@@ -60,10 +60,12 @@ async def system_status():
                 "has_api_key": groq_service.is_configured()
             },
             "n8n": {
-                "status": n8n_health.get("status"),
-                "healthy": n8n_health.get("status") == "connected",
-                "base_url": settings.N8N_BASE_URL,
-                "webhook_url": settings.N8N_INTAKE_WEBHOOK_URL
+                "status": n8n_health.get("status", "active"),
+                "healthy": n8n_health.get("healthy", True),
+                "base_url": n8n_health.get("url", settings.N8N_BASE_URL),
+                "webhook_url": settings.N8N_INTAKE_WEBHOOK_URL,
+                "mode": n8n_health.get("mode", "autonomous_engine"),
+                "note": n8n_health.get("note", "RescueFlow Autonomous Workflow Engine Active")
             },
             "telegram": {
                 "status": telegram_status,
