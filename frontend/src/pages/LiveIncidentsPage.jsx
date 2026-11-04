@@ -258,9 +258,18 @@ export function LiveIncidentsPage() {
                 {incidents.map((inc) => (
                   <tr key={inc.incident_id}>
                     <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                      <Link to={`/incidents/${inc.incident_id}`} style={{ color: 'var(--accent-cyan)' }}>
-                        {inc.incident_id}
-                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {inc.image_url && (
+                          <img 
+                            src={inc.image_url} 
+                            alt="Scene" 
+                            style={{ width: '28px', height: '28px', borderRadius: '6px', objectFit: 'cover', border: '1px solid #cbd5e1', flexShrink: 0 }} 
+                          />
+                        )}
+                        <Link to={`/incidents/${inc.incident_id}`} style={{ color: 'var(--accent-cyan)' }}>
+                          {inc.incident_id}
+                        </Link>
+                      </div>
                     </td>
                     <td>
                       <PriorityBadge level={inc.priority_level} score={inc.priority_score} />
