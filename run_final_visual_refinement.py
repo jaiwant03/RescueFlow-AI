@@ -20,7 +20,7 @@ def set_cell_background(cell, hex_color):
     shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{hex_color}"/>')
     cell._tc.get_or_add_tcPr().append(shading_elm)
 
-def set_cell_margins(cell, top=60, bottom=60, left=85, right=85):
+def set_cell_margins(cell, top=55, bottom=55, left=80, right=80):
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = parse_xml(
         f'<w:tcMar {nsdecls("w")}>'
@@ -50,7 +50,7 @@ def set_repeat_header(row):
     trPr = row._tr.get_or_add_trPr()
     trPr.append(parse_xml(f'<w:tblHeader {nsdecls("w")}/>'))
 
-def format_table(table, col_widths, headers, rows_data, header_bg="0F2738", alt_bg="F8FAFC", pad_tb=55):
+def format_table(table, col_widths, headers, rows_data, header_bg="0F2738", alt_bg="F8FAFC", pad_tb=50):
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
     
@@ -62,7 +62,7 @@ def format_table(table, col_widths, headers, rows_data, header_bg="0F2738", alt_
     for i, title in enumerate(headers):
         hdr_cells[i].text = title
         set_cell_background(hdr_cells[i], header_bg)
-        set_cell_margins(hdr_cells[i], top=pad_tb+15, bottom=pad_tb+15, left=85, right=85)
+        set_cell_margins(hdr_cells[i], top=pad_tb+12, bottom=pad_tb+12, left=80, right=80)
         set_cell_border(hdr_cells[i],
                         bottom={"sz": 8, "val": "single", "color": "0D9488"},
                         top={"sz": 4, "val": "single", "color": "0F2738"},
@@ -87,7 +87,7 @@ def format_table(table, col_widths, headers, rows_data, header_bg="0F2738", alt_
             cell = row.cells[col_idx]
             cell.text = str(cell_value)
             set_cell_background(cell, bg_col)
-            set_cell_margins(cell, top=pad_tb, bottom=pad_tb, left=80, right=80)
+            set_cell_margins(cell, top=pad_tb, bottom=pad_tb, left=75, right=75)
             set_cell_border(cell,
                             bottom={"sz": 4, "val": "single", "color": "E2E8F0"},
                             top={"sz": 4, "val": "single", "color": "E2E8F0"},
@@ -97,11 +97,11 @@ def format_table(table, col_widths, headers, rows_data, header_bg="0F2738", alt_
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             p.paragraph_format.space_before = Pt(0)
             p.paragraph_format.space_after = Pt(0)
-            p.paragraph_format.line_spacing = 1.12
+            p.paragraph_format.line_spacing = 1.10
             if p.runs:
                 run = p.runs[0]
                 run.font.name = "Calibri"
-                run.font.size = Pt(8.5)
+                run.font.size = Pt(8.3)
                 run.font.color.rgb = RGBColor(30, 41, 59)
     
     for row in table.rows:
@@ -152,73 +152,73 @@ def add_header_footer(doc):
     r_right.font.size = Pt(8)
     r_right.font.color.rgb = RGBColor(148, 163, 184)
 
-def add_heading_1(doc, title, space_before=12, space_after=4):
+def add_heading_1(doc, title, space_before=11, space_after=3):
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(space_before)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.keep_with_next = True
     run = p.add_run(title)
     run.font.name = "Calibri"
-    run.font.size = Pt(15)
+    run.font.size = Pt(14.5)
     run.font.bold = True
     run.font.color.rgb = RGBColor(15, 39, 56) # Deep Peacock Blue
     return p
 
-def add_heading_2(doc, title, space_before=8, space_after=2):
+def add_heading_2(doc, title, space_before=7, space_after=2):
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(space_before)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.keep_with_next = True
     run = p.add_run(title)
     run.font.name = "Calibri"
-    run.font.size = Pt(12)
+    run.font.size = Pt(11.5)
     run.font.bold = True
     run.font.color.rgb = RGBColor(13, 148, 136) # Rama Green / Teal
     return p
 
 def add_heading_3(doc, title):
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(6)
+    p.paragraph_format.space_before = Pt(5)
     p.paragraph_format.space_after = Pt(2)
     p.paragraph_format.keep_with_next = True
     run = p.add_run(title)
     run.font.name = "Calibri"
-    run.font.size = Pt(10.5)
+    run.font.size = Pt(10)
     run.font.bold = True
     run.font.color.rgb = RGBColor(15, 39, 56)
     return p
 
-def add_body_p(doc, text, bold_prefix=None, space_after=4):
+def add_body_p(doc, text, bold_prefix=None, space_after=3.5):
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(0)
-    p.paragraph_format.space_after = Pt(space_after)
-    p.paragraph_format.line_spacing = 1.15
-    if bold_prefix:
-        r_b = p.add_run(bold_prefix)
-        r_b.font.name = "Calibri"
-        r_b.font.size = Pt(9.8)
-        r_b.font.bold = True
-        r_b.font.color.rgb = RGBColor(15, 39, 56)
-    r = p.add_run(text)
-    r.font.name = "Calibri"
-    r.font.size = Pt(9.8)
-    r.font.color.rgb = RGBColor(30, 41, 59)
-    return p
-
-def add_bullet_p(doc, text, bold_prefix=None, space_after=2.5):
-    p = doc.add_paragraph(style='List Bullet')
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.line_spacing = 1.14
     if bold_prefix:
         r_b = p.add_run(bold_prefix)
         r_b.font.name = "Calibri"
-        r_b.font.size = Pt(9.3)
+        r_b.font.size = Pt(9.6)
         r_b.font.bold = True
         r_b.font.color.rgb = RGBColor(15, 39, 56)
     r = p.add_run(text)
     r.font.name = "Calibri"
-    r.font.size = Pt(9.3)
+    r.font.size = Pt(9.6)
+    r.font.color.rgb = RGBColor(30, 41, 59)
+    return p
+
+def add_bullet_p(doc, text, bold_prefix=None, space_after=2):
+    p = doc.add_paragraph(style='List Bullet')
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(space_after)
+    p.paragraph_format.line_spacing = 1.12
+    if bold_prefix:
+        r_b = p.add_run(bold_prefix)
+        r_b.font.name = "Calibri"
+        r_b.font.size = Pt(9.2)
+        r_b.font.bold = True
+        r_b.font.color.rgb = RGBColor(15, 39, 56)
+    r = p.add_run(text)
+    r.font.name = "Calibri"
+    r.font.size = Pt(9.2)
     r.font.color.rgb = RGBColor(30, 41, 59)
     return p
 
@@ -227,8 +227,8 @@ def add_image_box(doc, img_path, caption, width_in=5.4):
     if os.path.exists(img_path):
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_before = Pt(5)
-        p.paragraph_format.space_after = Pt(2)
+        p.paragraph_format.space_before = Pt(4)
+        p.paragraph_format.space_after = Pt(1.5)
         p.paragraph_format.keep_with_next = True
         r = p.add_run()
         r.add_picture(img_path, width=Inches(width_in))
@@ -236,10 +236,10 @@ def add_image_box(doc, img_path, caption, width_in=5.4):
         p_cap = doc.add_paragraph()
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap.paragraph_format.space_before = Pt(0)
-        p_cap.paragraph_format.space_after = Pt(5)
+        p_cap.paragraph_format.space_after = Pt(4)
         r_c = p_cap.add_run(caption)
         r_c.font.name = "Calibri"
-        r_c.font.size = Pt(8.2)
+        r_c.font.size = Pt(8.0)
         r_c.font.italic = True
         r_c.font.color.rgb = RGBColor(100, 116, 139)
 
@@ -481,7 +481,7 @@ def build_cover_and_toc(doc):
             
     doc.add_page_break()
 
-    # Table of Contents (Verified Exact Page Mapping)
+    # Table of Contents (Verified Exact 15-Page Mapping)
     add_heading_1(doc, "Table of Contents")
     add_body_p(doc, "This document is organized into two primary parts: the six mandatory hackathon submission requirements presented first in Part A, followed by the comprehensive technical documentation in Part B.")
     
@@ -747,7 +747,7 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
         ["GET", "/api/realtime/events", "None (SSE Stream)", "Server-Sent Events push broadcasting real-time dashboard updates."]
     ]
     t_api = doc.add_table(rows=1, cols=4)
-    format_table(t_api, [0.8, 1.8, 1.6, 2.0], api_data[0], api_data[1:], pad_tb=50)
+    format_table(t_api, [0.8, 1.8, 1.6, 2.0], api_data[0], api_data[1:], pad_tb=45)
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
     # 8. UI Screenshots and Operations Walkthrough (Clean Page Break to Unite Section 8)
@@ -759,31 +759,31 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
     add_heading_2(doc, "8.1 Command Center Operations Dashboard (Leaflet GIS & Telemetry)")
     add_body_p(doc, "The Command Center serves as the primary visual cockpit for municipal coordinators. It displays real-time service connection badges (Groq AI Online, n8n Ready, MongoDB Local), dynamic KPI statistics cards (Total Incidents, P1 Critical, Approvals Pending, Deployed Teams), and an interactive Leaflet OpenStreetMap displaying live color-coded pulsing pins at exact geo-coordinates.")
     img1 = os.path.join(screenshots_dir, "media_1793717785374_1bb8169a.png")
-    add_image_box(doc, img1, "Figure 8.1: Command Center Operations Dashboard with Live Telemetry Header & Leaflet GIS Map", width_in=3.6)
+    add_image_box(doc, img1, "Figure 8.1: Command Center Operations Dashboard with Live Telemetry Header & Leaflet GIS Map", width_in=3.4)
 
     # 8.2 Real-Time Incident Ingestion & Telemetry Controller
     add_heading_2(doc, "8.2 Real-Time Incident Ingestion & Telemetry Controller")
     add_body_p(doc, "The Telemetry Controller bar provides evaluators and operators with a 1-click testing harness to inject canonical disaster scenarios across multiple reporting channels (Flood @ PSG via Telegram, Corroboration reports #2 and #3, Fire @ Gandhipuram, Medical @ RS Puram, and Casual Greeting noise filtering) to observe live pipeline reactions in real time.")
     img2 = os.path.join(screenshots_dir, "media_1793777496882_c12cee13.png")
-    add_image_box(doc, img2, "Figure 8.2: Real-Time Incident Ingestion & Telemetry Controller (Canonical Scenario Presets)", width_in=5.6)
+    add_image_box(doc, img2, "Figure 8.2: Real-Time Incident Ingestion & Telemetry Controller (Canonical Scenario Presets)", width_in=5.2)
 
     # 8.3 Emergency Ingestion Gateway
     add_heading_2(doc, "8.3 Emergency Ingestion Gateway (Citizen & Operator Reporting)")
     add_body_p(doc, "The Ingestion Gateway provides dual intake capabilities: a single incident dispatch form supporting freeform text description, automatic GPS landmark geocoding, and reporter metadata, alongside a multi-channel CSV batch ingestion tab that processes bulk historical call logs in under 1.5 seconds.")
     img3 = os.path.join(screenshots_dir, "media_1793777522083_279cd0a1.png")
-    add_image_box(doc, img3, "Figure 8.3: Emergency Ingestion Gateway with Preset Scenarios & Coordinate Inputs", width_in=5.6)
+    add_image_box(doc, img3, "Figure 8.3: Emergency Ingestion Gateway with Preset Scenarios & Coordinate Inputs", width_in=5.2)
 
     # 8.4 Disaster & Dispatch Real-Time Alerts Center
     add_heading_2(doc, "8.4 Disaster & Dispatch Real-Time Alerts Center")
     add_body_p(doc, "The Alerts Feed delivers an audible, real-time notification stream directly to coordinators as incidents are ingested and dispatches are deployed. Alerts are prioritized by urgency tier (Critical P1, High P2), timestamped with sub-second accuracy, and provide instant 1-click drill-down into specific incident details.")
     img5 = os.path.join(screenshots_dir, "media_1793723610922_84cad690.png")
-    add_image_box(doc, img5, "Figure 8.4: Disaster & Dispatch Alerts Real-Time Notification Center", width_in=3.3)
+    add_image_box(doc, img5, "Figure 8.4: Disaster & Dispatch Alerts Real-Time Notification Center", width_in=2.6)
 
     # 8.5 Incident Detail View & Message Corroboration Timeline
     add_heading_2(doc, "8.5 Incident Detail View & Message Corroboration Timeline")
     add_body_p(doc, "Clicking any incident opens the Incident Detail modal, presenting AI-extracted disaster entities (hazard category, people affected, required tactical gear), all merged source messages with similarity scores, and an immutable chronological operational timeline from initial ingestion to field dispatch.")
     img4 = os.path.join(screenshots_dir, "media_1793704015910_396d3935.png")
-    add_image_box(doc, img4, "Figure 8.5: Incident Detail View Displaying Merged Source Messages & Chronological Timeline", width_in=3.6)
+    add_image_box(doc, img4, "Figure 8.5: Incident Detail View Displaying Merged Source Messages & Chronological Timeline", width_in=3.0)
 
     # 9. Innovation and Uniqueness
     add_heading_1(doc, "9. Innovation & Technical Uniqueness")
@@ -825,7 +825,7 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
         ["TC-10", "CSV Batch Import", "Upload of 10-row disaster CSV containing mixed reports.", "Ingests 10 rows, deduplicates matching, creates distinct.", "Imported 10 rows in 1.4s, 4 distinct incidents created.", "PASSED"]
     ]
     t_test_table = doc.add_table(rows=1, cols=6)
-    format_table(t_test_table, [0.6, 1.2, 1.4, 1.2, 1.3, 0.5], t_tests[0], t_tests[1:], pad_tb=50)
+    format_table(t_test_table, [0.6, 1.2, 1.4, 1.2, 1.3, 0.5], t_tests[0], t_tests[1:], pad_tb=42)
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
     # 13. Completed Features, Pending Work and Limitations
@@ -852,10 +852,9 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
         "Phase 5 (Months 10–12): Integration with OASIS Common Alerting Protocol (CAP-v1.2) and municipal 112/911 Computer-Aided Dispatch (CAD) systems."
     )
 
-    # 16. Judging Criteria Alignment (Clean Page Break to Keep Table Intact)
-    doc.add_page_break()
-    add_heading_1(doc, "16. Hackathon Judging Criteria Alignment", space_before=6, space_after=2)
-    add_body_p(doc, "RescueFlow AI is directly aligned with all six official INFINEX 2K26 evaluation criteria:", space_after=3)
+    # 16. Judging Criteria Alignment
+    add_heading_1(doc, "16. Hackathon Judging Criteria Alignment", space_before=5, space_after=2)
+    add_body_p(doc, "RescueFlow AI is directly aligned with all six official INFINEX 2K26 evaluation criteria:", space_after=2.5)
     
     crit_data = [
         ["Judging Criterion", "Focus & Weight", "Technical Realization in RescueFlow AI"],
@@ -867,34 +866,34 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
         ["6. Presentation", "Clarity & completeness", "Structured technical report; clean architecture & workflow diagrams; verified 10-test-case validation matrix."]
     ]
     t_crit = doc.add_table(rows=1, cols=3)
-    format_table(t_crit, [1.4, 1.4, 3.4], crit_data[0], crit_data[1:], pad_tb=45)
+    format_table(t_crit, [1.4, 1.4, 3.4], crit_data[0], crit_data[1:], pad_tb=40)
     
     # 17. Participant Details
-    add_heading_1(doc, "17. Participant Details & Declaration", space_before=8, space_after=2)
+    add_heading_1(doc, "17. Participant Details & Declaration", space_before=7, space_after=2)
     add_body_p(doc,
         "Participant Name: [ENTER NAME]  |  Institution: [ENTER DETAILS]  |  Submission Date: [ENTER DATE]\n"
         "Track: Individual Participation — INFINEX 2K26 Global AI Hackathon (Organized by PropCare NW)\n"
         "Declaration: This project was designed and developed independently. All technical claims strictly reflect the working RescueFlow AI codebase.",
-        space_after=3
+        space_after=2.5
     )
 
     # 18. Conclusion
-    add_heading_1(doc, "18. Conclusion", space_before=8, space_after=2)
+    add_heading_1(doc, "18. Conclusion", space_before=7, space_after=2)
     add_body_p(doc,
         "During acute disasters, the barrier between survival and tragedy is measured in minutes. By combining high-speed language comprehension (Groq Llama 3.3-70B) with visual workflow automation (n8n), asynchronous document persistence (MongoDB), and an interactive GIS operations console (React 18), RescueFlow AI cuts emergency triage latency from 30 minutes to under two seconds. By anchoring priority scoring in deterministic mathematics and enforcing mandatory Human-in-the-Loop governance, the platform delivers the speed of artificial intelligence without the risk of autonomous hallucinations, providing an effective bridge between citizens in distress and the emergency teams dispatched to save them.",
-        space_after=3
+        space_after=2.5
     )
 
     # 19. References
-    add_heading_1(doc, "19. References & Technical Citations", space_before=8, space_after=2)
-    add_bullet_p(doc, "United Nations Office for Disaster Risk Reduction (UNDRR). Sendai Framework for Disaster Risk Reduction: Operational Guidance for Municipal Emergency Operations.", space_after=1.5)
-    add_bullet_p(doc, "National Disaster Management Authority (NDMA), Government of India. National Disaster Management Guidelines: Incident Response System (IRS) Standards.", space_after=1.5)
-    add_bullet_p(doc, "Meta AI (2024). The Llama 3 Herd of Models. Meta AI Research Technical Report.", space_after=1.5)
-    add_bullet_p(doc, "Groq Inc. (2024). LPU Inference Engine Architecture: Low-Latency Tensor Streaming for Autoregressive Large Language Models.", space_after=1.5)
-    add_bullet_p(doc, "OASIS Open (2010). Common Alerting Protocol Version 1.2 (CAP-v1.2). OASIS Standard.", space_after=1.5)
-    add_bullet_p(doc, "FastAPI Documentation (2024). High-Performance Asynchronous Web Framework for Python 3.8+ using Standard Type Hints.", space_after=1.5)
-    add_bullet_p(doc, "MongoDB Inc. (2024). Motor: Asynchronous Python Driver for MongoDB and asyncio Applications.", space_after=1.5)
-    add_bullet_p(doc, "n8n GmbH (2024). Enterprise Workflow Automation & Fair-Code Integration Engine Architecture.", space_after=1.5)
+    add_heading_1(doc, "19. References & Technical Citations", space_before=7, space_after=2)
+    add_bullet_p(doc, "United Nations Office for Disaster Risk Reduction (UNDRR). Sendai Framework for Disaster Risk Reduction: Operational Guidance for Municipal Emergency Operations.", space_after=1.2)
+    add_bullet_p(doc, "National Disaster Management Authority (NDMA), Government of India. National Disaster Management Guidelines: Incident Response System (IRS) Standards.", space_after=1.2)
+    add_bullet_p(doc, "Meta AI (2024). The Llama 3 Herd of Models. Meta AI Research Technical Report.", space_after=1.2)
+    add_bullet_p(doc, "Groq Inc. (2024). LPU Inference Engine Architecture: Low-Latency Tensor Streaming for Autoregressive Large Language Models.", space_after=1.2)
+    add_bullet_p(doc, "OASIS Open (2010). Common Alerting Protocol Version 1.2 (CAP-v1.2). OASIS Standard.", space_after=1.2)
+    add_bullet_p(doc, "FastAPI Documentation (2024). High-Performance Asynchronous Web Framework for Python 3.8+ using Standard Type Hints.", space_after=1.2)
+    add_bullet_p(doc, "MongoDB Inc. (2024). Motor: Asynchronous Python Driver for MongoDB and asyncio Applications.", space_after=1.2)
+    add_bullet_p(doc, "n8n GmbH (2024). Enterprise Workflow Automation & Fair-Code Integration Engine Architecture.", space_after=1.2)
 
 # ==============================================================================
 # 7. MAIN COMPILATION AND EXPORT
@@ -948,13 +947,13 @@ def main():
         sec.left_margin = Inches(1.0)
         sec.right_margin = Inches(1.0)
 
-    # Configure typography: 10pt Calibri, line spacing 1.15
+    # Configure typography: 9.6pt Calibri, line spacing 1.14
     normal_style = doc.styles['Normal']
     normal_style.font.name = 'Calibri'
-    normal_style.font.size = Pt(9.8)
+    normal_style.font.size = Pt(9.6)
     normal_style.font.color.rgb = RGBColor(30, 41, 59)
-    normal_style.paragraph_format.line_spacing = 1.15
-    normal_style.paragraph_format.space_after = Pt(4)
+    normal_style.paragraph_format.line_spacing = 1.14
+    normal_style.paragraph_format.space_after = Pt(3.5)
 
     # Add running header and footer
     add_header_footer(doc)
