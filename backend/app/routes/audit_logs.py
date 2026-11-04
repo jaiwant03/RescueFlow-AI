@@ -1,7 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Query
 from app.database import get_database, clean_mongo_doc
-from app.services.broadcaster import broadcaster
 
 router = APIRouter(prefix="/api/audit-logs", tags=["Audit Logs"])
 
@@ -34,9 +33,8 @@ async def clear_audit_logs():
     db = get_database()
     result = await db["audit_logs"].delete_many({})
     deleted = getattr(result, "deleted_count", 0)
-    await broadcaster.broadcast("AUDIT_LOGS_CLEARED", {"deleted_count": deleted})
     return {
         "status": "success",
-        "message": "All audit logs deleted successfully",
+        "message": "All audit logs cleared successfully",
         "deleted_count": deleted
     }

@@ -58,7 +58,6 @@ export const api = {
   // Audit Logs
   getAuditLogs: (params = {}) => client.get('/api/audit-logs', { params }).then(r => r.data),
   clearAuditLogs: () => client.delete('/api/audit-logs').then(r => r.data),
-  deleteAllAuditLogs: () => client.delete('/api/audit-logs').then(r => r.data),
 
   // Demo Simulation Controls
   runDemoScenario: (key) => client.post(`/api/simulate/scenario/${key}`).then(r => r.data),
