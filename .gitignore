@@ -6,14 +6,6 @@ backend_venv/
 backend/venv/
 venv/
 .env
-*.env
-backend/.env
-frontend/.env
-n8n/.env
-!.env.example
-!backend/.env.example
-!frontend/.env.example
-!n8n/.env.example
 
 # Node
 node_modules/
