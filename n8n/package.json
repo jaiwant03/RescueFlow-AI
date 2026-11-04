@@ -1,0 +1,10 @@
+{
+  "name": "rescueflow-n8n",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RescueFlow AI - n8n Master Orchestrator Service",
+  "scripts": {
+    "build": "npm install -g n8n",
+    "start": "n8n start"
+  }
+}
