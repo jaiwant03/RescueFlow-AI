@@ -24,7 +24,8 @@ import {
   RotateCw,
   Radio,
   FileText,
-  UserCheck
+  UserCheck,
+  Camera
 } from 'lucide-react';
 
 export function IncidentDetailPage() {
