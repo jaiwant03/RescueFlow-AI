@@ -38,6 +38,22 @@ class GroqService:
                 headers=headers,
                 json=payload
             )
+            if resp.status_code == 404 and ("model_not_found" in resp.text or "does not exist" in resp.text):
+                # Resilient fallback across active Groq models
+                fallback_candidates = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+                for candidate in fallback_candidates:
+                    if candidate != self.model:
+                        logger.warning(f"Groq model '{self.model}' not found on endpoint. Retrying with active model '{candidate}'...")
+                        payload["model"] = candidate
+                        resp = await client.post(
+                            f"{self.base_url}/chat/completions",
+                            headers=headers,
+                            json=payload
+                        )
+                        if resp.status_code == 200:
+                            self.model = candidate
+                            break
+
             if resp.status_code != 200:
                 logger.error(f"Groq API error ({resp.status_code}): {resp.text}")
                 raise RuntimeError(f"Groq API returned error status {resp.status_code}: {resp.text}")
