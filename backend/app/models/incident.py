@@ -33,5 +33,7 @@ class IncidentModel(BaseModel):
     source_messages: List[Dict[str, Any]] = Field(default_factory=list)
     timeline: List[TimelineEvent] = Field(default_factory=list)
     ai_summary: Optional[str] = None
+    image_url: Optional[str] = None
+    images: List[str] = Field(default_factory=list)
     created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())

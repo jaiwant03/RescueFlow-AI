@@ -20,4 +20,5 @@ class MessageModel(BaseModel):
     confidence: Optional[float] = None
     classification_reason: Optional[str] = None
     incident_id: Optional[str] = None
+    image_url: Optional[str] = None
     status: str = "received"  # received, processed, non_emergency, processing_failed

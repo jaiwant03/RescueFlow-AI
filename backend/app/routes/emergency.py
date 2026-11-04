@@ -2,6 +2,7 @@ import csv
 import io
 import logging
 import uuid
+import base64
 from typing import List, Optional
 from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, HTTPException
@@ -33,6 +34,7 @@ async def submit_emergency_report(payload: EmergencyReportInput):
         "location_hint": payload.location,
         "latitude": payload.latitude,
         "longitude": payload.longitude,
+        "image_url": payload.image_url,
         "timestamp": datetime.utcnow().isoformat(),
         "metadata": {"reported_via": "React Web Emergency Report Form"}
     }
@@ -91,6 +93,30 @@ async def upload_csv_messages(file: UploadFile = File(...)):
         "success": True,
         "total_imported": len(results),
         "results": results
+    }
+
+@router.post("/upload-image")
+async def upload_emergency_image(file: UploadFile = File(...)):
+    """
+    Uploads an emergency photo or damage assessment image.
+    Converts to optimized Data URI for resilient cross-platform MongoDB Atlas persistence.
+    """
+    if not (file.content_type and file.content_type.startswith("image/")):
+        raise HTTPException(status_code=400, detail="Only image files (JPEG, PNG, WebP) are accepted.")
+    
+    content = await file.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Image exceeds maximum 5MB size limit.")
+    
+    b64_str = base64.b64encode(content).decode("utf-8")
+    mime = file.content_type or "image/jpeg"
+    data_uri = f"data:{mime};base64,{b64_str}"
+    
+    return {
+        "success": True,
+        "filename": file.filename,
+        "content_type": mime,
+        "image_url": data_uri
     }
 
 # Simulation routes
