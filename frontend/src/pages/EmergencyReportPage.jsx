@@ -127,6 +127,7 @@ export function EmergencyReportPage() {
         longitude: longitude ? parseFloat(longitude) : null,
         source: source,
         message: message.trim(),
+        image_url: imagePreview || null,
       };
 
       const res = await api.submitEmergencyReport(payload);
@@ -134,8 +135,10 @@ export function EmergencyReportPage() {
       addToast('Report Submitted', 'Emergency message ingested and processed through AI pipeline.', 'info');
       refreshStats();
 
-      // Clear form message
+      // Clear form message & image
       setMessage('');
+      setImagePreview(null);
+      setImageFileName('');
     } catch (err) {
       addToast('Submission Failed', err.message, 'warning');
     } finally {
