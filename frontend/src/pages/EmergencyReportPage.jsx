@@ -586,7 +586,7 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px', fontWeight: 600 }}>
-                      Simulated Channel Source
+                      Emergency Ingestion Channel
                     </label>
                     <ModeledSelect
                       value={source}
