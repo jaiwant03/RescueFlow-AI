@@ -726,6 +726,7 @@ def build_part_b_documentation(doc, out_dir, screenshots_dir):
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
     add_body_p(doc, "Tier Mapping: Score 80–100 -> P1 Critical (Mandatory Approval) | Score 60–79 -> P2 High (Mandatory Approval) | Score 30–59 -> P3 Medium | Score < 30 -> P4 Low.")
 
+    doc.add_page_break()
     # 7. Database Design and API Documentation
     add_heading_1(doc, "7. Database Design & API Documentation")
     add_body_p(doc, "MongoDB houses five collections: incidents (consolidated disaster events, merged reports, timeline), messages (raw citizen distress text, classification status), approvals (coordinator decisions and reasons), response_tasks (field dispatch orders), and audit_logs (immutable forensic event traces).")
