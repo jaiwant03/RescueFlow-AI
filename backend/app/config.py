@@ -2,8 +2,9 @@ import os
 from typing import Dict, Any
 from dotenv import load_dotenv
 
-# Load from .env file if present in workspace root or backend dir
+# Load from .env file if present in backend dir or workspace root
 load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 class Settings:
