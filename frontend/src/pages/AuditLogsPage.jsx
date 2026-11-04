@@ -116,12 +116,12 @@ export function AuditLogsPage() {
   const handleClearAllConfirm = async () => {
     try {
       setClearing(true);
-      await api.clearAuditLogs();
-      addToast('Audit Logs Purged', 'All audit ledger records have been permanently cleared from database.', 'info');
+      await api.deleteAllAuditLogs();
+      addToast('Audit Logs Deleted', 'All audit logs have been permanently deleted from database.', 'info');
       setConfirmClearOpen(false);
       loadAuditLogs();
     } catch (err) {
-      addToast('Purge Failed', err.response?.data?.detail || err.message, 'warning');
+      addToast('Delete Failed', err.response?.data?.detail || err.message, 'warning');
     } finally {
       setClearing(false);
     }
@@ -278,38 +278,39 @@ export function AuditLogsPage() {
 
           <button 
             onClick={() => setConfirmClearOpen(true)} 
-            disabled={logs.length === 0}
+            disabled={loading || logs.length === 0}
+            title={logs.length === 0 ? "No audit logs to delete" : "Permanently delete all audit logs"}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: '#ffffff',
-              border: '1.5px solid #fecaca',
-              boxShadow: '0 2px 6px rgba(220, 38, 38, 0.04)',
+              background: logs.length === 0 ? '#f8fafc' : '#fef2f2',
+              border: `1.5px solid ${logs.length === 0 ? '#e2e8f0' : '#fecaca'}`,
+              boxShadow: logs.length === 0 ? 'none' : '0 2px 6px rgba(220, 38, 38, 0.08)',
               padding: '8px 16px',
               borderRadius: '10px',
               color: logs.length === 0 ? '#94a3b8' : '#dc2626',
               fontWeight: 700,
               fontSize: '0.84rem',
               cursor: logs.length === 0 ? 'not-allowed' : 'pointer',
-              opacity: logs.length === 0 ? 0.6 : 1,
+              opacity: logs.length === 0 ? 0.65 : 1,
               transition: 'all 0.15s ease'
             }}
             onMouseEnter={(e) => {
               if (logs.length > 0) {
-                e.currentTarget.style.background = '#fef2f2';
+                e.currentTarget.style.background = '#fee2e2';
                 e.currentTarget.style.borderColor = '#f87171';
               }
             }}
             onMouseLeave={(e) => {
               if (logs.length > 0) {
-                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.background = '#fef2f2';
                 e.currentTarget.style.borderColor = '#fecaca';
               }
             }}
           >
-            <Trash2 size={14} color={logs.length === 0 ? '#94a3b8' : '#dc2626'} /> 
-            <span>Clear All Logs</span>
+            <Trash2 size={15} color={logs.length === 0 ? '#94a3b8' : '#dc2626'} /> 
+            <span>Delete All</span>
           </button>
         </div>
       </div>
@@ -796,7 +797,7 @@ export function AuditLogsPage() {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                  Purge All Audit Trail Records?
+                  Delete All Audit Logs?
                 </h3>
                 <span style={{ fontSize: '0.78rem', color: '#dc2626', fontWeight: 600 }}>
                   Irreversible compliance action
@@ -805,7 +806,7 @@ export function AuditLogsPage() {
             </div>
 
             <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.5, marginBottom: '20px' }}>
-              Are you sure you want to permanently clear all <strong>{stats.total} audit records</strong> from the MongoDB ledger? This will reset all historical traces and timestamps.
+              Are you sure you want to permanently delete all <strong>{stats.total} audit logs</strong> from the database? This action cannot be undone.
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
@@ -848,11 +849,11 @@ export function AuditLogsPage() {
               >
                 {clearing ? (
                   <>
-                    <RotateCw size={14} className="spin" /> Purging...
+                    <RotateCw size={14} className="spin" /> Deleting...
                   </>
                 ) : (
                   <>
-                    <Trash2 size={14} /> Yes, Purge All Logs
+                    <Trash2 size={14} /> Yes, Delete All
                   </>
                 )}
               </button>
