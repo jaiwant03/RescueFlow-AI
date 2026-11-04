@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { api } from '../services/api';
 import { ModeledSelect } from '../components/ModeledSelect';
 import { useSystem } from '../context/SystemContext';
+import { useRealtime } from '../hooks/useRealtime';
 import { 
   ScrollText, 
   RotateCw, 
@@ -61,6 +62,14 @@ export function AuditLogsPage() {
   useEffect(() => {
     loadAuditLogs();
   }, [loadAuditLogs]);
+
+  // Live real-time SSE listener for audit log creation or clearing
+  useRealtime(useCallback((event) => {
+    if (!event) return;
+    if (event.type === 'AUDIT_LOG_CREATED' || event.type === 'AUDIT_LOGS_CLEARED' || event.type === 'SYSTEM_RESET') {
+      loadAuditLogs();
+    }
+  }, [loadAuditLogs]));
 
   // Derived audit stats
   const stats = useMemo(() => {
