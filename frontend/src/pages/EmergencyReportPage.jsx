@@ -641,6 +641,104 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                 </div>
               </div>
 
+              {/* Disaster Scene Photo / Evidence Upload (Stored in MongoDB Atlas) */}
+              <div
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--peacock-deep)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Camera size={14} color="var(--rama-green)" /> Disaster Scene Photo / Damage Evidence
+                  </div>
+                  <span style={{ fontSize: '0.70rem', color: '#0f766e', fontWeight: 700, background: '#f0fdfa', padding: '2px 8px', borderRadius: '6px', border: '1px solid #ccfbf1' }}>
+                    Stored in MongoDB Atlas
+                  </span>
+                </div>
+
+                {!imagePreview ? (
+                  <label
+                    style={{
+                      border: '2px dashed #cbd5e1',
+                      borderRadius: '10px',
+                      padding: '18px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      cursor: 'pointer',
+                      background: '#ffffff',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--rama-green)';
+                      e.currentTarget.style.background = '#f0fdfa';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#cbd5e1';
+                      e.currentTarget.style.background = '#ffffff';
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageFile(file);
+                      }}
+                    />
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ccfbf1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ImageIcon size={18} color="var(--rama-green)" />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>Click to attach disaster scene photo</span>
+                      <p style={{ margin: '2px 0 0', fontSize: '0.72rem', color: '#64748b' }}>PNG, JPG, WebP supported &bull; Auto-optimized for instant dispatch</p>
+                    </div>
+                  </label>
+                ) : (
+                  <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', border: '1px solid #cbd5e1', maxHeight: '200px' }}>
+                    <img 
+                      src={imagePreview} 
+                      alt="Disaster Scene Evidence" 
+                      style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }} 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => { setImagePreview(null); setImageFileName(''); }}
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'rgba(15, 23, 42, 0.85)',
+                        border: 'none',
+                        color: '#ffffff',
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer'
+                      }}
+                      title="Remove image"
+                    >
+                      <X size={14} />
+                    </button>
+                    <div style={{ position: 'absolute', bottom: '6px', left: '8px', background: 'rgba(15, 23, 42, 0.82)', backdropFilter: 'blur(4px)', color: '#ffffff', padding: '3px 8px', borderRadius: '6px', fontSize: '0.70rem', fontWeight: 600 }}>
+                      Attached: {imageFileName || 'Disaster Evidence'}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Submit Button & Clear */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                 <button
@@ -652,6 +750,8 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
                     setLongitude('');
                     setName('');
                     setPhone('');
+                    setImagePreview(null);
+                    setImageFileName('');
                   }}
                   style={{
                     display: 'inline-flex',
