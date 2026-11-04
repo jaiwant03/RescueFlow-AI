@@ -337,6 +337,46 @@ export function IncidentDetailPage() {
               {incident.ai_summary || 'Urgent incident requiring rapid tactical field triage and immediate unit dispatch.'}
             </div>
 
+            {/* Disaster Scene Image Evidence from MongoDB Atlas */}
+            {incident.image_url && (
+              <div 
+                style={{ 
+                  marginBottom: '18px', 
+                  borderRadius: '12px', 
+                  overflow: 'hidden', 
+                  border: '1.5px solid #e2e8f0', 
+                  position: 'relative',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  background: '#0f172a'
+                }}
+              >
+                <img 
+                  src={incident.image_url} 
+                  alt="Disaster Scene Evidence" 
+                  style={{ width: '100%', maxHeight: '340px', objectFit: 'cover', display: 'block' }} 
+                />
+                <div 
+                  style={{ 
+                    position: 'absolute', 
+                    bottom: '10px', 
+                    left: '10px', 
+                    background: 'rgba(15, 23, 42, 0.85)', 
+                    backdropFilter: 'blur(6px)', 
+                    color: '#ffffff', 
+                    padding: '5px 12px', 
+                    borderRadius: '8px', 
+                    fontSize: '0.74rem', 
+                    fontWeight: 600, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px' 
+                  }}
+                >
+                  <Camera size={13} color="#2dd4bf" /> Verified Disaster Scene Evidence &bull; Stored in MongoDB Atlas
+                </div>
+              </div>
+            )}
+
             {/* Quick Metrics */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '18px' }}>
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
