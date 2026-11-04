@@ -45,7 +45,7 @@ def build_section_16_ui_ux_design(doc, screenshots_dir):
     add_body_p(doc,
         "The Command Center provides a high-level operational briefing at a glance. The persistent header displays real-time connection status pills for the Backend, MongoDB (LOCAL), Groq AI (ONLINE), and n8n (READY). Beneath the header, four high-contrast KPI cards display total incidents, critical emergencies, active field response units, and automated deduplication savings with animated numeric rollups."
     )
-    img_dash = os.path.join(screenshots_dir, "media_1793717785374_1bb8169a.jpg")
+    img_dash = os.path.join(screenshots_dir, "media_1793717785374_1bb8169a.png")
     add_embedded_screenshot(doc, img_dash, "Figure 16.1: RescueFlow AI Operations Command Center with Live Telemetry Header & Leaflet GIS Map")
     
     # 2. Simulation & Ingestion Bar
@@ -53,7 +53,7 @@ def build_section_16_ui_ux_design(doc, screenshots_dir):
     add_body_p(doc,
         "Positioned prominently above the map, the Real-Time Incident Ingestion & Telemetry Controller provides 1-click evaluation buttons for the six canonical disaster scenarios (Flood at PSG, Corroboration reports, Fire at Gandhipuram, Medical at RS Puram, and Casual non-emergency text). This controller enables evaluators to witness sub-second ingestion, deduplication merging, and priority escalation in real time."
     )
-    img_sim = os.path.join(screenshots_dir, "media_1793777496882_c12cee13.jpg")
+    img_sim = os.path.join(screenshots_dir, "media_1793777496882_c12cee13.png")
     add_embedded_screenshot(doc, img_sim, "Figure 16.2: Real-Time Incident Ingestion & Telemetry Controller (Canonical Scenario Presets)")
     
     # 3. Emergency Ingestion Gateway
@@ -69,7 +69,7 @@ def build_section_16_ui_ux_design(doc, screenshots_dir):
     add_body_p(doc,
         "Accessible from the bell icon in the top navigation bar, the Disaster & Dispatch Alerts panel displays an audible, real-time telemetry feed of all incoming distress messages, classified priorities (P1 Critical, P2 High), and automated dispatch updates. Operators can filter by unread, critical, or pending approvals with one click."
     )
-    img_alerts = os.path.join(screenshots_dir, "media_1793723610922_84cad690.jpg")
+    img_alerts = os.path.join(screenshots_dir, "media_1793723610922_84cad690.png")
     add_embedded_screenshot(doc, img_alerts, "Figure 16.4: Disaster & Dispatch Alerts Telemetry Feed with Priority Tiers & Dispatch Notices")
     
     # 5. Live Incidents Backlog & Incident Detail Modal
@@ -77,10 +77,10 @@ def build_section_16_ui_ux_design(doc, screenshots_dir):
     add_body_p(doc,
         "The Live Incidents view (`/incidents`) presents a prioritized, searchable table of all disaster events. Clicking any incident opens a comprehensive drawer or modal displaying full AI extractions, merged raw citizen reports, affected headcounts, and a chronological operational timeline tracking every event from initial message receipt to team dispatch."
     )
-    img_triage = os.path.join(screenshots_dir, "media_1793703390365_30767650.jpg")
+    img_triage = os.path.join(screenshots_dir, "media_1793703390365_30767650.png")
     add_embedded_screenshot(doc, img_triage, "Figure 16.5: Live Incidents Triage Backlog with Priority Badges & Status Indicators")
     
-    img_detail = os.path.join(screenshots_dir, "media_1793704015910_396d3935.jpg")
+    img_detail = os.path.join(screenshots_dir, "media_1793704015910_396d3935.png")
     add_embedded_screenshot(doc, img_detail, "Figure 16.6: Incident Detail View Displaying Merged Source Reports & Operational Timeline")
     
     # 6. Authentication & Operator Profile Security

@@ -81,7 +81,7 @@ def build_complete_report():
     
     arch_img_path = os.path.join(out_dir, "RescueFlow_AI_Architecture.png")
     workflow_img_path = os.path.join(out_dir, "RescueFlow_AI_Workflow.png")
-    screenshots_dir = r"C:\Users\JAIWANT KARRUN.S.A\.gemini\antigravity\brain\44cff8d0-f707-437b-b020-e34b7a9e1216\.user_uploaded"
+    screenshots_dir = os.path.join(out_dir, "screenshots")
     
     # ------------------ SECTIONS 1 TO 8 ------------------
     print("Building Section 1: Cover Page...")
