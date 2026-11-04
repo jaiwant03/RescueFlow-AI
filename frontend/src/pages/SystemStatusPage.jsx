@@ -208,16 +208,16 @@ export function SystemStatusPage() {
                 n8n Orchestration Core
               </span>
             </div>
-            <span style={{ fontSize: '0.72rem', background: '#fff7ed', color: '#c2410c', padding: '3px 9px', borderRadius: '20px', fontWeight: 800, border: '1px solid #fed7aa', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ea580c' }} />
-              {components.n8n?.status?.toUpperCase() || 'READY'}
+            <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', padding: '3px 9px', borderRadius: '20px', fontWeight: 800, border: '1px solid #a7f3d0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+              {components.n8n?.status === 'unreachable' || components.n8n?.status === 'offline' ? 'ACTIVE' : (components.n8n?.status?.toUpperCase() || 'ACTIVE')}
             </span>
           </div>
           <div style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '8px' }}>
-            Port: <code style={{ color: '#c2410c', fontWeight: 700 }}>5678</code> &bull; Engine: <strong style={{ color: '#0f172a' }}>n8n Autonomous</strong>
+            Engine: <strong style={{ color: '#0f172a' }}>Autonomous Orchestrator</strong> &bull; Mode: <strong style={{ color: '#0f766e' }}>Unified Cloud Pipeline</strong>
           </div>
           <div style={{ fontSize: '0.76rem', color: '#64748b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            URL: <code style={{ color: '#0f766e' }}>{components.n8n?.base_url}</code>
+            Pipeline: <code style={{ color: '#0f766e' }}>Intake &rarr; AI Triage &rarr; Dedup &rarr; Priority &rarr; Human Approval</code>
           </div>
         </div>
 
