@@ -41,6 +41,13 @@ export const api = {
 
   // Emergency Intake
   submitEmergencyReport: (data) => client.post('/api/emergency/report', data).then(r => r.data),
+  uploadImage: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return client.post('/api/emergency/upload-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data);
+  },
   uploadCSV: (file) => {
     const formData = new FormData();
     formData.append('file', file);
