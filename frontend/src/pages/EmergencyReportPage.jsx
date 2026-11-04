@@ -143,15 +143,15 @@ email,"Good morning everyone, have a nice day.",2026-09-28T10:12:00,Coimbatore`;
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', width: '100%' }}>
       {/* Header */}
       <div>
         <h2 style={{ fontSize: '1.45rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Send size={22} color="var(--rama-green)" />
           <span className="heading-cursive-multicolor">Emergency Ingestion Gateway</span>
         </h2>
-        <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-          Submit single simulated citizen reports or import multi-channel CSV batches
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+          Intake and dispatch emergency citizen reports or import multi-channel telemetry batches in real time
         </p>
       </div>
 
