@@ -191,6 +191,7 @@ async def connect_to_mongo():
             await db_manager.db["incidents"].create_index("created_at")
             await db_manager.db["messages"].create_index("message_id", unique=True)
             await db_manager.db["audit_logs"].create_index("timestamp")
+            await db_manager.db["users"].create_index("email")
         except Exception as idx_err:
             logger.warning("Index creation note: %s", idx_err)
             
