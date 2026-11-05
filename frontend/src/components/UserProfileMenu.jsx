@@ -104,9 +104,9 @@ export function UserProfileMenu({ isOpen, onClose, onOpenEditProfile }) {
               border: '2px solid #ffffff',
             }}
           >
-            {user.photo ? (
+            {(user.photo || (typeof window !== 'undefined' ? localStorage.getItem('rescueflow_user_photo') : null)) ? (
               <img
-                src={user.photo}
+                src={user.photo || localStorage.getItem('rescueflow_user_photo')}
                 alt={user.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

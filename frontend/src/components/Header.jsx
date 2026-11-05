@@ -306,10 +306,10 @@ export function Header() {
                 flexShrink: 0,
               }}
             >
-              {user?.photo ? (
+              {(user?.photo || (typeof window !== 'undefined' ? localStorage.getItem('rescueflow_user_photo') : null)) ? (
                 <img
-                  src={user.photo}
-                  alt={user.name}
+                  src={user?.photo || localStorage.getItem('rescueflow_user_photo')}
+                  alt={user?.name || 'Operator'}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
