@@ -197,7 +197,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: hasIncidents || showSimOptions ? '14px' : '0',
+          marginBottom: '14px',
           position: 'relative',
           zIndex: 1,
         }}
@@ -234,7 +234,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                 gap: '8px',
               }}
             >
-              <span>Real-Time Telegram Incident Ingestion</span>
+              <span>Real-Time Incident Ingestion & Telemetry Controller</span>
               <span
                 style={{
                   fontSize: '0.68rem',
@@ -263,8 +263,8 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
               }}
             >
               {hasIncidents 
-                ? `Displaying ${incidents.length} active emergency incidents triaged by Groq AI in real time.`
-                : 'Listening for live citizen messages via Telegram Bot @RescueFlowAI_DemoBot — Database is empty.'
+                ? `Live citizen emergency messages received via Telegram — prioritized from High Severity (1) to Low (6) (${incidents.length} active)`
+                : 'Live citizen emergency messages received via Telegram — prioritized from High Severity (1) to Low (6)'
               }
             </p>
           </div>
@@ -348,97 +348,33 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
         </div>
       </div>
 
-      {/* 1. When Database Has ZERO Incidents and Simulation is NOT open */}
-      {!hasIncidents && !showSimOptions && (
-        <div
-          style={{
-            marginTop: '14px',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%)',
-            border: '1.5px dashed #99f6e4',
-            borderRadius: '10px',
-            padding: '20px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '16px',
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div
-              style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '50%',
-                background: '#ccfbf1',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 0 0 5px rgba(204, 251, 241, 0.45)',
-                flexShrink: 0,
-              }}
-            >
-              <Radio size={22} color="#0d9488" />
-            </div>
-            <div>
-              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f2738' }}>
-                Database is Cleared &bull; Zero Incidents Active
-              </div>
-              <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: '#64748b', lineHeight: 1.4 }}>
-                Send an emergency report to Telegram Bot <strong style={{ color: '#0369a1' }}>@RescueFlowAI_DemoBot</strong> (e.g. <em>"Flood in Ward 7 near Peelamedu, 4 people trapped"</em>) and it will appear here in real time.
-              </p>
-            </div>
-          </div>
-
-          <a
-            href="https://t.me/RescueFlowAI_DemoBot"
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              padding: '8px 18px',
-              borderRadius: '9999px',
-              background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
-              color: '#ffffff',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
-              flexShrink: 0,
-            }}
-          >
-            <Send size={13} /> Send Test Telegram Message
-          </a>
-        </div>
-      )}
-
-      {/* 2. When Database HAS Live Incidents: Display the REAL Incidents in Real Time */}
-      {hasIncidents && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${Math.min(6, Math.max(1, incidents.length))}, 1fr)`,
-            gap: '10px',
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          {incidents.slice(0, 6).map((inc, idx) => {
+      {/* Persistent 6 Incident Slots: Real ingested Telegram incidents appear live, empty slots remain clean */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(6, 1fr)',
+          gap: '10px',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        {[0, 1, 2, 3, 4, 5].map((slotIdx) => {
+          const inc = incidents[slotIdx];
+          if (inc) {
             const isCrit = inc.priority_level === 'critical';
             const isHigh = inc.priority_level === 'high';
-            const numBg = isCrit ? '#fee2e2' : isHigh ? '#ffedd5' : '#e0f2fe';
-            const numColor = isCrit ? '#991b1b' : isHigh ? '#9a3412' : '#075985';
+            const isMed = inc.priority_level === 'medium';
+            const numBg = isCrit ? '#fee2e2' : isHigh ? '#ffedd5' : isMed ? '#fef3c7' : '#e0f2fe';
+            const numColor = isCrit ? '#991b1b' : isHigh ? '#9a3412' : isMed ? '#92400e' : '#075985';
+            const borderColor = isCrit ? '#fecaca' : isHigh ? '#fed7aa' : isMed ? '#fde68a' : '#cbd5e1';
 
             return (
               <Link
-                key={inc.incident_id || idx}
+                key={inc.incident_id || slotIdx}
                 to={`/incidents/${inc.incident_id}`}
                 style={{
                   background: '#ffffff',
-                  border: `1.5px solid ${isCrit ? '#fecaca' : isHigh ? '#fed7aa' : '#e2e8f0'}`,
+                  border: `1.5px solid ${borderColor}`,
                   borderRadius: '10px',
                   padding: '9px 12px',
                   display: 'flex',
@@ -447,6 +383,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                   textDecoration: 'none',
                   transition: 'all 0.15s ease',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                  minHeight: '48px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = isCrit ? '#dc2626' : '#0d9488';
@@ -454,7 +391,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                   e.currentTarget.style.transform = 'translateY(-1px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = isCrit ? '#fecaca' : isHigh ? '#fed7aa' : '#e2e8f0';
+                  e.currentTarget.style.borderColor = borderColor;
                   e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.03)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
@@ -475,7 +412,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                     flexShrink: 0,
                   }}
                 >
-                  {idx + 1}
+                  {slotIdx + 1}
                 </div>
 
                 {/* Incident Type Icon */}
@@ -484,7 +421,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                 </div>
 
                 {/* Info Text */}
-                <div style={{ overflow: 'hidden', lineHeight: 1.2, flex: 1 }}>
+                <div style={{ overflow: 'hidden', lineHeight: 1.2, flex: 1, minWidth: 0 }}>
                   <div
                     style={{
                       fontSize: '0.78rem',
@@ -495,6 +432,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                       textOverflow: 'ellipsis',
                       textTransform: 'capitalize',
                     }}
+                    title={`${inc.type} @ ${inc.location}`}
                   >
                     {inc.type} @ {inc.location?.split(',')[0]}
                   </div>
@@ -508,16 +446,85 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                       marginTop: '2px',
                     }}
                   >
-                    {inc.people_affected ? `${inc.people_affected} affected` : 'Report logged'} &bull; {inc.priority_level?.toUpperCase()}
+                    {inc.people_affected ? `${inc.people_affected} affected` : 'Report logged'} &bull; {inc.priority_level?.toUpperCase() || 'NORMAL'}
                   </div>
                 </div>
 
                 <ChevronRight size={13} color="#94a3b8" style={{ flexShrink: 0 }} />
               </Link>
             );
-          })}
-        </div>
-      )}
+          }
+
+          // Unoccupied slot: clean, empty card box
+          return (
+            <div
+              key={`empty-${slotIdx}`}
+              style={{
+                background: '#f8fafc',
+                border: '1.5px dashed #cbd5e1',
+                borderRadius: '10px',
+                padding: '9px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                minHeight: '48px',
+              }}
+            >
+              {/* Muted Rank Number */}
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: '#e2e8f0',
+                  color: '#64748b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  flexShrink: 0,
+                }}
+              >
+                {slotIdx + 1}
+              </div>
+
+              {/* Muted Waiting Beacon Icon */}
+              <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                <Radio size={14} color="#94a3b8" />
+              </div>
+
+              {/* Empty slot placeholder text */}
+              <div style={{ overflow: 'hidden', lineHeight: 1.2, flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: '0.76rem',
+                    fontWeight: 600,
+                    color: '#94a3b8',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  Empty Slot
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.64rem',
+                    color: '#94a3b8',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    marginTop: '2px',
+                  }}
+                >
+                  Waiting for Telegram
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       {/* 3. Optional Simulation Test Buttons (Shown if toggled) */}
       {showSimOptions && (
