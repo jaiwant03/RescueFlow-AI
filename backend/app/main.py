@@ -24,6 +24,7 @@ from app.routes import (
     audit_logs,
     n8n_events,
     realtime,
+    user,
 )
 
 # Configure structured logging
@@ -82,6 +83,7 @@ app.include_router(analytics.router)
 app.include_router(audit_logs.router)
 app.include_router(n8n_events.router)
 app.include_router(realtime.router)
+app.include_router(user.router)
 
 if __name__ == "__main__":
     import uvicorn
