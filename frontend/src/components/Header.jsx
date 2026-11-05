@@ -27,6 +27,20 @@ export function Header() {
     return name.slice(0, 2).toUpperCase();
   };
 
+  // Clean, non-congested title & subtitle for the profile pill
+  const rawName = (user?.name || 'Commander').trim();
+  const rawRole = (user?.role || 'Operations').trim();
+  const isDuplicate = rawName.toLowerCase() === rawRole.toLowerCase();
+
+  // If name is long generic "Operations Commander", clean to "Commander"
+  const formattedName = isDuplicate && rawName.toLowerCase().includes('operations commander')
+    ? 'Commander'
+    : rawName;
+
+  const formattedSubtitle = isDuplicate
+    ? (user?.callsign || user?.badge || 'HQ Command')
+    : rawRole;
+
   return (
     <header
       style={{
@@ -280,18 +294,27 @@ export function Header() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '4px 8px 4px 6px',
+              padding: '3px 9px 3px 5px',
               borderRadius: '12px',
-              background: isProfileOpen ? '#f8fafc' : 'transparent',
-              border: `1px solid ${isProfileOpen ? '#cbd5e1' : 'transparent'}`,
+              background: isProfileOpen ? '#f1f5f9' : '#f8fafc',
+              border: `1px solid ${isProfileOpen ? '#94a3b8' : '#e2e8f0'}`,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#f1f5f9';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = isProfileOpen ? '#f1f5f9' : '#f8fafc';
+              e.currentTarget.style.borderColor = isProfileOpen ? '#94a3b8' : '#e2e8f0';
             }}
           >
             <div
               style={{
-                width: '34px',
-                height: '34px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #0077b6 0%, #0d9488 100%)',
                 display: 'flex',
@@ -299,8 +322,8 @@ export function Header() {
                 justifyContent: 'center',
                 color: '#ffffff',
                 fontWeight: 700,
-                fontSize: '0.80rem',
-                boxShadow: '0 2px 6px rgba(0, 119, 182, 0.25)',
+                fontSize: '0.78rem',
+                boxShadow: '0 2px 5px rgba(0, 119, 182, 0.20)',
                 overflow: 'hidden',
                 border: '1.5px solid #ffffff',
                 flexShrink: 0,
@@ -316,15 +339,38 @@ export function Header() {
                 getInitials(user?.name)
               )}
             </div>
-            <div style={{ lineHeight: 1.15, textAlign: 'left' }}>
-              <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a' }}>
-                {user?.name || 'Operations Officer'}
+            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', minWidth: 0, maxWidth: '125px' }}>
+              <div 
+                style={{ 
+                  fontSize: '0.76rem', 
+                  fontWeight: 700, 
+                  color: '#0f172a',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  lineHeight: 1.25,
+                }}
+                title={user?.name}
+              >
+                {formattedName}
               </div>
-              <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 500 }}>
-                {user?.role || 'Operations Commander'}
+              <div 
+                style={{ 
+                  fontSize: '0.64rem', 
+                  color: '#64748b', 
+                  fontWeight: 500,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  lineHeight: 1.2,
+                  marginTop: '1px'
+                }}
+                title={formattedSubtitle}
+              >
+                {formattedSubtitle}
               </div>
             </div>
-            <ChevronDown size={14} color="#94a3b8" />
+            <ChevronDown size={13} color="#64748b" style={{ flexShrink: 0 }} />
           </button>
 
           {/* User Profile Menu */}
