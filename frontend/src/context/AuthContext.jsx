@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
     return [];
   });
 
-  // Current logged in user
+  // Current logged in user with persistent photo recovery
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('rescueflow_user');
     let currentUser = null;
@@ -38,7 +38,14 @@ export function AuthProvider({ children }) {
         console.warn('Failed parsing current user from storage', e);
       }
     }
+
+    // Dedicated standalone photo storage (guarantees photo is NEVER lost after time passes or on refresh)
+    const dedicatedPhoto = localStorage.getItem('rescueflow_user_photo');
+
     if (currentUser) {
+      if (!currentUser.photo && dedicatedPhoto) {
+        currentUser.photo = dedicatedPhoto;
+      }
       // Recover photo from registeredUsers if available
       try {
         const savedReg = localStorage.getItem('rescueflow_registered_users');
@@ -50,7 +57,7 @@ export function AuthProvider({ children }) {
                    (currentUser.email && u.email?.toLowerCase() === currentUser.email?.toLowerCase()) ||
                    (currentUser.name && u.name?.toLowerCase() === currentUser.name?.toLowerCase())
             );
-            if (match && match.photo) {
+            if (match && match.photo && !currentUser.photo) {
               currentUser = { ...currentUser, photo: match.photo };
             }
           }
@@ -62,6 +69,42 @@ export function AuthProvider({ children }) {
 
     return currentUser;
   });
+
+  // Permanently sync operator profile and photo with MongoDB Atlas on boot & background
+  useEffect(() => {
+    let isMounted = true;
+    const syncProfileFromAtlas = async () => {
+      try {
+        const emailToLookup = user?.email || (typeof window !== 'undefined' ? localStorage.getItem('rescueflow_last_email') : null);
+        const atlasUser = await api.getUserProfile(emailToLookup);
+        if (atlasUser && isMounted) {
+          if (atlasUser.photo) {
+            try {
+              localStorage.setItem('rescueflow_user_photo', atlasUser.photo);
+            } catch (e) {}
+          }
+          setUser(prev => {
+            if (!prev) return atlasUser;
+            const finalPhoto = atlasUser.photo || prev.photo || localStorage.getItem('rescueflow_user_photo') || null;
+            const merged = {
+              ...prev,
+              ...atlasUser,
+              photo: finalPhoto,
+            };
+            try {
+              localStorage.setItem('rescueflow_user', JSON.stringify(merged));
+            } catch (e) {}
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.warn('Atlas user profile sync notice:', err);
+      }
+    };
+
+    syncProfileFromAtlas();
+    return () => { isMounted = false; };
+  }, []);
 
   // Sync registered users to localStorage
   useEffect(() => {
@@ -81,6 +124,11 @@ export function AuthProvider({ children }) {
         u => u.name && u.name.trim().toLowerCase() === cleanName
       );
 
+      const persistentPhoto = matched?.photo || credentials.photo || localStorage.getItem('rescueflow_user_photo') || null;
+      if (persistentPhoto) {
+        try { localStorage.setItem('rescueflow_user_photo', persistentPhoto); } catch (e) {}
+      }
+
       const userData = {
         id: matched?.id || `user-${Date.now()}`,
         name: credentials.name,
@@ -89,7 +137,7 @@ export function AuthProvider({ children }) {
         callsign: credentials.callsign || matched?.callsign || 'COMMAND-1',
         badge: credentials.badge || matched?.badge || `EOC-${Math.floor(1000 + Math.random() * 9000)}`,
         email: credentials.email || matched?.email || 'commander@rescueflow.ai',
-        photo: matched?.photo || credentials.photo || null,
+        photo: persistentPhoto,
       };
       setUser(userData);
       try {
@@ -111,10 +159,17 @@ export function AuthProvider({ children }) {
       return { success: false, error: 'Please enter your security passcode.' };
     }
 
+    try { localStorage.setItem('rescueflow_last_email', cleanEmail); } catch (e) {}
+
     const matched = registeredUsers.find(
       u => (u.email && u.email.toLowerCase() === cleanEmail) || 
            (u.name && u.name.toLowerCase() === cleanEmail)
     );
+
+    const persistentPhoto = matched?.photo || localStorage.getItem('rescueflow_user_photo') || null;
+    if (persistentPhoto) {
+      try { localStorage.setItem('rescueflow_user_photo', persistentPhoto); } catch (e) {}
+    }
 
     let userData = null;
 
@@ -125,6 +180,7 @@ export function AuthProvider({ children }) {
       userData = {
         ...matched,
         role: credentials.overrideRole || matched.role || 'Operations Commander',
+        photo: persistentPhoto,
       };
     } else {
       // Real-time dynamic operator profile generated from entered identifier
@@ -145,7 +201,7 @@ export function AuthProvider({ children }) {
         department: 'Disaster Operations Command',
         callsign: `TAC-${Math.floor(10 + Math.random() * 90)}`,
         badge: `EOC-${Math.floor(1000 + Math.random() * 9000)}`,
-        photo: null,
+        photo: persistentPhoto,
       };
 
       setRegisteredUsers(prev => [userData, ...prev.filter(u => u.email !== userData.email)]);
@@ -157,6 +213,15 @@ export function AuthProvider({ children }) {
     } catch (e) {
       console.warn('Storage save failed', e);
     }
+
+    // Async background sync with MongoDB Atlas to restore cloud-stored photo
+    api.getUserProfile(cleanEmail).then(atlasProfile => {
+      if (atlasProfile && atlasProfile.photo) {
+        try { localStorage.setItem('rescueflow_user_photo', atlasProfile.photo); } catch (e) {}
+        setUser(prev => prev ? { ...prev, photo: atlasProfile.photo } : prev);
+      }
+    }).catch(() => {});
+
     return { success: true, user: userData };
   }, [registeredUsers]);
 
