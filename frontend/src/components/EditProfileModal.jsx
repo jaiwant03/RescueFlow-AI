@@ -46,7 +46,8 @@ export function EditProfileModal({ isOpen, onClose }) {
       setCallsign(user.callsign || 'COMMAND-1');
       setBadge(user.badge || 'EOC-7701');
       setEmail(user.email || '');
-      setPhoto(user.photo || null);
+      const persistentPhoto = user.photo || (typeof window !== 'undefined' ? localStorage.getItem('rescueflow_user_photo') : null) || null;
+      setPhoto(persistentPhoto);
       setErrorMessage('');
     }
   }, [user, isOpen]);
