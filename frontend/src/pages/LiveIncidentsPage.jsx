@@ -51,6 +51,17 @@ export function LiveIncidentsPage() {
     loadIncidents();
   }, [loadIncidents]);
 
+  // Real-time synchronization when incidents are created/updated via Telegram
+  const handleRealtimeEvent = useCallback((event) => {
+    if (!event) return;
+    const { type } = event;
+    if (type === 'INCIDENT_CREATED' || type === 'INCIDENT_UPDATED' || type === 'SYSTEM_RESET') {
+      loadIncidents();
+    }
+  }, [loadIncidents]);
+
+  useRealtime(handleRealtimeEvent);
+
   const priorityOptions = [
     { value: 'all', label: 'All Priorities' },
     { value: 'critical', label: 'Critical (80+)', dotColor: '#ef4444' },
