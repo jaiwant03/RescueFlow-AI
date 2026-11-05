@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { api } from '../services/api';
+import { useRealtime } from '../hooks/useRealtime';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { ApprovalModal } from '../components/ApprovalModal';
 import { ModeledSelect } from '../components/ModeledSelect';
@@ -53,6 +54,18 @@ export function ApprovalCenterPage() {
   useEffect(() => {
     loadApprovals();
   }, [loadApprovals]);
+
+  // Real-time synchronization when incidents requiring approval are created via Telegram
+  const handleRealtimeEvent = useCallback((event) => {
+    if (!event) return;
+    const { type } = event;
+    if (type === 'INCIDENT_CREATED' || type === 'INCIDENT_UPDATED' || type === 'SYSTEM_RESET') {
+      loadApprovals();
+      refreshStats();
+    }
+  }, [loadApprovals, refreshStats]);
+
+  useRealtime(handleRealtimeEvent);
 
   // Statistics
   const stats = useMemo(() => {
