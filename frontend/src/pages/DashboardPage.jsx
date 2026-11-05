@@ -77,6 +77,18 @@ export function DashboardPage() {
     setCurrentTimeStr(formatted);
   }, [loadData]);
 
+  // Real-time synchronization when incidents are created/updated via Telegram
+  const handleRealtimeEvent = useCallback((event) => {
+    if (!event) return;
+    const { type } = event;
+    if (type === 'INCIDENT_CREATED' || type === 'INCIDENT_UPDATED' || type === 'SYSTEM_RESET') {
+      loadData();
+      refreshStats();
+    }
+  }, [loadData, refreshStats]);
+
+  useRealtime(handleRealtimeEvent);
+
   const handleOpenApproval = (incident, action) => {
     setSelectedIncidentForApproval(incident);
     setApprovalAction(action);
@@ -97,7 +109,11 @@ export function DashboardPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* 1. Hackathon Demo Simulation Controller Hero Banner */}
-      <DemoControlBar onScenarioComplete={loadData} />
+      <DemoControlBar 
+        incidents={incidents}
+        onScenarioComplete={loadData}
+        onResetComplete={loadData}
+      />
 
       {/* 2. Top 6 Operations Statistics Cards */}
       <div
