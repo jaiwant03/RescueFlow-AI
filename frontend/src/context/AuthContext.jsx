@@ -270,13 +270,44 @@ export function AuthProvider({ children }) {
     return { success: true, user: newUser };
   }, [registeredUsers]);
 
-  // Update profile handler (persists photo & credentials to active session & registered registry)
-  const updateProfile = useCallback((profileData) => {
+  // Update profile handler (persists photo & credentials to active session, MongoDB Atlas & registered registry)
+  const updateProfile = useCallback(async (profileData) => {
+    // 1. Immediately store photo in dedicated standalone storage key
+    if (profileData.photo) {
+      try {
+        localStorage.setItem('rescueflow_user_photo', profileData.photo);
+      } catch (e) {
+        console.warn('Dedicated photo storage note:', e);
+      }
+    }
+
+    // 2. Synchronize to MongoDB Atlas Cloud Database
+    try {
+      const activeEmail = profileData.email || user?.email || 'operator@rescueflow.ai';
+      localStorage.setItem('rescueflow_last_email', activeEmail.trim().toLowerCase());
+      api.updateUserProfile({
+        ...profileData,
+        email: activeEmail,
+        id: user?.id,
+        photo: profileData.photo || localStorage.getItem('rescueflow_user_photo') || null
+      }).catch(err => {
+        console.warn('MongoDB Atlas profile update notice:', err);
+      });
+    } catch (e) {
+      // Atlas sync silent fallback
+    }
+
+    // 3. Update React session state
     setUser(prevUser => {
       if (!prevUser) return null;
+      const finalPhoto = profileData.photo !== undefined 
+        ? profileData.photo 
+        : (prevUser.photo || localStorage.getItem('rescueflow_user_photo') || null);
+
       const updated = {
         ...prevUser,
         ...profileData,
+        photo: finalPhoto,
       };
 
       try {
@@ -304,6 +335,7 @@ export function AuthProvider({ children }) {
           nextList[matchedIndex] = {
             ...nextList[matchedIndex],
             ...profileData,
+            photo: finalPhoto,
             password: profileData.password || nextList[matchedIndex].password || 'admin',
           };
         } else {
@@ -318,7 +350,7 @@ export function AuthProvider({ children }) {
               department: updated.department,
               callsign: updated.callsign,
               badge: updated.badge,
-              photo: updated.photo || null,
+              photo: finalPhoto,
             }
           ];
         }
@@ -336,7 +368,7 @@ export function AuthProvider({ children }) {
     });
 
     return { success: true };
-  }, []);
+  }, [user]);
 
   // Role switch handler
   const switchRole = useCallback((newRole) => {
