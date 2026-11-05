@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { api } from '../services/api';
 import { useSystem } from '../context/SystemContext';
+import { useRealtime } from '../hooks/useRealtime';
 import { DemoControlBar } from '../components/DemoControlBar';
 import { IncidentMap } from '../components/IncidentMap';
 import { ApprovalModal } from '../components/ApprovalModal';
