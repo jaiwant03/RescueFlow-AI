@@ -7,8 +7,15 @@ def calculate_priority_score(
 ) -> Tuple[int, str, List[str]]:
     """
     Deterministic hybrid priority engine for RescueFlow AI.
-    Calculates a score (0-100), maps it to a level (critical, high, medium, low),
-    and generates explainable deterministic reasons.
+    Calculates an explainable score (0-100) and priority level based on:
+    1. Immediate life danger (30 pts)
+    2. People trapped/stranded (20 pts)
+    3. Vulnerable population presence (20 pts)
+    4. Medical emergency & trauma (20 pts)
+    5. Scale of people affected (tiered up to 35 pts)
+    6. Tactical rescue / fire resources required (15 pts)
+    7. Multi-source corroboration (10 pts)
+    8. High-consequence disaster type (15 pts)
     """
     score = 0
     reasons: List[str] = []
@@ -21,71 +28,98 @@ def calculate_priority_score(
     resources_req = [str(r).lower() for r in extraction_data.get("resources_required", [])]
     summary = str(extraction_data.get("summary", "")).lower()
     
-    # Vulnerable people check
-    vulnerable_info = extraction_data.get("vulnerable_people", {})
-    vulnerable_detected = False
-    if isinstance(vulnerable_info, dict):
-        vulnerable_detected = bool(vulnerable_info.get("detected", False))
-        types = vulnerable_info.get("types", [])
-    elif isinstance(vulnerable_info, list) and len(vulnerable_info) > 0:
-        vulnerable_detected = True
-        types = vulnerable_info
-    else:
-        types = []
-
     # 1. Immediate life danger check
     is_life_danger = (
-        severity == "critical" or
-        "trapped" in summary or
-        "urgent" in summary or
+        severity in ["critical", "high"] or
+        people_affected >= 20 or
+        (disaster_type in ["fire", "building_collapse", "explosion", "landslide"] and people_affected >= 5) or
+        any(w in summary for w in ["trapped", "urgent", "fire", "burn", "smoke", "collapse", "drown", "explosion", "hazard", "electric"]) or
         any("urgent" in n or "rescue" in n or "evacuation" in n for n in immediate_needs)
     )
     if is_life_danger:
         score += weights.get("immediate_life_danger", 30)
-        reasons.append("Immediate life danger detected")
+        if people_affected >= 20:
+            reasons.append(f"Immediate life danger: Mass emergency affecting {people_affected} people")
+        elif disaster_type in ["fire", "building_collapse", "explosion", "landslide"]:
+            reasons.append(f"Immediate life danger: Active {disaster_type} threat with multiple potential casualties")
+        else:
+            reasons.append("Immediate life danger detected")
 
-    # 2. People trapped
+    # 2. People trapped or stranded in distress zone
+    trapped_keywords = ["trapped", "stranded", "stuck", "surrounded", "inside", "cut off", "under debris", "marooned"]
     is_trapped = (
-        "trapped" in summary or
-        any("trapped" in n for n in immediate_needs) or
+        any(w in summary for w in trapped_keywords) or
+        any("trapped" in n or "evacuat" in n for n in immediate_needs) or
         any("boat" in r or "evacuation" in r for r in resources_req)
     )
     if is_trapped:
         score += weights.get("people_trapped", 20)
-        reasons.append("People reported trapped in distress zone")
+        reasons.append("People reported trapped/stranded in distress zone")
 
-    # 3. Vulnerable population
+    # 3. Vulnerable population check (children, elderly, hospital patients, etc.)
+    vulnerable_info = extraction_data.get("vulnerable_people", {})
+    vulnerable_detected = False
+    types = []
+    if isinstance(vulnerable_info, dict):
+        vulnerable_detected = bool(vulnerable_info.get("detected", False))
+        types = list(vulnerable_info.get("types", []))
+    elif isinstance(vulnerable_info, list) and len(vulnerable_info) > 0:
+        vulnerable_detected = True
+        types = list(vulnerable_info)
+
+    vulnerable_keywords = ["child", "children", "baby", "infant", "elderly", "senior", "pregnant", "disabled", "patient", "school", "hospital"]
+    if not vulnerable_detected:
+        vulnerable_detected = any(w in summary for w in vulnerable_keywords)
+        if vulnerable_detected and not types:
+            types = [w for w in vulnerable_keywords if w in summary]
+
     if vulnerable_detected:
         score += weights.get("vulnerable_people", 20)
         types_str = f" ({', '.join(types)})" if types else ""
         reasons.append(f"Vulnerable people present{types_str}")
 
-    # 4. Medical emergency
+    # 4. Medical emergency & trauma response
+    medical_keywords = ["medical", "injured", "injury", "burn", "trauma", "hospital", "bleeding", "casualt", "unconscious", "wound", "patient"]
     is_medical = (
         disaster_type == "medical" or
         "medical" in immediate_needs or
         "ambulance" in resources_req or
-        "injured" in summary or
-        "hospital" in summary or
-        "bleeding" in summary
+        any(w in summary for w in medical_keywords)
     )
     if is_medical:
         score += weights.get("medical_emergency", 20)
-        reasons.append("Urgent medical attention required")
+        reasons.append("Urgent medical attention / trauma response required")
 
-    # 5. Scale of people affected
-    if people_affected >= 10:
+    # 5. Scale of people affected (tiered for mass-casualty events)
+    if people_affected >= 50:
+        score += 35
+        reasons.append(f"Catastrophic mass casualty/impact scale: {people_affected}+ people affected")
+    elif people_affected >= 20:
+        score += 25
+        reasons.append(f"Severe mass impact scale: {people_affected} people affected")
+    elif people_affected >= 10:
         score += weights.get("people_affected_10_plus", 20)
         reasons.append(f"Mass casualty/impact scale: {people_affected}+ people affected")
     elif people_affected >= 5:
         score += weights.get("people_affected_5_to_9", 10)
         reasons.append(f"High impact scale: {people_affected} people affected")
+    elif people_affected >= 1:
+        score += 5
+        reasons.append(f"Direct impact on {people_affected} resident(s)")
 
-    # 6. Rescue team / boat / air transport required
-    is_rescue_req = any(r in resources_req for r in ["rescue_team", "boat", "fire_service", "helicopter"])
+    # 6. Tactical rescue / fire / emergency resources required
+    is_rescue_req = (
+        disaster_type in ["fire", "building_collapse", "landslide"] or
+        people_affected >= 20 or
+        any(w in summary for w in ["fire", "rescue", "collapse", "squad", "trapped", "stranded"]) or
+        any(r in resources_req for r in ["rescue_team", "boat", "fire_service", "helicopter", "first_responders", "ambulance"])
+    )
     if is_rescue_req:
         score += weights.get("rescue_required", 15)
-        reasons.append("Tactical rescue resources requested")
+        if disaster_type == "fire":
+            reasons.append("Tactical fire suppression and rescue response required")
+        else:
+            reasons.append("Tactical rescue resources requested")
 
     # 7. Multiple independent reports received (corroboration)
     if report_count > 1:
@@ -93,11 +127,11 @@ def calculate_priority_score(
         reasons.append(f"Multi-source corroboration ({report_count} independent reports)")
 
     # 8. High-severity disaster category
-    if disaster_type in ["flood", "fire", "building_collapse", "earthquake", "landslide"]:
+    if disaster_type in ["flood", "fire", "building_collapse", "earthquake", "landslide", "explosion", "gas_leak", "hazmat"]:
         score += weights.get("critical_disaster_type", 15)
         reasons.append(f"High-consequence disaster type: {disaster_type.replace('_', ' ').title()}")
 
-    # Cap score at 100 max, 5 min for valid emergencies
+    # Cap score between 10 (minimum emergency floor) and 100 max
     final_score = min(max(score, 10), 100)
 
     # Determine priority tier
