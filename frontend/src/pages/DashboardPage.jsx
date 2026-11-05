@@ -108,12 +108,8 @@ export function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* 1. Hackathon Demo Simulation Controller Hero Banner */}
-      <DemoControlBar 
-        incidents={incidents}
-        onScenarioComplete={loadData}
-        onResetComplete={loadData}
-      />
+      {/* 1. Real-Time Telemetry & Incident Ingestion Banner */}
+      <DemoControlBar incidents={incidents} />
 
       {/* 2. Top 6 Operations Statistics Cards */}
       <div

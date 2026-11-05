@@ -1,26 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../services/api';
-import { useSystem } from '../context/SystemContext';
 import { LandscapeArtwork } from './LandscapeArtwork';
 import { 
   Shield, 
-  Play, 
   Waves, 
   Flame, 
-  Plus, 
   Zap, 
   Droplets, 
   MessageSquare, 
-  Loader2,
-  Trash2,
-  Send,
-  Radio,
-  HeartPulse,
-  AlertTriangle,
-  ChevronRight,
-  ExternalLink,
-  Sparkles
+  Radio, 
+  HeartPulse, 
+  AlertTriangle, 
+  ChevronRight 
 } from 'lucide-react';
 
 function getIncidentIcon(type) {
@@ -33,132 +24,7 @@ function getIncidentIcon(type) {
   return <MessageSquare size={15} color="#0d9488" />;
 }
 
-export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComplete }) {
-  const { addToast, refreshStats } = useSystem();
-  const [runningKey, setRunningKey] = useState(null);
-  const [runningAll, setRunningAll] = useState(false);
-  const [isClearing, setIsClearing] = useState(false);
-  const [showSimOptions, setShowSimOptions] = useState(false);
-
-  // 6 Scenarios for testing / evaluator demonstration
-  const scenarios = [
-    {
-      key: 'step1_fire_gandhipuram',
-      stepNum: '1',
-      numBg: '#fee2e2',
-      numColor: '#991b1b',
-      title: 'Fire @ Gandhipuram',
-      subtitle: '8 trapped (Telegram)',
-      severityLabel: 'P1 CRITICAL',
-      icon: <Flame size={15} color="#dc2626" />,
-    },
-    {
-      key: 'step2_flood_peelamedu',
-      stepNum: '2',
-      numBg: '#ffedd5',
-      numColor: '#9a3412',
-      title: 'Flood @ Peelamedu',
-      subtitle: 'Water surge 5ft (Telegram)',
-      severityLabel: 'P1 CRITICAL',
-      icon: <Waves size={15} color="#ea580c" />,
-    },
-    {
-      key: 'step3_medical_rspuram',
-      stepNum: '3',
-      numBg: '#fef3c7',
-      numColor: '#92400e',
-      title: 'Medical @ RS Puram',
-      subtitle: 'Head trauma (Telegram)',
-      severityLabel: 'P2 HIGH',
-      icon: (
-        <div style={{ width: '15px', height: '15px', background: '#d97706', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Plus size={11} color="#ffffff" strokeWidth={3} />
-        </div>
-      ),
-    },
-    {
-      key: 'step4_hazard_townhall',
-      stepNum: '4',
-      numBg: '#e0f2fe',
-      numColor: '#075985',
-      title: 'Hazard @ Town Hall',
-      subtitle: 'Live wire down (Telegram)',
-      severityLabel: 'P3 MEDIUM',
-      icon: <Zap size={15} color="#0284c7" />,
-    },
-    {
-      key: 'step5_waterlogging_ukkadam',
-      stepNum: '5',
-      numBg: '#dcfce7',
-      numColor: '#166534',
-      title: 'Waterlogging @ Ukkadam',
-      subtitle: 'Road flooded (Telegram)',
-      severityLabel: 'P4 LOW',
-      icon: <Droplets size={15} color="#0d9488" />,
-    },
-    {
-      key: 'step6_casual_query',
-      stepNum: '6',
-      numBg: '#f1f5f9',
-      numColor: '#475569',
-      title: 'Casual Message',
-      subtitle: 'Filtered Out (Telegram)',
-      severityLabel: 'P5 FILTERED',
-      icon: <MessageSquare size={15} color="#64748b" />,
-    },
-  ];
-
-  const handleRunScenario = async (sc) => {
-    setRunningKey(sc.key);
-    try {
-      const res = await api.runDemoScenario(sc.key);
-      addToast(
-        `✓ ${sc.title}`,
-        res.note || 'Telegram message received & triaged in real time.',
-        sc.key === 'step6_casual_query' || sc.key === 'step6_non_emergency' ? 'info' : 'critical'
-      );
-      if (onScenarioComplete) onScenarioComplete();
-      refreshStats();
-    } catch (err) {
-      addToast('Scenario Notice', err.response?.data?.detail || err.message, 'warning');
-    } finally {
-      setRunningKey(null);
-    }
-  };
-
-  const handleRunAllScenarios = async () => {
-    setRunningAll(true);
-    for (const sc of scenarios) {
-      setRunningKey(sc.key);
-      try {
-        await api.runDemoScenario(sc.key);
-        if (onScenarioComplete) onScenarioComplete();
-        refreshStats();
-      } catch (err) {
-        // continue
-      }
-      await new Promise(r => setTimeout(r, 600));
-    }
-    setRunningKey(null);
-    setRunningAll(false);
-    addToast('All Telegram Scenarios Processed', 'Priority ranking 1 (Critical) to 6 (Low/Filtered) ingested into dispatch queue.', 'info');
-  };
-
-  const handleClearData = async () => {
-    setIsClearing(true);
-    try {
-      await api.resetDemoData();
-      addToast('Database Wiped Clean', 'All incidents, messages, and dispatch tasks removed. Listening for Telegram messages.', 'info');
-      refreshStats();
-      if (onResetComplete) onResetComplete();
-      if (onScenarioComplete) onScenarioComplete();
-    } catch (err) {
-      addToast('Reset Notice', err.response?.data?.detail || err.message, 'warning');
-    } finally {
-      setIsClearing(false);
-    }
-  };
-
+export function DemoControlBar({ incidents = [] }) {
   const hasIncidents = incidents && incidents.length > 0;
 
   return (
@@ -191,7 +57,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
         </div>
       </div>
 
-      {/* Top Banner Row: Title + Status + Action Controls */}
+      {/* Top Banner Row: Title + Live Status */}
       <div
         style={{
           display: 'flex',
@@ -203,7 +69,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Shield Icon with live status pulse */}
+          {/* Shield Icon */}
           <div
             style={{
               width: '38px',
@@ -220,6 +86,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
           >
             <Shield size={20} color="#ffffff" />
           </div>
+
           <div>
             <h2
               className="heading-cursive-multicolor"
@@ -268,83 +135,6 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
               }
             </p>
           </div>
-        </div>
-
-        {/* Action Controls: Clear Database + Telegram Bot + Sim Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Telegram Bot Link */}
-          <a
-            href="https://t.me/RescueFlowAI_DemoBot"
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              background: '#f0f9ff',
-              color: '#0369a1',
-              border: '1px solid #bae6fd',
-              borderRadius: '9999px',
-              padding: '6px 14px',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              textDecoration: 'none',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Send size={12} /> @RescueFlowAI_DemoBot
-          </a>
-
-          {/* Clear Database (Wipe Clean) Button */}
-          <button
-            onClick={handleClearData}
-            disabled={isClearing}
-            title="Wipe all incidents and messages to start from a 100% clean state"
-            style={{
-              background: '#fff1f2',
-              color: '#e11d48',
-              border: '1px solid #fecdd3',
-              borderRadius: '9999px',
-              padding: '6px 14px',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: isClearing ? 'not-allowed' : 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#ffe4e6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#fff1f2';
-            }}
-          >
-            {isClearing ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
-            Clear Database
-          </button>
-
-          {/* Toggle Simulation Scenarios */}
-          <button
-            onClick={() => setShowSimOptions(prev => !prev)}
-            style={{
-              background: showSimOptions ? '#f1f5f9' : 'transparent',
-              color: '#475569',
-              border: '1px solid #cbd5e1',
-              borderRadius: '9999px',
-              padding: '6px 12px',
-              fontSize: '0.76rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-            }}
-          >
-            <Sparkles size={12} color="#0d9488" />
-            {showSimOptions ? 'Hide Test Scenarios' : 'Test Scenarios'}
-          </button>
         </div>
       </div>
 
@@ -396,7 +186,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                {/* Step / Priority Rank */}
+                {/* Priority Rank Number */}
                 <div
                   style={{
                     width: '24px',
@@ -434,7 +224,7 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
                     }}
                     title={`${inc.type} @ ${inc.location}`}
                   >
-                    {inc.type} @ {inc.location?.split(',')[0]}
+                    {inc.type} @ {inc.location ? inc.location.split(',')[0] : 'Scene'}
                   </div>
                   <div
                     style={{
@@ -525,93 +315,6 @@ export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComp
           );
         })}
       </div>
-
-      {/* 3. Optional Simulation Test Buttons (Shown if toggled) */}
-      {showSimOptions && (
-        <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #f1f5f9', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-              Test Telemetry Scenarios (Inject synthetic Telegram distress calls):
-            </span>
-            <button
-              onClick={handleRunAllScenarios}
-              disabled={runningAll || Boolean(runningKey)}
-              style={{
-                background: '#0d9488',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '4px 12px',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                cursor: runningAll ? 'not-allowed' : 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              {runningAll ? <Loader2 size={11} className="animate-spin" /> : <Play size={10} fill="#ffffff" />}
-              Inject All 6 Test Calls
-            </button>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(6, 1fr)',
-              gap: '8px',
-            }}
-          >
-            {scenarios.map((sc) => {
-              const isRunning = runningKey === sc.key;
-              return (
-                <div
-                  key={sc.key}
-                  onClick={() => !runningAll && !runningKey && handleRunScenario(sc)}
-                  style={{
-                    background: isRunning ? '#f0fdfa' : '#f8fafc',
-                    border: `1px solid ${isRunning ? '#0d9488' : '#e2e8f0'}`,
-                    borderRadius: '8px',
-                    padding: '6px 8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: runningAll || runningKey ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      background: sc.numBg,
-                      color: sc.numColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.68rem',
-                      fontWeight: 800,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {isRunning ? <Loader2 size={10} className="animate-spin" /> : sc.stepNum}
-                  </div>
-                  <div style={{ flexShrink: 0 }}>{sc.icon}</div>
-                  <div style={{ overflow: 'hidden', lineHeight: 1.15 }}>
-                    <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0f2738', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {sc.title}
-                    </div>
-                    <div style={{ fontSize: '0.62rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {sc.subtitle}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
