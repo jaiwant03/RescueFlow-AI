@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useSystem } from '../context/SystemContext';
 import { LandscapeArtwork } from './LandscapeArtwork';
@@ -11,16 +12,35 @@ import {
   Zap, 
   Droplets, 
   MessageSquare, 
-  Loader2 
+  Loader2,
+  Trash2,
+  Send,
+  Radio,
+  HeartPulse,
+  AlertTriangle,
+  ChevronRight,
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 
-export function DemoControlBar({ onScenarioComplete }) {
+function getIncidentIcon(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('fire')) return <Flame size={15} color="#dc2626" />;
+  if (t.includes('flood') || t.includes('water')) return <Waves size={15} color="#0284c7" />;
+  if (t.includes('med') || t.includes('trauma')) return <HeartPulse size={15} color="#ea580c" />;
+  if (t.includes('elec') || t.includes('hazard') || t.includes('wire')) return <Zap size={15} color="#d97706" />;
+  if (t.includes('hazmat') || t.includes('chem')) return <AlertTriangle size={15} color="#9333ea" />;
+  return <MessageSquare size={15} color="#0d9488" />;
+}
+
+export function DemoControlBar({ incidents = [], onScenarioComplete, onResetComplete }) {
   const { addToast, refreshStats } = useSystem();
   const [runningKey, setRunningKey] = useState(null);
   const [runningAll, setRunningAll] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [showSimOptions, setShowSimOptions] = useState(false);
 
-  // 6 Scenarios Strictly Ordered: Highest Severity (1) to Lowest Severity (6)
-  // All received directly from citizen Telegram channels & bot
+  // 6 Scenarios for testing / evaluator demonstration
   const scenarios = [
     {
       key: 'step1_fire_gandhipuram',
@@ -124,6 +144,23 @@ export function DemoControlBar({ onScenarioComplete }) {
     addToast('All Telegram Scenarios Processed', 'Priority ranking 1 (Critical) to 6 (Low/Filtered) ingested into dispatch queue.', 'info');
   };
 
+  const handleClearData = async () => {
+    setIsClearing(true);
+    try {
+      await api.resetDemoData();
+      addToast('Database Wiped Clean', 'All incidents, messages, and dispatch tasks removed. Listening for Telegram messages.', 'info');
+      refreshStats();
+      if (onResetComplete) onResetComplete();
+      if (onScenarioComplete) onScenarioComplete();
+    } catch (err) {
+      addToast('Reset Notice', err.response?.data?.detail || err.message, 'warning');
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
+  const hasIncidents = incidents && incidents.length > 0;
+
   return (
     <div
       style={{
@@ -150,34 +187,34 @@ export function DemoControlBar({ onScenarioComplete }) {
         }}
       >
         <div style={{ position: 'absolute', right: '-10px', top: '10px', width: '380px', height: '110px' }}>
-          <LandscapeArtwork width="380px" height="110px" opacity={0.55} />
+          <LandscapeArtwork width="380px" height="110px" opacity={0.45} />
         </div>
       </div>
 
-      {/* Top Banner Row: Title + Run Demo Data Button */}
+      {/* Top Banner Row: Title + Status + Action Controls */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '16px',
+          marginBottom: hasIncidents || showSimOptions ? '14px' : '0',
           position: 'relative',
           zIndex: 1,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Shield Icon in Teal Rounded Square */}
+          {/* Shield Icon with live status pulse */}
           <div
             style={{
               width: '38px',
               height: '38px',
               borderRadius: '8px',
-              background: '#0d9488',
+              background: hasIncidents ? '#0d9488' : '#0284c7',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#ffffff',
-              boxShadow: '0 2px 6px rgba(13, 148, 136, 0.3)',
+              boxShadow: hasIncidents ? '0 2px 6px rgba(13, 148, 136, 0.3)' : '0 2px 6px rgba(2, 132, 199, 0.3)',
               flexShrink: 0,
             }}
           >
@@ -187,13 +224,34 @@ export function DemoControlBar({ onScenarioComplete }) {
             <h2
               className="heading-cursive-multicolor"
               style={{
-                fontSize: '1.25rem',
+                fontSize: '1.20rem',
                 fontWeight: 800,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
               }}
             >
-              Real-Time Incident Ingestion & Telemetry Controller
+              <span>Real-Time Telegram Incident Ingestion</span>
+              <span
+                style={{
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  color: '#059669',
+                  background: '#ecfdf5',
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
+                  border: '1px solid #a7f3d0',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                BOT ACTIVE
+              </span>
             </h2>
 
             <p
@@ -201,158 +259,352 @@ export function DemoControlBar({ onScenarioComplete }) {
                 fontSize: '0.74rem',
                 color: '#64748b',
                 fontWeight: 500,
-                marginTop: '2px',
+                margin: '2px 0 0',
               }}
             >
-              Live citizen emergency messages received via Telegram — prioritized from High Severity (1) to Low (6)
+              {hasIncidents 
+                ? `Displaying ${incidents.length} active emergency incidents triaged by Groq AI in real time.`
+                : 'Listening for live citizen messages via Telegram Bot @RescueFlowAI_DemoBot — Database is empty.'
+              }
             </p>
           </div>
         </div>
 
-        {/* Green "Inject All Scenarios" Pill Button */}
-        <button
-          onClick={handleRunAllScenarios}
-          disabled={runningAll || Boolean(runningKey)}
+        {/* Action Controls: Clear Database + Telegram Bot + Sim Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Telegram Bot Link */}
+          <a
+            href="https://t.me/RescueFlowAI_DemoBot"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              background: '#f0f9ff',
+              color: '#0369a1',
+              border: '1px solid #bae6fd',
+              borderRadius: '9999px',
+              padding: '6px 14px',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              textDecoration: 'none',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Send size={12} /> @RescueFlowAI_DemoBot
+          </a>
+
+          {/* Clear Database (Wipe Clean) Button */}
+          <button
+            onClick={handleClearData}
+            disabled={isClearing}
+            title="Wipe all incidents and messages to start from a 100% clean state"
+            style={{
+              background: '#fff1f2',
+              color: '#e11d48',
+              border: '1px solid #fecdd3',
+              borderRadius: '9999px',
+              padding: '6px 14px',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: isClearing ? 'not-allowed' : 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#ffe4e6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#fff1f2';
+            }}
+          >
+            {isClearing ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+            Clear Database
+          </button>
+
+          {/* Toggle Simulation Scenarios */}
+          <button
+            onClick={() => setShowSimOptions(prev => !prev)}
+            style={{
+              background: showSimOptions ? '#f1f5f9' : 'transparent',
+              color: '#475569',
+              border: '1px solid #cbd5e1',
+              borderRadius: '9999px',
+              padding: '6px 12px',
+              fontSize: '0.76rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}
+          >
+            <Sparkles size={12} color="#0d9488" />
+            {showSimOptions ? 'Hide Test Scenarios' : 'Test Scenarios'}
+          </button>
+        </div>
+      </div>
+
+      {/* 1. When Database Has ZERO Incidents and Simulation is NOT open */}
+      {!hasIncidents && !showSimOptions && (
+        <div
           style={{
-            background: 'linear-gradient(135deg, #0d9488 0%, #0077b6 100%)',
-            color: '#ffffff',
-            borderRadius: '9999px',
-            padding: '7px 18px',
-            fontSize: '0.80rem',
-            fontWeight: 700,
+            marginTop: '14px',
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%)',
+            border: '1.5px dashed #99f6e4',
+            borderRadius: '10px',
+            padding: '20px 16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            border: 'none',
-            cursor: runningAll || Boolean(runningKey) ? 'not-allowed' : 'pointer',
-            boxShadow: '0 2px 8px rgba(13, 148, 136, 0.35)',
-            transition: 'all 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (!runningAll && !runningKey) {
-              e.currentTarget.style.opacity = '0.92';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!runningAll && !runningKey) {
-              e.currentTarget.style.opacity = '1';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }
+            justifyContent: 'space-between',
+            gap: '16px',
+            position: 'relative',
+            zIndex: 1,
           }}
         >
-          {runningAll ? (
-            <>
-              <Loader2 size={14} className="animate-spin" />
-              Processing Inbound Telemetry...
-            </>
-          ) : (
-            <>
-              <Play size={12} fill="#ffffff" />
-              Process Inbound Stream
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* 6 Scenario Cards Row: High Severity (1) to Low Severity (6) */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '10px',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
-        {scenarios.map((sc) => {
-          const isRunning = runningKey === sc.key;
-          return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div
-              key={sc.key}
-              onClick={() => !runningAll && !runningKey && handleRunScenario(sc)}
               style={{
-                background: isRunning ? '#f0fdfa' : '#ffffff',
-                border: `1px solid ${isRunning ? '#0d9488' : '#e2e8f0'}`,
-                borderRadius: '8px',
-                padding: '8px 10px',
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: '#ccfbf1',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                cursor: runningAll || runningKey ? 'not-allowed' : 'pointer',
-                transition: 'all 0.15s ease',
-                boxShadow: isRunning ? '0 0 10px rgba(13, 148, 136, 0.25)' : 'none',
-              }}
-              onMouseEnter={(e) => {
-                if (!runningAll && !runningKey) {
-                  e.currentTarget.style.borderColor = '#0d9488';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.05)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!runningAll && !runningKey) {
-                  e.currentTarget.style.borderColor = isRunning ? '#0d9488' : '#e2e8f0';
-                  e.currentTarget.style.boxShadow = isRunning ? '0 0 10px rgba(13, 148, 136, 0.25)' : 'none';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }
+                justifyContent: 'center',
+                boxShadow: '0 0 0 5px rgba(204, 251, 241, 0.45)',
+                flexShrink: 0,
               }}
             >
-              {/* Step Number Circle */}
-              <div
+              <Radio size={22} color="#0d9488" />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f2738' }}>
+                Database is Cleared &bull; Zero Incidents Active
+              </div>
+              <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: '#64748b', lineHeight: 1.4 }}>
+                Send an emergency report to Telegram Bot <strong style={{ color: '#0369a1' }}>@RescueFlowAI_DemoBot</strong> (e.g. <em>"Flood in Ward 7 near Peelamedu, 4 people trapped"</em>) and it will appear here in real time.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="https://t.me/RescueFlowAI_DemoBot"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              padding: '8px 18px',
+              borderRadius: '9999px',
+              background: 'linear-gradient(135deg, #0284c7 0%, #0d9488 100%)',
+              color: '#ffffff',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(2, 132, 199, 0.3)',
+              flexShrink: 0,
+            }}
+          >
+            <Send size={13} /> Send Test Telegram Message
+          </a>
+        </div>
+      )}
+
+      {/* 2. When Database HAS Live Incidents: Display the REAL Incidents in Real Time */}
+      {hasIncidents && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${Math.min(6, Math.max(1, incidents.length))}, 1fr)`,
+            gap: '10px',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {incidents.slice(0, 6).map((inc, idx) => {
+            const isCrit = inc.priority_level === 'critical';
+            const isHigh = inc.priority_level === 'high';
+            const numBg = isCrit ? '#fee2e2' : isHigh ? '#ffedd5' : '#e0f2fe';
+            const numColor = isCrit ? '#991b1b' : isHigh ? '#9a3412' : '#075985';
+
+            return (
+              <Link
+                key={inc.incident_id || idx}
+                to={`/incidents/${inc.incident_id}`}
                 style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: sc.numBg,
-                  color: sc.numColor,
+                  background: '#ffffff',
+                  border: `1.5px solid ${isCrit ? '#fecaca' : isHigh ? '#fed7aa' : '#e2e8f0'}`,
+                  borderRadius: '10px',
+                  padding: '9px 12px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 800,
-                  flexShrink: 0,
+                  gap: '8px',
+                  textDecoration: 'none',
+                  transition: 'all 0.15s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = isCrit ? '#dc2626' : '#0d9488';
+                  e.currentTarget.style.boxShadow = '0 3px 8px rgba(0,0,0,0.06)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = isCrit ? '#fecaca' : isHigh ? '#fed7aa' : '#e2e8f0';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.03)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                {isRunning ? <Loader2 size={12} className="animate-spin" /> : sc.stepNum}
-              </div>
-
-              {/* Scenario Icon */}
-              <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                {sc.icon}
-              </div>
-
-              {/* Text Info */}
-              <div style={{ overflow: 'hidden', lineHeight: 1.2 }}>
+                {/* Step / Priority Rank */}
                 <div
                   style={{
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    color: '#0f2738',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    background: numBg,
+                    color: numColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    flexShrink: 0,
                   }}
                 >
-                  {sc.title}
+                  {idx + 1}
                 </div>
+
+                {/* Incident Type Icon */}
+                <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                  {getIncidentIcon(inc.type)}
+                </div>
+
+                {/* Info Text */}
+                <div style={{ overflow: 'hidden', lineHeight: 1.2, flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      color: '#0f2738',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {inc.type} @ {inc.location?.split(',')[0]}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.66rem',
+                      color: '#64748b',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {inc.people_affected ? `${inc.people_affected} affected` : 'Report logged'} &bull; {inc.priority_level?.toUpperCase()}
+                  </div>
+                </div>
+
+                <ChevronRight size={13} color="#94a3b8" style={{ flexShrink: 0 }} />
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
+      {/* 3. Optional Simulation Test Buttons (Shown if toggled) */}
+      {showSimOptions && (
+        <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #f1f5f9', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+              Test Telemetry Scenarios (Inject synthetic Telegram distress calls):
+            </span>
+            <button
+              onClick={handleRunAllScenarios}
+              disabled={runningAll || Boolean(runningKey)}
+              style={{
+                background: '#0d9488',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                cursor: runningAll ? 'not-allowed' : 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              {runningAll ? <Loader2 size={11} className="animate-spin" /> : <Play size={10} fill="#ffffff" />}
+              Inject All 6 Test Calls
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              gap: '8px',
+            }}
+          >
+            {scenarios.map((sc) => {
+              const isRunning = runningKey === sc.key;
+              return (
                 <div
+                  key={sc.key}
+                  onClick={() => !runningAll && !runningKey && handleRunScenario(sc)}
                   style={{
-                    fontSize: '0.66rem',
-                    color: '#64748b',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    marginTop: '1px',
+                    background: isRunning ? '#f0fdfa' : '#f8fafc',
+                    border: `1px solid ${isRunning ? '#0d9488' : '#e2e8f0'}`,
+                    borderRadius: '8px',
+                    padding: '6px 8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: runningAll || runningKey ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  {sc.subtitle}
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      background: sc.numBg,
+                      color: sc.numColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isRunning ? <Loader2 size={10} className="animate-spin" /> : sc.stepNum}
+                  </div>
+                  <div style={{ flexShrink: 0 }}>{sc.icon}</div>
+                  <div style={{ overflow: 'hidden', lineHeight: 1.15 }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0f2738', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {sc.title}
+                    </div>
+                    <div style={{ fontSize: '0.62rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {sc.subtitle}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
