@@ -70,6 +70,11 @@ export const api = {
   runDemoScenario: (key) => client.post(`/api/simulate/scenario/${key}`).then(r => r.data),
   resetDemoData: () => client.post('/api/simulate/reset-demo-data').then(r => r.data),
 
+  // User Profile & Photo Persistence in MongoDB Atlas
+  getUserProfile: (email = null) => client.get('/api/user/profile', { params: email ? { email } : {} }).then(r => r.data),
+  updateUserProfile: (data) => client.post('/api/user/profile', data).then(r => r.data),
+  updateUserPhoto: (data) => client.post('/api/user/photo', data).then(r => r.data),
+
   // Base URL helper
   getBaseUrl: () => API_BASE_URL,
 };
