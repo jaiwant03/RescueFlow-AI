@@ -87,7 +87,7 @@ export function EditProfileModal({ isOpen, onClose }) {
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
-          const TARGET_SIZE = 360; // Optimal square resolution
+          const TARGET_SIZE = 280; // Optimal square resolution (fast, crisp, lightweight)
           const width = img.width;
           const height = img.height;
 
@@ -114,12 +114,18 @@ export function EditProfileModal({ isOpen, onClose }) {
             TARGET_SIZE
           );
 
-          // Convert to lightweight data URL (JPEG ~35-50KB)
-          const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          // Convert to lightweight data URL (JPEG ~18-25KB)
+          const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
           setPhoto(optimizedDataUrl);
+          try {
+            localStorage.setItem('rescueflow_user_photo', optimizedDataUrl);
+          } catch (e) {}
         } catch (e) {
           console.error('Failed to optimize image', e);
           setPhoto(readerEvent.target.result);
+          try {
+            localStorage.setItem('rescueflow_user_photo', readerEvent.target.result);
+          } catch (err) {}
         }
       };
       img.onerror = () => {
@@ -151,6 +157,9 @@ export function EditProfileModal({ isOpen, onClose }) {
 
   const handleRemovePhoto = () => {
     setPhoto(null);
+    try {
+      localStorage.removeItem('rescueflow_user_photo');
+    } catch (e) {}
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
