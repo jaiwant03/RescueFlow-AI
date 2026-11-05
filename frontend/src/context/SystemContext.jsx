@@ -353,6 +353,10 @@ export function SystemProvider({ children }) {
       refreshStats();
     } else if (type === 'SYSTEM_RESET') {
       addToast('🧹 System Reset', 'Operational records synchronized and reset.', 'info');
+      setNotifications([]);
+      try {
+        localStorage.removeItem('rescueflow_notifications');
+      } catch (e) {}
       refreshStats();
     }
   }, [addToast, addNotification, refreshStats]);
