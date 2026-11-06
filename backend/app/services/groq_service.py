@@ -228,11 +228,44 @@ class GroqService:
             "summary": summary
         }
 
+    def sanitize_input_text(self, text: str) -> str:
+        """Sanitizes user input to defend against prompt injection and escape payloads."""
+        if not text:
+            return ""
+        injection_patterns = [
+            r"ignore\s+(all\s+)?previous\s+instructions",
+            r"system\s+override",
+            r"you\s+are\s+now\s+(an?\s+)?",
+            r"disregard\s+(all\s+)?prior\s+commands",
+            r"forget\s+everything",
+            r"output\s+is_emergency\s*=\s*false",
+        ]
+        cleaned = text
+        for p in injection_patterns:
+            cleaned = re.sub(p, "[SECURITY_FLAGGED_ATTEMPT]", cleaned, flags=re.IGNORECASE)
+        return cleaned.strip()
+
     # ------------------ HEURISTIC FALLBACKS (Guarantees zero crashes) ------------------
     def _heuristic_classification(self, message: str) -> Dict[str, Any]:
-        lower = message.lower()
-        non_emergency_words = ["good morning", "hello", "hi there", "have a nice day", "test only", "casual"]
-        if any(w in lower for w in non_emergency_words) and not any(k in lower for k in ["flood", "fire", "urgent", "help", "trapped"]):
+        cleaned = self.sanitize_input_text(message)
+        lower = cleaned.lower()
+        non_emergency_words = [
+            "good morning", "good evening", "good afternoon", "hello", "hi there",
+            "have a nice day", "test only", "casual", "weather forecast", "how are you"
+        ]
+        
+        # Check multilingual emergency terms first
+        tamil_emergency = ["thee", "neruppu", "vellam", "thanni", "kaapathunga", "udhavi", "maram"]
+        hindi_emergency = ["aag", "baadh", "paani", "bachao", "madad", "ghayal", "chot"]
+        spanish_emergency = ["fuego", "inundacion", "ayuda", "socorro", "herido", "atrapado"]
+        french_emergency = ["incendie", "feu", "inondation", "secours", "aide", "blesse"]
+
+        has_distress = any(k in lower for k in [
+            "flood", "fire", "urgent", "help", "trapped", "smoke", "collapse",
+            "hazard", "injury", "injured", "accident", "danger", "burst", "leak"
+        ] + tamil_emergency + hindi_emergency + spanish_emergency + french_emergency)
+
+        if any(w in lower for w in non_emergency_words) and not has_distress:
             return {
                 "is_emergency": False,
                 "emergency_type": "non_emergency",
@@ -241,21 +274,29 @@ class GroqService:
             }
 
         emergency_type = "other"
-        if "flood" in lower or "water" in lower:
+        confidence = 0.90
+        if any(k in lower for k in ["flood", "water", "surge", "inundat", "vellam", "baadh", "inundacion"]):
             emergency_type = "flood"
-        elif "fire" in lower or "smoke" in lower or "burn" in lower:
+        elif any(k in lower for k in ["fire", "flames", "smoke", "burn", "gas", "thee", "neruppu", "aag", "fuego", "incendie"]):
             emergency_type = "fire"
-        elif "medical" in lower or "elderly" in lower or "heart" in lower or "injury" in lower:
+        elif any(k in lower for k in ["medical", "elderly", "heart", "injury", "injured", "head trauma", "bleeding", "madad", "herido"]):
             emergency_type = "medical"
-        elif "collapse" in lower or "debris" in lower:
+        elif any(k in lower for k in ["collapse", "debris", "rubble", "trapped under"]):
             emergency_type = "building_collapse"
-        elif "accident" in lower or "crash" in lower:
+        elif any(k in lower for k in ["accident", "crash", "collision"]):
             emergency_type = "accident"
+        elif any(k in lower for k in ["wire", "electric", "pole", "hazard", "gas leak"]):
+            emergency_type = "hazard"
+
+        # Track uncertainty if indicators are minimal
+        if emergency_type == "other" and not has_distress:
+            confidence = 0.55
 
         return {
-            "is_emergency": True,
+            "is_emergency": True if has_distress else (confidence > 0.60),
             "emergency_type": emergency_type,
-            "confidence": 0.90,
+            "confidence": confidence,
+            "uncertainty_flag": (0.35 <= confidence <= 0.65),
             "reason": f"Urgent distress indicators matched for {emergency_type} incident."
         }
 
