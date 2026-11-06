@@ -97,14 +97,15 @@ class GroqService:
             "- Do not invent location or people count."
         )
 
+        sanitized_msg = self.sanitize_input_text(message)
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": message}
+            {"role": "user", "content": sanitized_msg}
         ]
 
         if not self.is_configured():
             logger.warning("GROQ_API_KEY not set. Using intelligent heuristic classifier for demo.")
-            return self._heuristic_classification(message)
+            return self._heuristic_classification(sanitized_msg)
 
         try:
             content = await self._call_groq(messages, temperature=0.1)
