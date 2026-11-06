@@ -149,6 +149,17 @@ class InMemoryCollection:
             modified_count = 0
         return UpdateResultZero()
 
+    async def delete_one(self, query: Dict[str, Any]):
+        for idx, d in enumerate(self.docs):
+            if all(d.get(k) == v for k, v in query.items()):
+                self.docs.pop(idx)
+                class DeleteResult:
+                    deleted_count = 1
+                return DeleteResult()
+        class DeleteResultZero:
+            deleted_count = 0
+        return DeleteResultZero()
+
     async def delete_many(self, query: Dict[str, Any]):
         before = len(self.docs)
         self.docs = [d for d in self.docs if not all(d.get(k) == v for k, v in query.items())]
