@@ -122,9 +122,10 @@ class TelegramService:
         logger.info("Telegram poller stopped.")
 
     async def _poll_loop(self):
-        """Continuous background poller for Telegram messages."""
+        """Continuous background poller for Telegram citizen messages & GPS locations."""
         from app.services.mongodb import process_emergency_intake
         import uuid
+        import re
         from datetime import datetime
 
         while self._is_running:
@@ -143,28 +144,66 @@ class TelegramService:
                             if not msg:
                                 continue
 
-                            text = msg.get("text", "")
-                            if not text:
-                                continue
-
                             from_user = msg.get("from", {})
                             chat_id = msg.get("chat", {}).get("id")
                             user_name = from_user.get("first_name", "Telegram User")
                             username = f"@{from_user.get('username')}" if from_user.get("username") else user_name
 
-                            # Ignore bot's own /start command or handle it
-                            if text.strip().lower() == "/start":
+                            # Extract text, photo caption, or native GPS location
+                            raw_text = msg.get("text") or msg.get("caption") or ""
+                            tg_loc = msg.get("location")
+                            lat = None
+                            lng = None
+
+                            if tg_loc and isinstance(tg_loc, dict):
+                                try:
+                                    lat = float(tg_loc.get("latitude"))
+                                    lng = float(tg_loc.get("longitude"))
+                                except (ValueError, TypeError):
+                                    pass
+
+                            # If text is empty but GPS location was attached, synthesize report text
+                            if not raw_text.strip():
+                                if lat is not None and lng is not None:
+                                    raw_text = f"Emergency situation reported with live GPS coordinates: {lat:.5f}, {lng:.5f}"
+                                elif msg.get("photo"):
+                                    raw_text = "Emergency photo report submitted by citizen via Telegram"
+                                else:
+                                    # Non-emergency/service message without text or location
+                                    continue
+
+                            # Handle bot /start command
+                            if raw_text.strip().lower() == "/start":
                                 reply_text = (
                                     f"👋 Hello {user_name}! I am the *RescueFlow AI Emergency Bot*.\n\n"
                                     "🚨 *To report an emergency:*\n"
-                                    "Simply reply with the disaster type, your location, and the current situation.\n\n"
+                                    "1. Send your message describing the disaster, location, and people affected.\n"
+                                    "2. You can also tap 📎 *Location* to send your exact GPS pin or attach photos.\n\n"
                                     "_Example:_\n"
-                                    "\"Flash flood in Ward 7 near Green Park. 6 people trapped on the first floor. Water level 4 feet.\""
+                                    "\"Flash flood in Saibaba Colony near Avinashi Road. 6 people trapped. Water rising 4 feet.\""
                                 )
                                 await self.send_message(chat_id, reply_text)
                                 continue
 
-                            logger.info(f"Incoming Telegram emergency report from {username}: {text}")
+                            # Also extract embedded coordinates from text if not provided by native location
+                            if lat is None or lng is None:
+                                coord_match = re.search(r'(-?\d{1,2}\.\d{3,7})[,\s]+(-?\d{1,3}\.\d{3,7})', raw_text)
+                                if coord_match:
+                                    try:
+                                        lat = float(coord_match.group(1))
+                                        lng = float(coord_match.group(2))
+                                    except (ValueError, TypeError):
+                                        pass
+
+                            location_hint = f"GPS ({lat:.4f}, {lng:.4f})" if (lat is not None and lng is not None) else None
+
+                            # Photo handling if attached
+                            image_url = None
+                            if msg.get("photo") and isinstance(msg.get("photo"), list) and len(msg.get("photo")) > 0:
+                                file_id = msg.get("photo")[-1].get("file_id")
+                                image_url = f"telegram://photo/{file_id}"
+
+                            logger.info(f"Incoming Telegram emergency report from {username}: {raw_text} (GPS: {lat}, {lng})")
 
                             # Normalize message for RescueFlow AI Pipeline
                             message_id = f"TG-{uuid.uuid4().hex[:8].upper()}"
@@ -174,16 +213,18 @@ class TelegramService:
                                 "sender": username,
                                 "phone": None,
                                 "email": None,
-                                "message": text,
-                                "location": None,
-                                "location_hint": None,
-                                "latitude": None,
-                                "longitude": None,
+                                "message": raw_text,
+                                "location": location_hint,
+                                "location_hint": location_hint,
+                                "latitude": lat,
+                                "longitude": lng,
+                                "image_url": image_url,
                                 "timestamp": datetime.utcnow().isoformat(),
                                 "metadata": {
                                     "chat_id": chat_id,
                                     "telegram_user_id": from_user.get("id"),
-                                    "reported_via": "Telegram Bot (@RescueFlowAI_DemoBot)"
+                                    "reported_via": "Telegram Bot (@RescueFlowAI_DemoBot)",
+                                    "has_gps": lat is not None and lng is not None
                                 }
                             }
 
@@ -191,14 +232,17 @@ class TelegramService:
                             result = await process_emergency_intake(normalized)
 
                             # Send immediate acknowledgement back to citizen on Telegram
-                            inc_id = result.get("incident", {}).get("incident_id", "PENDING")
-                            priority = result.get("priority_level", "NORMAL").upper()
-                            disaster_type = result.get("type", "Disaster Report").title()
+                            inc = result.get("incident") or {}
+                            inc_id = inc.get("incident_id", "PENDING")
+                            priority = (inc.get("priority_level") or result.get("priority_level", "NORMAL")).upper()
+                            disaster_type = (inc.get("type") or result.get("type", "Emergency Report")).title()
+                            loc_display = inc.get("location") or location_hint or "Coimbatore Sector"
 
                             reply = (
                                 f"🚨 *EMERGENCY REPORT RECEIVED BY RESCUEFLOW AI*\n\n"
                                 f"✅ *Incident ID:* `{inc_id}`\n"
                                 f"🔥 *Classified Disaster:* {disaster_type}\n"
+                                f"📍 *Location:* {loc_display}\n"
                                 f"⚡ *Assigned Priority:* *{priority}*\n\n"
                                 f"Your report has been triaged by AI and dispatched to the Operations Commander on duty."
                             )
