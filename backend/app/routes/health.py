@@ -4,6 +4,8 @@ from app.config import settings
 from app.database import db_manager, in_memory_db
 from app.services.groq_service import groq_service
 from app.services.n8n import n8n_service
+from app.services.task_queue import task_queue
+from app.services.staleness_monitor import staleness_monitor
 
 router = APIRouter(tags=["Health & System"])
 logger = logging.getLogger("rescueflow.routes.health")
