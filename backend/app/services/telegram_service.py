@@ -99,6 +99,9 @@ class TelegramService:
 
         return await self.send_message(chat_id or self.alert_chat_id, text)
 
+    # Alias for dispatch alert
+    send_dispatch_alert = broadcast_incident_alert
+
     async def start_polling(self):
         """Starts background long polling to intake citizen messages sent directly to the bot."""
         if not self.is_configured or self._is_running:

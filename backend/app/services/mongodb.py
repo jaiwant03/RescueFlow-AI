@@ -404,6 +404,16 @@ async def execute_approval_decision(
         has_explicit_email = False
         email_targets = []
 
+        # Helper to validate email addresses (strictly distinguishing from Telegram @handles)
+        def _is_real_email(s: str) -> bool:
+            if not s or not isinstance(s, str):
+                return False
+            s = s.strip()
+            if s.startswith("@"):
+                return False
+            import re
+            return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", s))
+
         for msg in source_messages:
             if isinstance(msg, dict):
                 src = str(msg.get("source", "")).lower().strip()
@@ -411,11 +421,11 @@ async def execute_approval_decision(
                     reporting_sources.add(src)
                 sender = str(msg.get("sender", "")).strip()
                 email_val = str(msg.get("email", "")).strip()
-                if "@" in email_val:
+                if _is_real_email(email_val):
                     has_explicit_email = True
                     if email_val not in email_targets:
                         email_targets.append(email_val)
-                elif "@" in sender:
+                elif _is_real_email(sender):
                     has_explicit_email = True
                     if sender not in email_targets:
                         email_targets.append(sender)
@@ -472,7 +482,7 @@ async def execute_approval_decision(
             try:
                 from app.services.telegram_service import telegram_service
                 if telegram_service.is_configured:
-                    await telegram_service.send_dispatch_alert(incident)
+                    await telegram_service.broadcast_incident_alert(incident)
             except Exception as e:
                 logger.warning(f"Telegram dispatch alert notification failed: {e}")
 
