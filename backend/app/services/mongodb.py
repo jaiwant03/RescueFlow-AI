@@ -134,14 +134,19 @@ async def process_emergency_intake(message_payload: Dict[str, Any]) -> Dict[str,
     )
 
     # 4. Check for similar/duplicate active incident
-    cursor = db["incidents"].find({"status": {"$in": ["pending", "approved", "responding", "monitoring"]}})
-    active_incidents = await cursor.to_list(100)
-
-    match_result = deduplication_engine.find_matching_incident(extraction, active_incidents)
-    
     lat_in = message_payload.get("latitude")
     lng_in = message_payload.get("longitude")
     resolved_lat, resolved_lng = resolve_coords(extraction.get("location", ""), lat_in, lng_in)
+
+    cursor = db["incidents"].find({"status": {"$in": ["pending", "approved", "responding", "monitoring"]}})
+    active_incidents = await cursor.to_list(100)
+
+    match_result = deduplication_engine.find_matching_incident(
+        extraction,
+        active_incidents,
+        new_lat=resolved_lat,
+        new_lng=resolved_lng
+    )
 
     source_msg_entry = {
         "message_id": message_id,
