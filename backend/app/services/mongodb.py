@@ -510,7 +510,7 @@ async def execute_approval_decision(
                     "approval_status": "approved",
                     "approved_by": decided_by,
                     "approved_at": now_iso,
-                    "assigned_team": f"{incident.get('type').title()} Unit Alpha",
+                    "assigned_team": f"{incident_type.title()} Unit Alpha",
                     "timeline": timeline,
                     "updated_at": now_iso
                 }
@@ -542,7 +542,7 @@ async def execute_approval_decision(
             incident_id=incident_id,
             source="n8n_response",
             actor="Automated Dispatch",
-            details={"channels": ["telegram", "email"], "simulated": True}
+            details={"channels": [t.get("channel") for t in dispatched_tasks], "simulated": True}
         )
 
         # Notify n8n workflow webhook
@@ -551,7 +551,7 @@ async def execute_approval_decision(
         updated_inc = await db["incidents"].find_one({"incident_id": incident_id})
         updated_inc = sanitize_doc(updated_inc)
         await broadcaster.broadcast("INCIDENT_UPDATED", updated_inc)
-        return {"success": True, "incident": updated_inc, "tasks": sanitize_doc([telegram_task, email_task])}
+        return {"success": True, "incident": updated_inc, "tasks": sanitize_doc(dispatched_tasks)}
 
 
     else:
