@@ -174,24 +174,42 @@ async def connect_to_mongo():
             raise ImportError("Motor module not available in active environment.")
         db_manager.client = AsyncIOMotorClient(
             settings.MONGO_URI,
-            serverSelectionTimeoutMS=2000
+            serverSelectionTimeoutMS=3000,
+            maxPoolSize=50,
+            minPoolSize=5,
+            maxIdleTimeMS=30000
         )
         # Check connection
         await db_manager.client.admin.command('ping')
         db_manager.db = db_manager.client[settings.DB_NAME]
         db_manager.is_connected = True
         db_manager.is_fallback = False
-        logger.info("Connected to MongoDB successfully: database '%s'", settings.DB_NAME)
+        logger.info("Connected to MongoDB successfully: database '%s' (pool: 50 connections)", settings.DB_NAME)
         
-        # Ensure indexes
+        # Ensure single and high-performance compound indexes for scalability
         try:
+            # Incidents collection indexes
             await db_manager.db["incidents"].create_index("incident_id", unique=True)
             await db_manager.db["incidents"].create_index("status")
             await db_manager.db["incidents"].create_index("priority_level")
             await db_manager.db["incidents"].create_index("created_at")
+            # Compound indexes for fast filtering and deduplication lookup
+            await db_manager.db["incidents"].create_index([("status", 1), ("created_at", -1)])
+            await db_manager.db["incidents"].create_index([("status", 1), ("priority_score", -1)])
+            await db_manager.db["incidents"].create_index([("type", 1), ("status", 1)])
+            await db_manager.db["incidents"].create_index([("status", 1), ("updated_at", 1)])
+            
+            # Messages collection indexes
             await db_manager.db["messages"].create_index("message_id", unique=True)
+            await db_manager.db["messages"].create_index([("is_emergency", 1), ("timestamp", -1)])
+            
+            # Audit & Approvals indexes
             await db_manager.db["audit_logs"].create_index("timestamp")
+            await db_manager.db["audit_logs"].create_index([("incident_id", 1), ("timestamp", -1)])
+            await db_manager.db["approvals"].create_index("approval_id", unique=True)
+            await db_manager.db["approvals"].create_index([("status", 1), ("priority", 1)])
             await db_manager.db["users"].create_index("email")
+            logger.info("MongoDB compound and single indexes verified successfully.")
         except Exception as idx_err:
             logger.warning("Index creation note: %s", idx_err)
             
