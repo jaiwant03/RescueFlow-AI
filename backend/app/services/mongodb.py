@@ -393,43 +393,112 @@ async def execute_approval_decision(
             "actor": decided_by
         })
         
-        # 2. Automated dispatch tasks (simulated Telegram & Email dispatches)
+        # 2. Automated dispatch tasks (routed by incident reporting channel)
         resources_list = incident.get("resources_required", ["Rescue Team"])
         if not resources_list:
             resources_list = ["First Response Unit"]
 
-        telegram_task = {
-            "task_id": f"TSK-TG-{uuid.uuid4().hex[:6].upper()}",
-            "incident_id": incident_id,
-            "channel": "telegram",
-            "target": "RescueFlow Emergency Bot Channel",
-            "content": f"🚨 [SIMULATED] CRITICAL ALERT: {incident.get('type').upper()} at {incident.get('location')}. {incident.get('people_affected')} affected. Deploying: {', '.join(resources_list)}",
-            "status": "dispatched",
-            "is_simulation": True,
-            "assigned_team": f"{incident.get('type').title()} Unit Alpha",
-            "resources": resources_list,
-            "timestamp": now_iso
-        }
-        await db["response_tasks"].insert_one(telegram_task)
+        # Determine reporting channel(s) from incident source messages
+        source_messages = incident.get("source_messages", [])
+        reporting_sources = set()
+        has_explicit_email = False
+        email_targets = []
 
-        email_task = {
-            "task_id": f"TSK-EM-{uuid.uuid4().hex[:6].upper()}",
-            "incident_id": incident_id,
-            "channel": "email",
-            "target": "rescueflow.demo@gmail.com",
-            "content": f"[SIMULATED EMERGENCY DISPATCH] Incident #{incident_id} approved for immediate response. Location: {incident.get('location')}.",
-            "status": "dispatched",
-            "is_simulation": True,
-            "assigned_team": f"{incident.get('type').title()} Unit Alpha",
-            "resources": resources_list,
-            "timestamp": now_iso
-        }
-        await db["response_tasks"].insert_one(email_task)
+        for msg in source_messages:
+            if isinstance(msg, dict):
+                src = str(msg.get("source", "")).lower().strip()
+                if src:
+                    reporting_sources.add(src)
+                sender = str(msg.get("sender", "")).strip()
+                email_val = str(msg.get("email", "")).strip()
+                if "@" in email_val:
+                    has_explicit_email = True
+                    if email_val not in email_targets:
+                        email_targets.append(email_val)
+                elif "@" in sender:
+                    has_explicit_email = True
+                    if sender not in email_targets:
+                        email_targets.append(sender)
 
+        # Fallback to incident-level source if source_messages is empty
+        if not reporting_sources and incident.get("source"):
+            reporting_sources.add(str(incident.get("source", "")).lower().strip())
+
+        is_telegram_source = "telegram" in reporting_sources
+        is_email_source = "email" in reporting_sources or has_explicit_email
+
+        # Channel dispatch routing:
+        # If reported strictly via Telegram, dispatch ONLY via Telegram (do not generate or show Email)
+        if is_telegram_source and not is_email_source:
+            send_telegram = True
+            send_email = False
+        # If reported strictly via Email, dispatch ONLY via Email
+        elif is_email_source and not is_telegram_source:
+            send_telegram = False
+            send_email = True
+        # If multi-channel reports (merged Telegram + Email)
+        elif is_telegram_source and is_email_source:
+            send_telegram = True
+            send_email = True
+        # Default fallback (e.g. portal/manual): default to Telegram response channel
+        else:
+            send_telegram = True
+            send_email = False
+
+        dispatched_tasks = []
+        dispatched_channel_names = []
+        incident_type = str(incident.get("type") or "emergency")
+        incident_loc = incident.get("location") or "Unspecified Location"
+        affected_count = incident.get("people_affected") or 0
+
+        if send_telegram:
+            telegram_task = {
+                "task_id": f"TSK-TG-{uuid.uuid4().hex[:6].upper()}",
+                "incident_id": incident_id,
+                "channel": "telegram",
+                "target": "RescueFlow Emergency Bot Channel",
+                "content": f"🚨 [SIMULATED] CRITICAL ALERT: {incident_type.upper()} at {incident_loc}. {affected_count} affected. Deploying: {', '.join(resources_list)}",
+                "status": "dispatched",
+                "is_simulation": True,
+                "assigned_team": f"{incident_type.title()} Unit Alpha",
+                "resources": resources_list,
+                "timestamp": now_iso
+            }
+            await db["response_tasks"].insert_one(telegram_task)
+            dispatched_tasks.append(telegram_task)
+            dispatched_channel_names.append("Telegram")
+
+            # Also trigger Telegram bot alert if live token configured
+            try:
+                from app.services.telegram_service import telegram_service
+                if telegram_service.is_configured:
+                    await telegram_service.send_dispatch_alert(incident)
+            except Exception as e:
+                logger.warning(f"Telegram dispatch alert notification failed: {e}")
+
+        if send_email:
+            target_email = email_targets[0] if email_targets else "rescueflow.demo@gmail.com"
+            email_task = {
+                "task_id": f"TSK-EM-{uuid.uuid4().hex[:6].upper()}",
+                "incident_id": incident_id,
+                "channel": "email",
+                "target": target_email,
+                "content": f"[SIMULATED EMERGENCY DISPATCH] Incident #{incident_id} approved for immediate response. Location: {incident_loc}.",
+                "status": "dispatched",
+                "is_simulation": True,
+                "assigned_team": f"{incident_type.title()} Unit Alpha",
+                "resources": resources_list,
+                "timestamp": now_iso
+            }
+            await db["response_tasks"].insert_one(email_task)
+            dispatched_tasks.append(email_task)
+            dispatched_channel_names.append("Email")
+
+        channels_description = " and ".join(dispatched_channel_names) if dispatched_channel_names else "Field Units"
         timeline.append({
             "timestamp": now_iso,
             "event_type": "NOTIFICATIONS_SENT",
-            "description": f"Automated response dispatches sent via Telegram and Email to response units",
+            "description": f"Automated response dispatch sent via {channels_description} to response units",
             "actor": "n8n Automated Response"
         })
 
