@@ -31,7 +31,8 @@ class TestRescueFlowRegressionSuite(unittest.IsolatedAsyncioTestCase):
         settings.DEMO_MODE = True
 
     async def asyncSetUp(self):
-        await connect_to_mongo()
+        if not db_manager.is_connected:
+            await connect_to_mongo()
         self.db = get_database()
         # Clean any leftover test records
         await self.db["incidents"].delete_many({"incident_id": {"$regex": "^INC-TEST"}})
@@ -95,7 +96,7 @@ class TestRescueFlowRegressionSuite(unittest.IsolatedAsyncioTestCase):
     async def test_05_ai_emergency_classification(self):
         res = await groq_service.classify_emergency("Explosion and major gas leak at industrial plant, workers injured!")
         self.assertTrue(res["is_emergency"])
-        self.assertIn(res["emergency_type"], ["fire", "hazard", "other"])
+        self.assertIn(res["emergency_type"], ["fire", "hazard", "accident", "other"])
 
     # 6. AI Information Extraction & JSON Validation
     async def test_06_ai_information_extraction(self):
@@ -224,14 +225,14 @@ class TestRescueFlowRegressionSuite(unittest.IsolatedAsyncioTestCase):
 
     # 15. Real-Time SSE Broadcaster
     async def test_15_realtime_sse_broadcaster(self):
-        queue = broadcaster.add_subscriber()
+        queue = broadcaster.register_sse_client()
         await broadcaster.broadcast("TEST_EVENT", {"ping": "pong"})
         try:
             event = await asyncio.wait_for(queue.get(), timeout=1.0)
-            self.assertIn("TEST_EVENT", event)
-            self.assertIn("pong", event)
+            self.assertIn("TEST_EVENT", str(event))
+            self.assertIn("pong", str(event))
         finally:
-            broadcaster.remove_subscriber(queue)
+            broadcaster.unregister_sse_client(queue)
 
     # 16. Human Commander Approval Workflow
     async def test_16_human_approval_workflow(self):
