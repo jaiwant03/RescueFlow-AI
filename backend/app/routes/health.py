@@ -78,6 +78,20 @@ async def system_status():
                 "status": email_status,
                 "healthy": True,
                 "note": "Messages processed via n8n Gmail Trigger or simulation input"
+            },
+            "task_queue": {
+                "status": "active",
+                "healthy": True,
+                "concurrency": task_queue.concurrency,
+                "queue_depth": task_queue.get_telemetry()["queue_depth"],
+                "metrics": task_queue.get_telemetry()["metrics"]
+            },
+            "staleness_monitor": {
+                "status": "active",
+                "healthy": True,
+                "check_interval_seconds": staleness_monitor.check_interval_seconds,
+                "threshold_minutes": staleness_monitor.stale_threshold_minutes,
+                "checks_run": staleness_monitor.stats["checks_run"]
             }
         }
     }

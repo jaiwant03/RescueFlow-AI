@@ -43,12 +43,27 @@ async def lifespan(app: FastAPI):
     logger.info(f"   Mode: {'DEMO SIMULATION' if settings.DEMO_MODE else 'PRODUCTION'}")
     logger.info("==================================================")
     await connect_to_mongo()
+
+    # Start resilient background task queue
+    from app.services.task_queue import task_queue
+    await task_queue.start()
+
+    # Start background staleness monitor
+    from app.services.staleness_monitor import staleness_monitor
+    await staleness_monitor.start()
+
     from app.services.telegram_service import telegram_service
     if telegram_service.is_configured:
         await telegram_service.start_polling()
         logger.info("Telegram Bot poller initialized for real-time citizen message ingestion.")
     yield
     # Shutdown
+    from app.services.staleness_monitor import staleness_monitor
+    await staleness_monitor.stop()
+
+    from app.services.task_queue import task_queue
+    await task_queue.stop()
+
     from app.services.telegram_service import telegram_service
     if telegram_service.is_configured:
         await telegram_service.stop_polling()
