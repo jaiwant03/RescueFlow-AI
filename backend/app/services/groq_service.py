@@ -151,14 +151,15 @@ class GroqService:
             "Possible resources: rescue_team, medical_team, ambulance, fire_service, police, shelter, food, water, boat, transport, other."
         )
 
+        sanitized_msg = self.sanitize_input_text(message)
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": message}
+            {"role": "user", "content": sanitized_msg}
         ]
 
         if not self.is_configured():
             logger.warning("GROQ_API_KEY not set. Using intelligent heuristic extractor for demo.")
-            return self._heuristic_extraction(message)
+            return self._heuristic_extraction(sanitized_msg)
 
         try:
             content = await self._call_groq(messages, temperature=0.1)
